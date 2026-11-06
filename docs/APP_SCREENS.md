@@ -111,6 +111,22 @@ No Xiaozhi pairing is needed on the second phone. **iOS** asks for *Local Networ
 
 ---
 
+## Every screen as its own SVG
+
+One file per screen, in `docs/images/screens/android/` and `docs/images/screens/ios/`. Use them in slides or reports, or open one to zoom in.
+
+| Screen | Android | iOS |
+|---|---|---|
+| 1. Home · car dashboard | <img src="images/screens/android/01-home.svg" width="220" alt="Android Home · car dashboard"> | <img src="images/screens/ios/01-home.svg" width="220" alt="iOS Home · car dashboard"> |
+| 2. More features | <img src="images/screens/android/02-more-features.svg" width="220" alt="Android More features"> | <img src="images/screens/ios/02-more-features.svg" width="220" alt="iOS More features"> |
+| 3. Bluetooth | <img src="images/screens/android/03-bluetooth.svg" width="220" alt="Android Bluetooth"> | <img src="images/screens/ios/03-bluetooth.svg" width="220" alt="iOS Bluetooth"> |
+| 4. Car setup | <img src="images/screens/android/04-car-setup.svg" width="220" alt="Android Car setup"> | <img src="images/screens/ios/04-car-setup.svg" width="220" alt="iOS Car setup"> |
+| 5. Drive | <img src="images/screens/android/05-drive.svg" width="220" alt="Android Drive"> | <img src="images/screens/ios/05-drive.svg" width="220" alt="iOS Drive"> |
+| 6. GPS Mission | <img src="images/screens/android/06-gps-mission.svg" width="220" alt="Android GPS Mission"> | <img src="images/screens/ios/06-gps-mission.svg" width="220" alt="iOS GPS Mission"> |
+| 7. Remote Mic | <img src="images/screens/android/07-remote-mic.svg" width="220" alt="Android Remote Mic"> | <img src="images/screens/ios/07-remote-mic.svg" width="220" alt="iOS Remote Mic"> |
+| 8. Settings | <img src="images/screens/android/08-settings.svg" width="220" alt="Android Settings"> | <img src="images/screens/ios/08-settings.svg" width="220" alt="iOS Settings"> |
+| 9. Voice Control | <img src="images/screens/android/09-voice-control.svg" width="220" alt="Android Voice Control"> | <img src="images/screens/ios/09-voice-control.svg" width="220" alt="iOS Voice Control"> |
+
 ## Questions to go deeper
 
 1. Why does FriendBot's "Steering" test spin the robot instead of turning gently like a car? What hardware would change that?
