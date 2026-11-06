@@ -50,7 +50,7 @@ If Bluetooth drops, the firmware stops the motors at once.
 ![Pairing screen](images/xiaozhi-pairing.svg)
 
 1. The app shows a **6-digit code**.
-2. Open **[xiaozhi.me](https://xiaozhi.me)** → sign in → **Add device** → enter the code.
+2. Open **[xiaozhi.me](https://xiaozhi.me)** → sign in → <https://xiaozhi.me/console/agents> → pick or create an Agent → **Add Device** → enter the code.
 3. The app saves the credentials in the iPhone and connects by itself next time.
 
 ### What you can do

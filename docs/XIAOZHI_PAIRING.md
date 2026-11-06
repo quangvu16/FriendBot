@@ -8,6 +8,22 @@ Voice Control needs a free **Xiaozhi** account. The phone acts as a Xiaozhi "dev
 
 > The website may show its buttons in Chinese. The names used here, with the usual Chinese label in brackets, are **Console** (控制台), **Create Agent** (新建智能体), **Configure Role** (配置角色) and **Add Device** (添加设备). Your browser's *Translate page* also works.
 
+## ⚡ Thêm thiết bị vào Xiaozhi Console (cách nhanh)
+
+Đã có tài khoản xiaozhi.me? Chỉ cần 5 bước:
+
+1. Truy cập **<https://xiaozhi.me/console/agents>**
+2. Tạo **Agent** mới (hoặc chọn Agent hiện có)
+3. Click **"Add Device"**
+4. Nhập **mã 6 số** từ ứng dụng FriendBot (màn hình **Voice Control** → *First-time pairing*)
+5. ✅ Hoàn tất! Ứng dụng hiện **"Bound! Connecting…"** rồi **"Xiaozhi ready"**
+
+> Mã chỉ dùng được trong **5 phút**. Hết hạn thì bấm **Retry** trên điện thoại để lấy mã mới. Chưa có tài khoản hoặc cần giải thích chi tiết: xem các bước 1–5 bên dưới.
+
+*Quick version in English:* open <https://xiaozhi.me/console/agents> → create a new Agent (or pick an existing one) → **Add Device** → type the 6-digit code from the FriendBot app → done.
+
+---
+
 ## What you need
 
 * The FriendBot app on your phone ([Android](ANDROID_APP.md) or [iOS](IOS_APP.md)), with **internet** (Wi-Fi or mobile data).
@@ -40,7 +56,7 @@ The robot does **not** need to be connected for pairing. Pairing links the *phon
 
 An **agent** is "the personality" that answers. Your devices (phones) are attached to it.
 
-1. Click **Create Agent** (新建智能体), name it, e.g. **FriendBot**, and confirm.
+1. Open **<https://xiaozhi.me/console/agents>**, click **Create Agent** (新建智能体), name it, e.g. **FriendBot**, and confirm.
 2. On the agent card, click **Configure Role** (配置角色):
 
 | Field | Suggested value | Why |
@@ -57,7 +73,7 @@ You do **not** need to add any robot commands on the website. *Why:* when the ap
 
 ## Step 4 · Add the phone as a device (type the code)
 
-1. On the agent card, click **Add Device** (添加设备).
+1. Go to **<https://xiaozhi.me/console/agents>** (your agents list). On the agent card, click **Add Device** (添加设备).
 2. Type the **6 digits** shown on the phone, e.g. `482915`.
 3. Click **Confirm**.
 

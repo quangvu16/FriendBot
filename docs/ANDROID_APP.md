@@ -45,7 +45,7 @@ Needs Android **7.0 or newer** (minSdk 24).
 ![Pairing screen](images/xiaozhi-pairing.svg)
 
 1. The app registers itself as a Xiaozhi device (`https://api.tenclass.net/xiaozhi/ota/`) and shows a **6-digit code**.
-2. On any computer or phone, open **[xiaozhi.me](https://xiaozhi.me)** → sign in → **Add device** → type the code.
+2. On any computer or phone, open **[xiaozhi.me](https://xiaozhi.me)** → sign in → <https://xiaozhi.me/console/agents> → pick or create an Agent → **Add Device** → type the code.
 3. The app sees the binding, saves the credentials and connects. **Next time it connects by itself.**
 
 **Use offline mode** skips pairing: you can still drive with the quick buttons and the built-in keywords.
