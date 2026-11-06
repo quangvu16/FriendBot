@@ -1,0 +1,325 @@
+# Firmware
+
+<p align="center">
+  <a href="README.md">English</a> |
+  <a href="README.zh-CN.md">简体中文</a> |
+  <a href="README.de-DE.md">Deutsch</a> |
+  <span>Français</span> |
+  <a href="README.es-ES.md">Español</a> |
+  <a href="README.ko-KR.md">한국어</a>
+</p>
+
+Nous utilisons une unité de microcontrôleur (MCU) pour agir comme un pont entre le corps du robot et le smartphone. Nous fournissons notre [firmware](openbot/openbot.ino) pour l'Arduino Nano avec un microcontrôleur ATmega328P ainsi que pour le kit de développement ESP32.
+
+## Fonctionnalités
+
+La tâche principale du MCU est de gérer le contrôle de bas niveau du véhicule et de fournir des lectures des capteurs montés sur le véhicule. Le MCU reçoit les commandes du véhicule et les signaux des indicateurs via la connexion série. Il convertit les commandes en signaux PWM pour le contrôleur de moteur et bascule les LED selon le signal de l'indicateur. Le programme Arduino suit également les rotations des roues en comptant les interruptions des capteurs optiques sur les roues avant gauche et droite. Il calcule la tension de la batterie par une moyenne mobile pondérée des mesures au niveau du circuit diviseur de tension. Il peut également mesurer la distance aux obstacles devant la voiture avec un capteur ultrasonique optionnel. Ces mesures sont renvoyées à l'application Android via le lien série.
+
+## Configuration
+
+Tous les réglages se trouvent dans la section **SETTINGS** en haut de `openbot.ino`. Vous n'avez rien à modifier en dessous.
+
+Pour conserver vos réglages lors d'une mise à jour du firmware, copiez les lignes de la section SETTINGS entre `#else` et `#endif` dans un nouveau fichier `openbot_settings.h` à côté de `openbot.ino`, et modifiez-les là. Si `openbot_settings.h` existe, le firmware l'utilise à la place de la section de `openbot.ino`, et git l'ignore, il n'est donc pas poussé par erreur.
+
+### Corps du robot
+
+Réglez `OPENBOT` sur le corps de votre robot et sélectionnez dans l'IDE Arduino une carte qu'il prend en charge. Le firmware détecte la carte ; avec toute autre carte, la compilation s'arrête avec une erreur.
+
+| Corps | `OPENBOT` | Arduino Nano | ESP32 Dev Module |
+|---|---|:---:|:---:|
+| Montage DIY (pilote de moteurs L298N) | `DIY` | ✓ | ✓ |
+| PCB personnalisé V1 / V2 | `PCB_V1` / `PCB_V2` | ✓ | |
+| Kit Ready-to-Run, moteurs TT | `RTR_TT` | ✓ | |
+| Kit Ready-to-Run, moteurs TT, ESP32 | `RTR_TT2` | | ✓ |
+| Kit Ready-to-Run, moteurs 520 | `RTR_520` | | ✓ |
+| Camion RC | `RC_CAR` | ✓ | |
+| OpenBot Lite | `LITE` | ✓ | |
+| Multi Terrain Vehicle | `MTV` | | ✓ |
+
+`DIY_ESP32` a été remplacé par `DIY` avec une carte ESP32 sélectionnée.
+
+### Conduite
+
+Par défaut, vous conduisez le robot avec l'application du téléphone. Pour le [mode sans téléphone](#mode-sans-téléphone), réglez `NO_PHONE_MODE 1` ; avec un ESP32, vous pouvez alors aussi conduire avec une [manette](#contrôle-par-manette) (`HAS_GAMEPAD 1`). `COAST_MODE` détermine si les moteurs roulent en roue libre (1) ou freinent (0) sans commande, et `DEBUG 1` affiche des informations de débogage dans le moniteur série.
+
+### Composants
+
+Chaque corps active les composants qu'il a normalement :
+
+| `OPENBOT` | Composants activés |
+|---|---|
+| `DIY`, `PCB_V1`, `PCB_V2` | Diviseur de tension, clignotants, sonar, capteurs de vitesse avant |
+| `RTR_TT`, `RTR_TT2`, `RTR_520` | Diviseur de tension, clignotants, sonar, pare-chocs, capteurs de vitesse avant et arrière, LED avant, arrière et d'état |
+| `LITE` | Clignotants |
+| `RC_CAR` | Aucun |
+| `MTV` | Capteurs de vitesse avant, centraux et arrière |
+
+Sur un ESP32, la liaison Bluetooth avec le téléphone est aussi activée.
+
+Dans les réglages, chaque composant prend la valeur par défaut du corps, p. ex. `#define HAS_SONAR DEFAULT_HAS_SONAR`, et un tableau au-dessus indique les valeurs par défaut de chaque corps. Pour changer un composant, réglez-le plutôt sur `1` (activé) ou `0` (désactivé), p. ex. `#define HAS_SONAR 0` si vous n'avez pas installé le capteur à ultrasons. Un composant activé mais non installé ne fait aucun mal, mais l'application affiche des valeurs absurdes, comme une distance sonar de 300 cm.
+
+| Réglage | Composant |
+|---|---|
+| `HAS_VOLTAGE_DIVIDER` | Mesure de la tension de la batterie |
+| `HAS_INDICATORS` | Clignotants |
+| `HAS_SONAR`, `SONAR_MEDIAN` | Capteur à ultrasons, et un filtre médian pour ses mesures |
+| `HAS_BUMPER` | Pare-chocs pour détecter les collisions |
+| `HAS_SPEED_SENSORS_FRONT`, `_BACK`, `_MIDDLE` | Capteurs de vitesse des roues |
+| `HAS_LEDS_FRONT`, `HAS_LEDS_BACK`, `HAS_LEDS_STATUS` | Phares, feux arrière et LED d'état |
+| `HAS_OLED` | Écran OLED |
+| `HAS_BLUETOOTH` | Liaison Bluetooth avec le téléphone (ESP32) |
+
+### Batterie
+
+La jauge de batterie de l'application va de `VOLTAGE_LOW` (vide) à `VOLTAGE_MAX` (pleine). Elles prennent les valeurs par défaut du corps ; pour une autre batterie, réglez-les dans les réglages, par exemple `#define VOLTAGE_LOW 6.8f` :
+
+| Batterie | `VOLTAGE_LOW` | `VOLTAGE_MAX` |
+|---|---:|---:|
+| 2S Li-ion / LiPo | 6.8f | 8.4f |
+| 3S Li-ion / LiPo | 10.2f | 12.6f |
+| 6 × AA | 6.0f | 9.0f |
+| 8 × AA | 8.0f | 12.0f |
+
+Si votre diviseur de tension diffère de celui du corps, réglez aussi `VOLTAGE_DIVIDER_FACTOR` sur (R1 + R2) / R2. `VOLTAGE_MIN` est la tension la plus basse à laquelle les moteurs tournent encore ; le firmware ne l'utilise qu'en mode sans téléphone.
+
+### Vérifier la configuration
+
+Au démarrage du robot, le moniteur série (115200 bauds) affiche le corps et les composants activés, par exemple :
+
+```
+OpenBot DIY (ESP32): voltage, indicators, sonar, speed sensors front, Bluetooth
+OpenBot settings: openbot_settings.h
+```
+
+La deuxième ligne indique d'où viennent les réglages : `openbot_settings.h`, ou `openbot.ino` s'il n'y a pas de fichier de réglages.
+
+Si deux composants utilisent la même broche, la compilation s'arrête avec l'erreur "Two parts use the same pin".
+
+### Dépendances
+
+Sur l'Arduino Nano, les capteurs de vitesse et le capteur à ultrasons ont besoin de la bibliothèque [PinChangeInterrupt](https://github.com/NicoHood/PinChangeInterrupt) ; la plupart des corps les activent par défaut. L'Arduino Nano n'a que deux broches d'interruption externes (D2 et D3) et D3 est également l'une des six broches qui supportent le PWM. Heureusement, il dispose également de trois interruptions de port qui couvrent toutes les broches de l'Arduino. Cette bibliothèque analyse ces interruptions de port permettant à toutes les broches de l'Arduino d'être utilisées comme interruptions.
+
+Si vous avez activé l'OLED, vous devez installer les bibliothèques [Adafruit_SSD1306](https://github.com/adafruit/Adafruit_SSD1306) et [Adafruit_GFX Library](https://github.com/adafruit/Adafruit-GFX-Library).
+
+Vous pouvez installer des bibliothèques en suivant ces étapes :
+
+1. Ouvrez le gestionnaire de bibliothèques : `Outils` :arrow_right: `Gérer les bibliothèques`
+2. Entrez le nom de la bibliothèque dans la barre de recherche.
+3. Sélectionnez la dernière version et cliquez sur installer. Si vous avez déjà installé la bibliothèque, elle s'affichera et vous pourrez peut-être la mettre à jour.
+
+<p float="left">
+  <img src="../docs/images/manage_libraries.jpg" height="300" />
+  <img src="../docs/images/install_library.jpg" height="300" /> 
+</p>
+
+### Clone chinois Nano (par exemple, lien US)
+
+Vous devrez peut-être télécharger les pilotes [WCH340](http://www.wch.cn/product/CH340.html) du fabricant de la puce (chinois) :
+
+- [Windows](http://www.wch.cn/downloads/CH341SER_EXE.html)
+- [Linux](http://www.wch.cn/download/CH341SER_LINUX_ZIP.html)
+- [Mac](http://www.wch.cn/download/CH341SER_MAC_ZIP.html)
+
+### Kit de développement ESP32
+
+Pour installer la carte ESP32 dans votre IDE Arduino, suivez ces instructions :
+
+1. Dans votre IDE Arduino, allez à **Fichier > Préférences** :
+<p align="center">
+  <img src="../docs/images/arduino-ide-open-preferences.png" width="300" alt="App GUI"/>
+</p>
+
+2. Entrez *https://dl.espressif.com/dl/package_esp32_index.json* dans le champ “_URL du gestionnaire de cartes supplémentaires_” comme indiqué dans la figure ci-dessous. Ensuite, cliquez sur le bouton “OK” :
+<p align="center">
+  <img src="../docs/images/arduino_preferences.png" width="600" alt="App GUI"/>
+</p>
+
+**Remarque :** si vous avez déjà l'URL des cartes ESP8266, vous pouvez séparer les URL par une virgule comme suit :
+
+    https://dl.espressif.com/dl/package_esp32_index.json,
+    http://arduino.esp8266.com/stable/package_esp8266com_index.json
+
+3. Ouvrez le gestionnaire de cartes. Allez à **Outils > Carte > Gestionnaire de cartes** :
+<p align="center">
+  <img src="../docs/images/arduino_boardsManager.png" width="800" alt="App GUI"/>
+</p>
+
+4. Recherchez ESP32. Recherchez “ESP32 par Espressif Systems“ et assurez-vous de sélectionner la version 2.0.17 dans le menu déroulant. Toute version 3.x.x ne fonctionnera pas ! Cliquez sur installer :
+<p align="center">
+  <img src="../docs/images/arduino_installing.png" width="600" alt="App GUI"/>
+</p>
+
+5. Vous devriez maintenant avoir tout pour flasher avec succès la carte ESP32 de votre OpenBot en utilisant l'environnement de développement Arduino.
+<p align="center">
+  <img src="../docs/images/arduino_ESP32-Board-add-on-in-Arduino-IDE-installed.png" width="600" alt="App GUI"/>
+</p>
+
+6. Pour flasher l'OpenBot avec votre nouveau code, sélectionnez simplement **ESP32 Dev Module** dans le menu **Outils > Carte > ESP32 Arduino**. Notez que du contenu supplémentaire ainsi que des solutions de dépannage du processus de flashage ESP32 peuvent être trouvés dans le lien suivant [lien](https://randomnerdtutorials.com/installing-the-esp32-board-in-arduino-ide-windows-instructions/).
+<p align="center">
+  <img src="../docs/images/arduino_windows-select-board.png" width="600" alt="App GUI"/>
+</p>
+
+Si vous avez des problèmes de téléchargement, essayez de réduire le débit en bauds. Allez dans outils et sélectionnez la vitesse de téléchargement à 115200.
+<p align="center">
+<img src="../docs/images/arduino_upload-speed-select.png" width="600" alt="App GUI"/>
+</p>
+
+## Téléchargement
+
+### Paramètres (configuration Arduino nano)
+
+- `Outils` :arrow_right: `Carte` :arrow_right: `Arduino AVR Boards` :arrow_right: `Arduino Nano`
+- `Outils` :arrow_right: `Processeur` :arrow_right: `ATmega328P (Old Bootloader)`
+- `Outils` :arrow_right: `Port` :arrow_right: `*Sélectionnez le port USB*`
+
+:memo: REMARQUE : Actuellement, la plupart des cartes Arduino Nano bon marché sont livrées avec l'_ancien bootloader_. Cependant, selon le vendeur, vous pouvez également en obtenir un avec le nouveau bootloader. Donc, si vous ne parvenez pas à télécharger le firmware, il est probable que vous deviez changer le processeur en _ATmega328P_.
+
+### Paramètres (configuration ESP32)
+
+- `Outils` :arrow_right: `Carte` :arrow_right: `ESP32 Arduino` :arrow_right: `ESP32 Dev Module`
+- `Outils` :arrow_right: `Port` :arrow_right: `*Sélectionnez le port USB*`
+
+### Téléchargement du firmware
+
+Le firmware peut maintenant être téléchargé via `Croquis` :arrow_right: `Téléverser` ou en appuyant sur le bouton de téléchargement (flèche droite).
+![Téléchargement du firmware](../docs/images/firmware_upload.png)
+
+### Test
+
+Cette section explique comment tester toutes les fonctionnalités de la voiture après que le firmware a été flashé avec succès.
+
+1. Confirmez que :
+   1. les roues ne sont pas connectées à la voiture
+   2. l'Arduino est connecté à l'ordinateur
+   3. le port USB correct est sélectionné
+2. Ouvrez le moniteur série : `Outils` :arrow_right: `Moniteur série`
+
+#### Envoi de messages à l'OpenBot
+
+Vous pouvez également envoyer des messages à l'Arduino en tapant une commande dans le champ de saisie en haut, puis en appuyant sur envoyer. Les commandes suivantes sont disponibles (à condition que les fonctionnalités nécessaires soient prises en charge par le robot) :
+
+- `c<gauche>,<droite>` où `<gauche>` et `<droite>` sont tous deux dans la plage [-255,255]. Une valeur de `0` arrêtera les moteurs. Une valeur de `255` applique la tension maximale entraînant les moteurs à pleine vitesse en avant. Des valeurs inférieures entraînent des tensions et des vitesses proportionnellement plus faibles. Les valeurs négatives appliquent les tensions correspondantes en polarité inverse entraînant les moteurs en marche arrière.
+- `i<gauche>,<droite>` où `<gauche>` et `<droite>` sont tous deux dans la plage [0,1] et correspondent aux LED indicatrices gauche et droite. Par exemple, `i1,0` allume l'indicateur gauche, `i0,1` l'indicateur droit et `i1,1` les deux indicateurs. Les feux indicateurs activés clignoteront une fois par seconde. Une valeur de `i0,0` éteint les indicateurs. Un seul état à la fois est possible.
+- `l<avant>,<arrière>` où `<avant>` et `<arrière>` sont tous deux dans la plage [0,255] et correspondent à la luminosité des LED avant et arrière.
+- `s<temps_ms>` où `<temps_ms>` correspond au temps en ms entre les mesures sonar déclenchées (par défaut = 1000). Après la lecture sonar, le message est envoyé au robot. S'il expire, la `MAX_SONAR_DISTANCE` spécifiée est envoyée.
+- `w<temps_ms>` où `<temps_ms>` correspond au temps en ms entre les mesures d'odométrie des roues envoyées au robot (par défaut = 1000). La vitesse des roues est surveillée en continu et le régime est calculé comme une moyenne sur l'intervalle de temps spécifié.
+- `v<temps_ms>` où `<temps_ms>` correspond au temps en ms entre les mesures de tension envoyées au robot (par défaut = 1000). La tension est surveillée en continu et filtrée via un filtre de moyenne mobile de taille 10. En plus de définir l'intervalle de temps pour les lectures de tension, l'envoi de cette commande déclenchera également des messages qui rapportent la tension minimale pour entraîner les moteurs (`vmin:<valeur>`), la tension minimale de la batterie (`vlow:<valeur>`) et la tension maximale de la batterie (`vmax:<valeur>`).
+- `h<temps_ms>` où `<temps_ms>` correspond au temps en ms après lequel le robot s'arrêtera si aucun nouveau message de battement de cœur n'a été reçu (par défaut = -1).
+- `b<temps_ms>` où `<temps_ms>` correspond au temps en ms après lequel le déclencheur de pare-chocs sera réinitialisé (par défaut = 750).
+- `n<couleur>,<état>` où `<couleur>` correspond à une LED de statut (`b` = bleu, `g` = vert, `y` = jaune) et `état` à sa valeur (`0` = éteint, `1` = allumé).
+- `f` enverra une demande à l'OpenBot pour retourner un message avec le type de robot et ses fonctionnalités, par exemple mesure de tension (`v`), indicateurs (`i`), sonar (`s`), capteurs de choc (`b`), odométrie des roues (`wf`, `wb`), LED (`lf`, `lb`, `ls`), etc. Par exemple, pour la version `RTR_V1` d'OpenBot, le message ressemblerait à ceci : `fRTR_V1:v:i:s:b:wf:wb:lf:lb:ls:`.
+
+#### Réception de messages de l'OpenBot
+
+Selon votre configuration, vous pouvez voir différents messages.
+
+![Moniteur série](../docs/images/serial_monitor.png)
+
+- Les messages qui commencent par `v` rapportent la tension de la batterie. Si vous connectez la batterie à la voiture (c'est-à-dire allumez l'interrupteur), elle devrait afficher la tension de la batterie. Si vous déconnectez la batterie (c'est-à-dire éteignez l'interrupteur), elle devrait afficher une petite valeur.
+- Les messages qui commencent par `w` rapportent les lectures des capteurs de vitesse mesurées en tours par seconde (rpm). Chaque trou dans le disque encodeur incrémentera un compteur de plus/moins un selon la direction. Vous pouvez définir le nombre de trous avec le paramètre `DISK_HOLES`. Si vous utilisez le disque standard avec 20 trous, il y aura 20 comptes pour chaque révolution de la roue.
+- Les messages qui commencent par `s` rapportent l'espace libre estimé devant le capteur ultrasonique en cm.
+- Les messages qui commencent par `b` rapportent les collisions. Les codes `lf` (avant gauche), `rf` (avant droit), `cf` (avant centre), `lb` (arrière gauche), `rb` (arrière droit) indiquent quel capteur a déclenché la collision.
+
+#### Procédure de test
+
+Avant de continuer, assurez-vous que les pneus sont retirés. Vous aurez besoin du moniteur série ouvert pour envoyer des commandes et vous verrez les messages reçus de votre OpenBot. Si vous avez installé l'affichage OLED, vous verrez également le statut du véhicule affiché là dans un format plus lisible par l'homme. La procédure de test suivante peut être utilisée pour tester toutes les fonctionnalités de la voiture :
+
+1. Allumez la voiture et observez la tension de la batterie (le nombre après le `v`). Vous pouvez vérifier la lecture avec un multimètre et ajuster le `VOLTAGE_DIVIDER_FACTOR` si nécessaire.
+2. Si vous avez installé un capteur ultrasonique :
+   1. Tenez votre main devant le capteur et déplacez-la d'avant en arrière. Vous devriez voir les lectures (le nombre après le `s`) changer en conséquence.
+   2. Nous avons observé que le capteur ultrasonique est très sensible aux vibrations ! Il est donc conseillé de s'assurer que vous obtiendrez des lectures fiables pendant le fonctionnement en effectuant le test suivant :
+      1. Placez l'OpenBot avec le capteur ultrasonique installé de manière à ce qu'il y ait au moins 200 cm d'espace libre devant lui. Vous devriez voir une lecture de `200` ou plus.
+      2. Observez les lectures sur le moniteur série pendant un certain temps, puis entrez la commande `c128,128`.
+      3. Si les lectures du capteur changent de manière significative, vous devrez amortir les vibrations transmises au capteur ultrasonique depuis le châssis (par exemple, ajouter du silicone, ajuster la position de montage).
+3. Si vous avez installé les capteurs de vitesse :
+   1. Assurez-vous d'avoir suffisamment d'espace libre devant le capteur ultrasonique. La lecture (le nombre après le `s`) doit être au moins supérieure à la `STOP_DISTANCE` qui est `10` par défaut.
+   2. Envoyez la commande `c128,128`. Les moteurs commenceront à tourner à _vitesse lente_ (50% PWM). Les lectures des capteurs de vitesse (valeurs après le `w`) sont rapportées en rpm et devraient être comprises entre 250 et 300 pour la version RTR_TT selon l'état de charge de la batterie. Si vous utilisez la version DIY ou une batterie plus faible, les valeurs peuvent être inférieures. Vérifiez que tous les moteurs tournent en avant et que les lectures des capteurs de vitesse sont positives.
+   3. Essayez d'envoyer différentes commandes et observez les lectures des capteurs de vitesse. Par exemple, la commande `c-128,-128` fera tourner tous les moteurs en arrière à _vitesse lente_ (50% PWM). La commande `c255,-255` fera tourner les moteurs gauches en avant et les moteurs droits en arrière à _vitesse rapide_ (100% PWM). La commande `c-192,192` fera tourner les moteurs gauches en arrière et les moteurs droits en avant à _vitesse normale_ (75% PWM).
+4. Arrêtez les moteurs en envoyant la commande `c0,0` ou en tenant votre main devant le capteur ultrasonique.
+5. Si vous avez installé les LED indicatrices, envoyez la commande `i1,0` et observez l'indicateur gauche clignoter. Envoyez ensuite la commande `i0,1` et observez l'indicateur droit clignoter. Enfin, éteignez l'indicateur en envoyant la commande `i0,0`.
+
+### Mode sans téléphone
+
+Avant de tester la voiture avec un smartphone qui a l'application OpenBot installée, vous pouvez également tester la voiture sans téléphone d'abord. Réglez simplement `NO_PHONE_MODE 1` dans les réglages. La voiture roulera maintenant à _vitesse normale_ (75% PWM) et ralentira à mesure qu'elle détecte des obstacles avec le capteur ultrasonique. Une fois qu'elle se rapproche du `TURN_THRESHOLD` (par défaut : 50 cm), elle commencera à tourner dans une direction aléatoire et allumera la LED de ce côté. Si l'espace libre estimé devant la voiture tombe en dessous du `TURN_THRESHOLD`, elle reculera lentement et les deux LED s'allumeront. Notez que la voiture et l'Arduino doivent être alimentés. L'Arduino peut être alimenté en connectant la broche 5V à la sortie 5V du pilote de moteur L298N, ou en connectant le câble USB à une source d'alimentation (par exemple, téléphone).
+
+Avant de faire rouler la voiture, nous vous recommandons de retirer les pneus, de connecter l'Arduino à un ordinateur et d'observer le moniteur série comme dans la section [Test](#test). La sortie sur le moniteur série est un peu plus facile à analyser (même que l'OLED) et montre la tension de la batterie, le régime pour les moteurs gauche et droit et l'espace libre estimé devant la voiture. Vous pouvez déplacer un grand objet d'avant en arrière devant le capteur ultrasonique et observer la vitesse des moteurs changer.
+
+:warning: AVERTISSEMENT : Si vous n'avez pas installé de capteur ultrasonique ou s'il est désactivé, la voiture roulera simplement en avant à _vitesse normale_ (75% PWM) et finira par entrer en collision. Même avec le capteur installé, la voiture peut parfois entrer en collision en raison de lectures bruyantes.
+
+### Contrôle par manette
+
+En mode sans téléphone, vous pouvez piloter un châssis ESP32 avec une manette Bluetooth au lieu de le laisser rouler seul.
+
+#### Configuration
+
+1. Dans l'Arduino IDE, ajoutez cette URL sous **Préférences > URL de gestionnaire de cartes supplémentaires** :
+   `https://raw.githubusercontent.com/ricardoquesada/esp32-arduino-lib-builder/master/bluepad32_files/package_esp32_bluepad32_index.json`
+2. Dans le gestionnaire de cartes, installez **esp32_bluepad32** (4.1.0). Il repose sur le même cœur esp32 (2.0.17) que le firmware habituel.
+3. Sélectionnez **ESP32 Dev Module** parmi les cartes esp32_bluepad32.
+4. Dans les réglages, réglez `NO_PHONE_MODE 1` et `HAS_GAMEPAD 1`, puis téléversez.
+
+La manette utilise le Bluetooth de l'ESP32 ; la liaison Bluetooth avec le téléphone est donc désactivée dans ce mode. Pour piloter avec l'application du téléphone, laissez `HAS_GAMEPAD 0` et appairez plutôt la manette avec le téléphone.
+
+#### Appairage
+
+Allumez le robot et mettez la manette en mode d'appairage. Elle se connecte en quelques secondes, puis se reconnecte à chaque fois que vous l'allumez. Pour appairer une autre manette, éteignez d'abord celle qui est connectée : une seule manette pilote à la fois.
+
+| Manette | Mode d'appairage |
+|---|---|
+| PS5 DualSense | Maintenez **Create**, puis maintenez **PS** jusqu'à ce que la barre lumineuse clignote. |
+| PS4 DualShock 4 | Maintenez **Share**, puis maintenez **PS** jusqu'à ce que la barre lumineuse clignote. |
+| Xbox Wireless (modèle 1708 ou plus récent) | Allumez-la, puis maintenez le bouton d'appairage 3 s. Mettez d'abord à jour le firmware de la manette en 5.15 ou plus récent (par ex. avec l'application Accessoires Xbox). |
+| Switch Pro, Joy-Con, 8BitDo et autres | Utilisez le mode d'appairage Bluetooth de la manette (voir son manuel). |
+
+La [liste des manettes prises en charge par Bluepad32](https://bluepad32.readthedocs.io/en/latest/supported_gamepads/) contient d'autres modèles, dont la DualShock 3 de la PS3, qui demande une configuration supplémentaire. Avec `DEBUG 1`, le moniteur série affiche le nom de chaque manette qui se connecte.
+
+Si une manette déjà appairée ne prend pas le contrôle, par exemple une manette PS4 ou PS5 dont la barre lumineuse reste bleue au lieu de passer au vert, à l'orange ou au rouge, remettez-la en mode d'appairage et redémarrez le robot.
+
+#### Commandes
+
+Les boutons sont indiqués PlayStation / Xbox.
+
+| Commande | Action |
+|---|---|
+| **R2 / L2** | Avant / arrière (mode jeu) |
+| **Stick gauche** | Diriger (mode jeu), avancer et diriger (mode joystick) ou côté gauche (mode double) |
+| **Stick droit** | Côté droit (mode double) |
+| **L1** | Mode de conduite suivant : jeu → joystick → double. La manette vibre une fois : brièvement pour jeu, plus longtemps pour joystick, le plus longtemps pour double. |
+| **Croix directionnelle haut / R3** | Plus vite |
+| **Croix directionnelle bas / L3** | Plus lentement |
+| **Carré / X** | Clignotant gauche marche ou arrêt |
+| **Rond / B** | Clignotant droit marche ou arrêt |
+| **Triangle / Y** | Clignotants éteints |
+| **Croix / A** | Phares marche ou arrêt |
+| **Start** | Exploration marche ou arrêt |
+| **Select / Back** | Arrêt devant obstacle marche ou arrêt |
+
+Pour Start et Select, une vibration longue signifie marche et une courte signifie arrêt.
+
+**Modes de conduite.** La manette démarre dans le mode défini par `GAMEPAD_DRIVE_MODE` (par défaut : jeu).
+- **Jeu :** R2 avance, L2 recule et le stick gauche dirige. En marche arrière, la direction est inversée, comme une voiture.
+- **Joystick :** le stick gauche avance et dirige. Le robot tourne toujours du côté où pointe le stick, même en marche arrière.
+- **Double :** chaque stick pilote un côté, comme un char.
+
+**Vitesses.** Il y a trois vitesses : lente (50 %), normale (75 %, la vitesse de départ) et rapide (100 %). La manette indique la vitesse avec ses LED de joueur (une à trois) ou sa barre lumineuse (vert, orange, rouge).
+
+**Exploration.** L'exploration est la conduite du mode sans téléphone décrite plus haut : le robot roule seul et contourne les obstacles. Elle est désactivée au démarrage ; appuyez sur **Start** pour l'activer. Pendant l'exploration, bouger un stick ou une gâchette reprend la main. Quand vous relâchez, le robot s'arrête brièvement puis reprend l'exploration. L'exploration nécessite un capteur sonar branché et `HAS_SONAR 1` ; sans lui, le robot roule simplement tout droit (voir l'avertissement plus haut).
+
+**Arrêt devant obstacle.** Lorsque vous pilotez avec la manette, le robot n'avance pas si le sonar détecte un obstacle plus proche que `STOP_DISTANCE`. Il est activé au démarrage ; appuyez sur **Select** pour le désactiver, par exemple pour pousser un objet. Il ne fonctionne qu'avec un capteur sonar branché et `HAS_SONAR 1` ; sinon, le robot ne s'arrête jamais devant les obstacles.
+
+**Sécurité.** Le robot s'arrête quand la manette se déconnecte. La plupart des manettes envoient aussi des données en continu ; si une telle manette se tait pendant 0,5 s (hors de portée, batterie vide), le robot s'arrête immédiatement au lieu d'attendre la déconnexion.
+
+## Utilisation d'autres MCU (exigences)
+
+Vous pouvez utiliser tout autre MCU avec les fonctionnalités suivantes :
+
+- 1x USB-to-TTL Serial (communication avec le smartphone)
+- 4x sortie PWM (contrôle des moteurs)
+- 1x broche analogique pour la surveillance de la batterie
+- 2x broche numérique pour les capteurs de vitesse
+- 1x broche numérique pour le capteur ultrasonique (optionnel)
+- 2x broche numérique pour les LED indicatrices (optionnel)
+
+## Suivant
+
+Compilez et exécutez l'[application Android](../robot/android/README.fr-FR.md)

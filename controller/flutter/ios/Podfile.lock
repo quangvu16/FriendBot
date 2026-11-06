@@ -1,0 +1,61 @@
+PODS:
+  - Flutter (1.0.0)
+  - flutter_webrtc (1.6.0):
+    - Flutter
+    - WebRTC-SDK (= 144.7559.09)
+  - fluttertoast (0.0.2):
+    - Flutter
+  - nsd_ios (0.0.1):
+    - Flutter
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
+  - sensors_plus (0.0.1):
+    - Flutter
+  - video_player_avfoundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
+  - WebRTC-SDK (144.7559.09)
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - flutter_webrtc (from `.symlinks/plugins/flutter_webrtc/ios`)
+  - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
+  - nsd_ios (from `.symlinks/plugins/nsd_ios/ios`)
+  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - sensors_plus (from `.symlinks/plugins/sensors_plus/ios`)
+  - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/darwin`)
+
+SPEC REPOS:
+  trunk:
+    - WebRTC-SDK
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  flutter_webrtc:
+    :path: ".symlinks/plugins/flutter_webrtc/ios"
+  fluttertoast:
+    :path: ".symlinks/plugins/fluttertoast/ios"
+  nsd_ios:
+    :path: ".symlinks/plugins/nsd_ios/ios"
+  path_provider_foundation:
+    :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  sensors_plus:
+    :path: ".symlinks/plugins/sensors_plus/ios"
+  video_player_avfoundation:
+    :path: ".symlinks/plugins/video_player_avfoundation/darwin"
+
+SPEC CHECKSUMS:
+  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  flutter_webrtc: f952258e6fa67477d481cfbad2885a4f117922a7
+  fluttertoast: fe6790210fdba20801685be946e3a2124b72eef5
+  nsd_ios: 596ad79109ddd3e52d665f650f36428049e3653e
+  path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
+  sensors_plus: b70a93b69dafdabd26ce4ac3f4d0529ab9acc4ca
+  video_player_avfoundation: 3453f792138786248960ca029747fcd9f318ef52
+  WebRTC-SDK: e6006119cd730d6315d875e4a421b6cc8bb88833
+
+PODFILE CHECKSUM: 0dbd5a87e0ace00c9610d2037ac22083a01f861d
+
+COCOAPODS: 1.16.2

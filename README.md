@@ -41,14 +41,26 @@ You speak in English, Tiếng Việt or 中文 → the phone sends your voice to
 
 ```
 FriendBot/
-├── README.md                    ← you are here
-├── docs/                        ← guides + SVG diagrams
-│   └── images/                  ← system, wiring, firmware, Android, iOS, Xiaozhi screens
-├── firmware/friendbot-esp32-mtv/← ESP32 Arduino sketch (3 sonars, LCD, BLE + USB)
-└── robot/
-    ├── android/                 ← Android app (Android Studio project)
-    └── ios/                     ← iOS app (Xcode + CocoaPods project)
+├── README.md                     ← you are here
+├── apk/                          ← ready-made Android APK
+├── docs/                         ← FriendBot guides + SVG diagrams (docs/images, docs/images/screens)
+│   ├── paper/, technical/        ← OpenBot paper and technical notes
+├── firmware/
+│   ├── friendbot-esp32-mtv/      ← FriendBot firmware (use this one)
+│   ├── openbot-esp32s3/          ← old MTV sketch + RC receiver helper (rc_input.h), kept for reference
+│   └── openbot/                  ← original OpenBot firmware (Arduino Nano / ESP32 bodies)
+├── robot/
+│   ├── android/                  ← Android app (Android Studio)
+│   ├── ios/                      ← iOS app (Xcode + CocoaPods)
+│   └── linux/                    ← Linux/Python robot app (GPS missions, LiDAR, inference)
+├── controller/                   ← remote controllers: Flutter app, Node.js, web server, Python
+├── policy/                       ← train your own Autopilot (Python, Jupyter, web frontend)
+├── open-code/                    ← OpenBot Playground: block-based programming (React)
+├── body/                         ← 3D-printable bodies (DIY, RTR, MTV, Lite, RC truck) + phone mount
+└── designs/                      ← FriendBot UI design drafts
 ```
+
+Most folders outside `docs/`, `firmware/friendbot-esp32-mtv/` and the robot apps come unchanged from [OpenBot](https://www.openbot.org); their own README files explain how to use them.
 
 ## Why is it built this way?
 

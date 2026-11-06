@@ -1,0 +1,16 @@
+{
+  "v": 3,
+  "createdOnFiles": { "v": 1, "at": "2026-11-01T22:50:16Z" },
+  "title": "Voice Control",
+  "launch": { "view": "canvas" },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": { "x": 0, "y": 0, "w": 390, "h": 844, "title": "Voice Control — iOS" },
+    "Android.dc.html": { "x": 470, "y": 0, "w": 390, "h": 844, "title": "Voice Control — Android" }
+  },
+  "order": ["Main.dc.html", "Android.dc.html"],
+  "notes": {
+    "title-main": { "x": 0, "y": -300, "text": "Voice Control — friendly Apple redesign", "kind": "title1", "maxW": 860 }
+  },
+  "designSystems": []
+}
