@@ -8,7 +8,7 @@
 
 ### Option A — download the APK (easiest)
 
-1. On the phone, open **[Releases](https://github.com/quangvu16/FriendBot/releases/latest)** and download **`FriendBot-android-debug.apk`**.
+1. On the phone, open **[apk/FriendBot-android-debug.apk](../apk/FriendBot-android-debug.apk)** on GitHub and tap **Download raw file** (65 MB).
 2. Open it. Android asks to allow *"install unknown apps"* for your browser/Files app → allow → **Install**.
 3. The app appears as **FriendBot**.
 

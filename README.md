@@ -11,7 +11,7 @@ You speak in English, Tiếng Việt or 中文 → the phone sends your voice to
 
 | What | Where |
 |---|---|
-| **Android app (APK)** | [GitHub Releases](https://github.com/quangvu16/FriendBot/releases/latest), file `FriendBot-android-debug.apk` |
+| **Android app (APK)** | [`apk/FriendBot-android-debug.apk`](apk/FriendBot-android-debug.apk) → on GitHub tap **Download raw file** |
 | iOS app | build it with Xcode (Apple does not allow installing iPhone apps from GitHub), see [iOS guide](docs/IOS_APP.md) |
 | Firmware | [`firmware/friendbot-esp32-mtv/`](firmware/friendbot-esp32-mtv/) (Arduino sketch) |
 
@@ -28,7 +28,7 @@ You speak in English, Tiếng Việt or 中文 → the phone sends your voice to
 
 1. **Wire it** — ESP32 WROOM-32 DevKitC + L298N + 2 motors + 3 HC-SR04 sonars + 16×2 I2C LCD. → [Wiring](docs/WIRING.md)
 2. **Flash it** — Arduino IDE, board *ESP32 Dev Module*, library *LiquidCrystal I2C*, open `friendbot-esp32-mtv.ino`, Upload. The LCD shows `FriendBot MTV`. → [Firmware](docs/FIRMWARE.md)
-3. **Install the app** — Android: APK from Releases. iPhone: Xcode build. → [Android](docs/ANDROID_APP.md) · [iOS](docs/IOS_APP.md)
+3. **Install the app** — Android: APK from the `apk/` folder. iPhone: Xcode build. → [Android](docs/ANDROID_APP.md) · [iOS](docs/IOS_APP.md)
 4. **Connect** — Bluetooth device **`FriendBot: MTV`** (or USB cable on Android).
 5. **Open Voice Control → pair once at xiaozhi.me → say "go forward".**
 

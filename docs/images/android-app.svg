@@ -136,7 +136,7 @@
 <circle cx="72" cy="180" r="13" fill="#0f172a"/><text x="72" y="185" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">1</text>
 <text x="96" y="186" font-size="15" font-weight="700" fill="#0f172a">Install</text>
 <text x="96" y="208" font-size="12.5" fill="#475569">Download FriendBot-android-debug.apk</text>
-<text x="96" y="227" font-size="12.5" fill="#475569">from GitHub Releases → open it →</text>
+<text x="96" y="227" font-size="12.5" fill="#475569">from the repo apk/ folder → open it →</text>
 <text x="96" y="246" font-size="12.5" fill="#475569">allow “install unknown apps”</text>
 <text x="96" y="265" font-size="12.5" fill="#475569">(or build: Android Studio → robot/android)</text>
 <circle cx="72" cy="322" r="13" fill="#0f172a"/><text x="72" y="327" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">2</text>
