@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import org.openbot.app.robot.R;
 import org.openbot.app.robot.databinding.FragmentGuideBinding;
@@ -85,56 +86,93 @@ public class GuideFragment extends Fragment {
         break;
     }
 
+    // Styled like the Autopilot bottom sheet: white page, black text at the default size (14sp),
+    // rows indented 16dp, openBotBlue accents and spinner_bg chips for actions.
+    int blue = ContextCompat.getColor(requireContext(), R.color.openBotBlue);
     LinearLayout content = binding.guideContent;
-    content.addView(text(getString(titleRes), 22, Typeface.BOLD, Color.BLACK));
-    content.addView(spacer(12));
-    content.addView(text(getString(introRes), 15, Typeface.NORMAL, Color.rgb(0x33, 0x33, 0x33)));
-    content.addView(spacer(16));
-    content.addView(text(getString(R.string.guide_section_materials), 17, Typeface.BOLD, Color.BLACK));
-    content.addView(spacer(6));
+    content.addView(text(getString(titleRes), 20, Typeface.BOLD, Color.BLACK, 16, 8));
+    content.addView(text(getString(introRes), 14, Typeface.NORMAL, Color.BLACK, 16, 8));
+
+    content.addView(header(getString(R.string.guide_section_materials), blue));
     for (String item : getResources().getStringArray(materialsRes)) {
-      content.addView(text("•  " + item, 15, Typeface.NORMAL, Color.rgb(0x33, 0x33, 0x33)));
-      content.addView(spacer(4));
+      content.addView(text("•  " + item, 14, Typeface.NORMAL, Color.BLACK, 16, 4));
     }
-    content.addView(spacer(12));
-    content.addView(text(getString(R.string.guide_section_steps), 17, Typeface.BOLD, Color.BLACK));
-    content.addView(spacer(6));
+
+    content.addView(header(getString(R.string.guide_section_steps), blue));
     String[] steps = getResources().getStringArray(stepsRes);
     for (int i = 0; i < steps.length; i++) {
-      content.addView(text((i + 1) + ".  " + steps[i], 15, Typeface.NORMAL, Color.rgb(0x33, 0x33, 0x33)));
-      content.addView(spacer(6));
+      android.text.SpannableString line = new android.text.SpannableString((i + 1) + ".  " + steps[i]);
+      int numEnd = String.valueOf(i + 1).length() + 1;
+      line.setSpan(new android.text.style.ForegroundColorSpan(blue), 0, numEnd, 0);
+      line.setSpan(new android.text.style.StyleSpan(Typeface.BOLD), 0, numEnd, 0);
+      TextView tv = text("", 14, Typeface.NORMAL, Color.BLACK, 16, 4);
+      tv.setText(line);
+      content.addView(tv);
     }
-    content.addView(spacer(8));
-    content.addView(text(getString(R.string.guide_section_tips), 17, Typeface.BOLD, Color.BLACK));
-    content.addView(spacer(6));
+
+    content.addView(header(getString(R.string.guide_section_tips), blue));
     for (String item : getResources().getStringArray(tipsRes)) {
-      content.addView(text("•  " + item, 15, Typeface.NORMAL, Color.rgb(0x33, 0x33, 0x33)));
-      content.addView(spacer(4));
+      content.addView(text("•  " + item, 14, Typeface.NORMAL, Color.BLACK, 16, 4));
     }
-    content.addView(spacer(16));
-    content.addView(text(getString(R.string.guide_credit), 12, Typeface.ITALIC, Color.GRAY));
+
+    // "Open <mode>" chip, same spinner_bg chip as the Threads stepper on the Autopilot page.
+    int modeDestination = modeDestination(guideId);
+    TextView open = text("▶  " + getString(titleRes), 14, Typeface.BOLD, blue, 0, 0);
+    open.setGravity(Gravity.CENTER);
+    open.setBackgroundResource(R.drawable.spinner_bg);
+    LinearLayout.LayoutParams openLp =
+        new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(40));
+    openLp.setMargins(dp(16), dp(20), dp(16), dp(12));
+    open.setLayoutParams(openLp);
+    open.setOnClickListener(
+        v -> {
+          // Back to the mode page when we came from it, otherwise open it.
+          androidx.navigation.NavController nav =
+              androidx.navigation.Navigation.findNavController(requireView());
+          if (!nav.popBackStack(modeDestination, false)) nav.navigate(modeDestination);
+        });
+    content.addView(open);
+
+    content.addView(text(getString(R.string.guide_credit), 12, Typeface.ITALIC, Color.GRAY, 16, 0));
   }
 
-  private TextView text(String value, int sizeSp, int style, int color) {
+  private static int modeDestination(String guideId) {
+    switch (guideId) {
+      case GUIDE_FACE:
+        return R.id.followFaceFragment;
+      case GUIDE_LINE:
+        return R.id.followLineFragment;
+      case GUIDE_AVOIDANCE:
+        return R.id.avoidObjectFragment;
+      case GUIDE_COLOUR:
+      default:
+        return R.id.followColourFragment;
+    }
+  }
+
+  /** Section header: bold openBotBlue, padded like an Autopilot row label. */
+  private TextView header(String value, int color) {
+    TextView tv = text(value, 14, Typeface.BOLD, color, 16, 0);
+    tv.setPadding(dp(16), dp(12), 0, dp(4));
+    return tv;
+  }
+
+  private TextView text(String value, int sizeSp, int style, int color, int startDp, int bottomDp) {
     TextView tv = new TextView(requireContext());
     tv.setText(value);
     tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, sizeSp);
     tv.setTypeface(Typeface.create(Typeface.DEFAULT, style), style);
     tv.setTextColor(color);
     tv.setGravity(Gravity.START);
-    LinearLayout.LayoutParams lp =
+    tv.setPadding(dp(startDp), 0, dp(16), dp(bottomDp));
+    tv.setLayoutParams(
         new LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-    tv.setLayoutParams(lp);
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
     return tv;
   }
 
-  private View spacer(int heightDp) {
-    View v = new View(requireContext());
-    v.setLayoutParams(
-        new LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT, (int) (heightDp * getResources().getDisplayMetrics().density)));
-    return v;
+  private int dp(int value) {
+    return (int) (value * getResources().getDisplayMetrics().density);
   }
 
   @Override

@@ -59,6 +59,7 @@ public abstract class VisionModeFragment extends CameraFragment {
 
     binding.controllerContainer.speedInfo.setText(getString(R.string.speedInfo, "---,---"));
     binding.cameraToggle.setOnClickListener(v -> toggleCamera());
+    binding.helpRow.setVisibility(getGuideId() == null ? View.GONE : View.VISIBLE);
     binding.helpButton.setOnClickListener(
         v -> {
           String guideId = getGuideId();
@@ -129,7 +130,11 @@ public abstract class VisionModeFragment extends CameraFragment {
   /** Builds the mode-specific row of controls in {@code binding.modePanel}. */
   protected abstract void setupModeControls();
 
-  /** Adds a "label [−] value [+]" stepper to the mode panel. */
+  /**
+   * Adds a "label [− value +]" row to the mode panel, laid out exactly like the Autopilot page's
+   * Threads row: a label (black, default size, paddingStart 16dp, paddingVertical 12dp) and a
+   * spinner_bg chip holding the ic_baseline_remove / ic_baseline_add icons around the value.
+   */
   protected void addStepper(
       String label,
       int min,
@@ -137,41 +142,30 @@ public abstract class VisionModeFragment extends CameraFragment {
       int step,
       int initial,
       java.util.function.IntConsumer onChange) {
-    android.widget.TextView labelView = new android.widget.TextView(requireContext());
-    labelView.setText(label);
-    labelView.setTextColor(android.graphics.Color.BLACK);
-    labelView.setTextSize(13);
-    labelView.setPadding(0, 0, (int) (8 * density()), 0);
-    binding.modePanel.addView(labelView);
+    LinearLayout row = newRow();
+    row.addView(newRowLabel(label), new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 3f));
 
     final int[] value = {initial};
+
+    LinearLayout chip = new LinearLayout(requireContext());
+    chip.setOrientation(LinearLayout.HORIZONTAL);
+    chip.setGravity(android.view.Gravity.START);
+    chip.setBackgroundResource(R.drawable.spinner_bg);
+
+    android.widget.ImageView minus = new android.widget.ImageView(requireContext());
+    minus.setImageResource(R.drawable.ic_baseline_remove);
+    minus.setContentDescription(getString(R.string.minus));
+
     android.widget.TextView valueView = new android.widget.TextView(requireContext());
     valueView.setText(String.valueOf(initial));
     valueView.setTextColor(android.graphics.Color.BLACK);
-    valueView.setTextSize(14);
-    valueView.setPadding((int) (6 * density()), 0, (int) (6 * density()), 0);
+    valueView.setGravity(android.view.Gravity.CENTER);
+    int pad = (int) (4 * density());
+    valueView.setPadding(pad, pad, pad, pad);
 
-    android.widget.Button minus = new android.widget.Button(requireContext());
-    minus.setText("−");
-    minus.setAllCaps(false);
-    minus.setTextColor(android.graphics.Color.WHITE);
-    minus.setMinWidth(0);
-    minus.setMinimumWidth(0);
-    minus.setPadding(0, 0, 0, 0);
-    minus.setBackgroundResource(R.drawable.button_item_background_black);
-    minus.setBackgroundTintList(
-        androidx.core.content.ContextCompat.getColorStateList(requireContext(), R.color.openBotBlue));
-
-    android.widget.Button plus = new android.widget.Button(requireContext());
-    plus.setText("+");
-    plus.setAllCaps(false);
-    plus.setTextColor(android.graphics.Color.WHITE);
-    plus.setMinWidth(0);
-    plus.setMinimumWidth(0);
-    plus.setPadding(0, 0, 0, 0);
-    plus.setBackgroundResource(R.drawable.button_item_background_black);
-    plus.setBackgroundTintList(
-        androidx.core.content.ContextCompat.getColorStateList(requireContext(), R.color.openBotBlue));
+    android.widget.ImageView plus = new android.widget.ImageView(requireContext());
+    plus.setImageResource(R.drawable.ic_baseline_add);
+    plus.setContentDescription(getString(R.string.plus));
 
     minus.setOnClickListener(
         v -> {
@@ -188,32 +182,66 @@ public abstract class VisionModeFragment extends CameraFragment {
           onChange.accept(value[0]);
         });
 
-    binding.modePanel.addView(minus);
-    binding.modePanel.addView(valueView);
-    binding.modePanel.addView(plus);
+    // Same weights as fragment_autopilot.xml: minus 1.5, value 3, plus 1.5.
+    chip.addView(minus, new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1.5f));
+    chip.addView(valueView, new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 3f));
+    chip.addView(plus, new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1.5f));
+    row.addView(chip, new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f));
+
+    binding.modePanel.addView(row);
     onChange.accept(initial);
   }
 
-  /** Adds a small action button to the mode panel. */
+  /**
+   * Adds a "label [action]" row to the mode panel. The action is a spinner_bg chip with
+   * openBotBlue text at the default size, the same chip style as the Threads stepper.
+   */
   protected android.widget.Button addActionButton(String label, View.OnClickListener onClick) {
+    LinearLayout row = newRow();
+    row.addView(
+        newRowLabel(getString(R.string.tile_target_tracking)),
+        new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 2f));
+
     android.widget.Button button = new android.widget.Button(requireContext());
     button.setText(label);
     button.setAllCaps(false);
-    button.setTextColor(android.graphics.Color.WHITE);
-    button.setTextSize(13);
+    button.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.openBotBlue));
+    button.setBackgroundResource(R.drawable.spinner_bg);
     button.setMinWidth(0);
     button.setMinimumWidth(0);
-    button.setBackgroundResource(R.drawable.button_item_background_black);
-    button.setBackgroundTintList(
-        androidx.core.content.ContextCompat.getColorStateList(requireContext(), R.color.openBotBlue));
-    LinearLayout.LayoutParams lp =
-        new LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-    lp.setMarginEnd((int) (8 * density()));
-    button.setLayoutParams(lp);
+    button.setMinHeight(0);
+    button.setMinimumHeight(0);
+    button.setStateListAnimator(null);
     button.setOnClickListener(onClick);
-    binding.modePanel.addView(button);
+    LinearLayout.LayoutParams lp =
+        new LinearLayout.LayoutParams(0, (int) (40 * density()), 2f);
+    lp.gravity = android.view.Gravity.CENTER_VERTICAL;
+    row.addView(button, lp);
+
+    binding.modePanel.addView(row);
     return button;
+  }
+
+  /** A horizontal row with weightSum 4, like the rows of the Autopilot bottom sheet. */
+  private LinearLayout newRow() {
+    LinearLayout row = new LinearLayout(requireContext());
+    row.setOrientation(LinearLayout.HORIZONTAL);
+    row.setWeightSum(4f);
+    row.setLayoutParams(
+        new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+    return row;
+  }
+
+  /** Row label in the Autopilot style: black, default size, paddingStart 16dp, paddingVertical 12dp. */
+  private android.widget.TextView newRowLabel(String text) {
+    android.widget.TextView tv = new android.widget.TextView(requireContext());
+    tv.setText(text);
+    tv.setTextColor(android.graphics.Color.BLACK);
+    tv.setGravity(android.view.Gravity.CENTER_VERTICAL);
+    int v = (int) (12 * density());
+    tv.setPadding((int) (16 * density()), v, 0, v);
+    return tv;
   }
 
   protected float density() {

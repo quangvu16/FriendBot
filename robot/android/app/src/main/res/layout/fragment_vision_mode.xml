@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The same page template as fragment_autopilot.xml: CoordinatorLayout with a
-     drag-handle bottom sheet (drag down to hide the panel), the Auto switch plus
-     USB / Bluetooth / camera toggles in the sheet header, mode-specific controls in
-     the content area, and the shared control_buttons row at the bottom. -->
+<!-- Shared page for the five vision modes (Follow a Coloured Object, Follow a Face, Follow a
+     Black Line, Object Avoidance, Object Tracking), built on the Autopilot page template
+     (fragment_autopilot.xml) with the same colours, sizes and fonts:
+     - full-screen camera overlay with a white drag-handle bottom sheet (peek 48dp);
+     - sheet header: Auto Mode switch (32dp start) and USB / Bluetooth / camera toggles
+       (openBotBlue, 40dp);
+     - sheet body: label / value rows like Autopilot's Server, Model, Inference and Threads rows
+       (black text at the default size, label paddingStart 16dp, paddingVertical 12dp);
+       the mode rows are added in code into mode_panel (see VisionModeFragment.addStepper);
+     - the shared control_buttons row at the bottom. -->
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -13,27 +20,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <TextView
-        android:id="@+id/status_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|start"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:background="#99000000"
-        android:paddingStart="10dp"
-        android:paddingTop="6dp"
-        android:paddingEnd="10dp"
-        android:paddingBottom="6dp"
-        android:text="@string/vision_stopped"
-        android:textColor="@android:color/white"
-        android:textSize="13sp" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/control_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
         android:background="@drawable/bottom_sheet_bg"
         app:behavior_hideable="false"
         app:behavior_peekHeight="48dp"
@@ -62,6 +52,83 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/drag_handle" />
 
+        <LinearLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/controllerContainer"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <!-- Status row: same shape as Autopilot's "Inference  time/fps" row. -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.8"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="12dp"
+                    android:paddingStart="16dp"
+                    android:text="@string/status"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/status_text"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3.2"
+                    android:gravity="center_vertical|start"
+                    android:paddingHorizontal="8dp"
+                    android:text="@string/vision_stopped"
+                    android:textColor="@android:color/black"
+                    tools:text="▲ Running" />
+            </LinearLayout>
+
+            <!-- Mode-specific rows (tolerance, threshold, stop distance, lock target ...). -->
+            <LinearLayout
+                android:id="@+id/mode_panel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <!-- Guide row: label + a spinner_bg chip, like Autopilot's "Threads [- 1 +]". -->
+            <LinearLayout
+                android:id="@+id/help_row"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="4">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="12dp"
+                    android:paddingStart="16dp"
+                    android:text="@string/tile_guides"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/help_button"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="2"
+                    android:background="@drawable/spinner_bg"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:text="@string/vision_help"
+                    android:textColor="@color/openBotBlue" />
+            </LinearLayout>
+        </LinearLayout>
+
         <CheckBox
             android:id="@+id/usbToggle"
             android:layout_width="wrap_content"
@@ -88,51 +155,13 @@
             android:layout_height="40dp"
             android:layout_margin="16dp"
             android:background="@android:color/transparent"
+            android:contentDescription="@string/camera_facing_back"
             android:scaleType="center"
             android:src="@drawable/ic_cameraswitch"
-            android:text="@string/camera_facing_back"
             app:layout_constraintBottom_toBottomOf="@+id/auto_switch"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/auto_switch"
             app:tint="@color/openBotBlue" />
-
-        <!-- Mode-specific content: the help button and the mode controls. -->
-        <LinearLayout
-            android:id="@+id/content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toTopOf="@+id/controllerContainer"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <Button
-                android:id="@+id/help_button"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:background="@drawable/button_item_background_black"
-                android:backgroundTint="@color/openBotBlue"
-                android:minWidth="0dp"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:text="@string/vision_help"
-                android:textColor="@android:color/white"
-                android:textSize="13sp" />
-
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:scrollbars="none">
-
-                <LinearLayout
-                    android:id="@+id/mode_panel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal" />
-            </HorizontalScrollView>
-        </LinearLayout>
 
         <include
             android:id="@+id/controllerContainer"
