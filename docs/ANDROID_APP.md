@@ -53,7 +53,7 @@ This guide covers the FriendBot Android app from install to the last screen. **E
 
 ### Option A: download the APK (easiest)
 
-1. On the phone, open **[apk/FriendBot-android-debug.apk](../apk/FriendBot-android-debug.apk)** on GitHub → **Download raw file** (65 MB).
+1. On the phone, open **[apk/FriendBot-android-debug.apk](../apk/FriendBot-android-debug.apk)** on GitHub → **Download raw file** (82 MB).
 2. Open it → allow *"install unknown apps"* → **Install**. The app appears as **FriendBot**.
 3. Needs Android **7.0 or newer** (minSdk 24).
 

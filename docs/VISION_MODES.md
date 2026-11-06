@@ -8,7 +8,7 @@ Five camera behaviours plus four instruction pages, added to both apps in the **
 
 *Sources in this repo:* Android `robot/android/app/src/main/java/org/openbot/app/robot/vision/`, iOS `robot/ios/OpenBot/OpenBot/Controllers/Vision/`.
 
-> ⚠️ **Not built yet.** These pages are in the source code but not in the APK in `apk/` (Nov 2). Build the apps in Android Studio / Xcode to use them.
+> **Android:** included in the APK in [`apk/`](../apk/) (built 6 Nov 2026). **iOS:** build with Xcode ([iOS guide](IOS_APP.md)).
 
 <p align="center"><img src="images/screens/android/26-vision-modes-grid.svg" width="260" alt="Android Vision Modes tiles"> &nbsp; <img src="images/screens/ios/26-vision-modes-grid.svg" width="260" alt="iOS Vision Modes tiles"></p>
 
