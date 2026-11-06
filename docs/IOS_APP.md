@@ -45,6 +45,8 @@ If Bluetooth drops, the firmware stops the motors at once.
 
 ### Pair once with Xiaozhi
 
+> **Full step-by-step guide with the website screens: [Connect to xiaozhi.me](XIAOZHI_PAIRING.md).**
+
 ![Pairing screen](images/xiaozhi-pairing.svg)
 
 1. The app shows a **6-digit code**.

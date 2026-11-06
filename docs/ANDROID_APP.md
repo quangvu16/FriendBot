@@ -40,6 +40,8 @@ Needs Android **7.0 or newer** (minSdk 24).
 
 ### First launch: pair with Xiaozhi (once)
 
+> **Full step-by-step guide with the website screens: [Connect to xiaozhi.me](XIAOZHI_PAIRING.md).**
+
 ![Pairing screen](images/xiaozhi-pairing.svg)
 
 1. The app registers itself as a Xiaozhi device (`https://api.tenclass.net/xiaozhi/ota/`) and shows a **6-digit code**.

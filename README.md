@@ -23,6 +23,7 @@ You speak in English, Tiếng Việt or 中文 → the phone sends your voice to
 | [2. Firmware](docs/FIRMWARE.md) | How to flash, what each setting does, how the robot keeps itself safe | [firmware-flow.svg](docs/images/firmware-flow.svg) |
 | [3. Android app](docs/ANDROID_APP.md) | Install the APK, connect by USB or Bluetooth, pair Xiaozhi, talk | [android-app.svg](docs/images/android-app.svg) |
 | [4. iOS app](docs/IOS_APP.md) | Build in Xcode, connect by Bluetooth, pair Xiaozhi, talk | [ios-app.svg](docs/images/ios-app.svg) |
+| [5. Connect to xiaozhi.me](docs/XIAOZHI_PAIRING.md) | Create the account and agent, get the 6-digit code, bind the phone | [xiaozhi-connect.svg](docs/images/xiaozhi-connect.svg) |
 
 ## Quick start (about 1 hour)
 
@@ -30,7 +31,7 @@ You speak in English, Tiếng Việt or 中文 → the phone sends your voice to
 2. **Flash it** — Arduino IDE, board *ESP32 Dev Module*, library *LiquidCrystal I2C*, open `friendbot-esp32-mtv.ino`, Upload. The LCD shows `FriendBot MTV`. → [Firmware](docs/FIRMWARE.md)
 3. **Install the app** — Android: APK from the `apk/` folder. iPhone: Xcode build. → [Android](docs/ANDROID_APP.md) · [iOS](docs/IOS_APP.md)
 4. **Connect** — Bluetooth device **`FriendBot: MTV`** (or USB cable on Android).
-5. **Open Voice Control → pair once at xiaozhi.me → say "go forward".**
+5. **Open Voice Control → pair once at xiaozhi.me** ([step-by-step](docs/XIAOZHI_PAIRING.md)) **→ say "go forward".**
 
 *Example:* say **"đi thẳng 3 giây"** (go straight 3 seconds). Xiaozhi replies "Được, đang đi thẳng!", calls `self.robot.move(forward, 3000 ms)`, the app sends `c144,144` every 250 ms, and after 3 s sends `c0,0`. If a wall appears at 30 cm, the firmware slows the car on its own; at 15 cm it stops.
 
