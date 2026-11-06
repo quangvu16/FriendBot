@@ -22,8 +22,8 @@ You speak in English, Tiếng Việt or 中文 → the phone sends your voice to
 | [⭐ All app screens (Android + iOS)](docs/SCREENS_GUIDE.md) | Every screen of both apps in one guide, with a screen map | [app-navigation.svg](docs/images/app-navigation.svg) |
 | [1. Wiring](docs/WIRING.md) | Which wire goes to which ESP32 pin, power, safety resistors | [wiring.svg](docs/images/wiring.svg) |
 | [2. Firmware](docs/FIRMWARE.md) | How to flash, what each setting does, how the robot keeps itself safe | [firmware-flow.svg](docs/images/firmware-flow.svg) |
-| [3. Android app](docs/ANDROID_APP.md) | Install the APK, connect by USB or Bluetooth, pair Xiaozhi, talk | [android-app.svg](docs/images/android-app.svg) |
-| [4. iOS app](docs/IOS_APP.md) | Build in Xcode, connect by Bluetooth, pair Xiaozhi, talk | [ios-app.svg](docs/images/ios-app.svg) |
+| [3. Android app](docs/ANDROID_APP.md) | Install the APK, connect, and **every Android screen** (19) with its SVG | [android-app.svg](docs/images/android-app.svg) |
+| [4. iOS app](docs/IOS_APP.md) | Build in Xcode, connect by Bluetooth, and **every iOS screen** (18) with its SVG | [ios-app.svg](docs/images/ios-app.svg) |
 | [5. Connect to xiaozhi.me](docs/XIAOZHI_PAIRING.md) | Create the account and agent, get the 6-digit code, bind the phone | [xiaozhi-connect.svg](docs/images/xiaozhi-connect.svg) |
 | [6. Other app screens](docs/APP_SCREENS.md) | Home dashboard, Bluetooth, Car setup, Drive, GPS Mission, Remote Mic, Settings | [android-screens.svg](docs/images/android-screens.svg) · [ios-screens.svg](docs/images/ios-screens.svg) |
 | [7. GPS Mission + AI screens](docs/AI_AND_MISSION.md) | GPS Mission, Autopilot, Object Tracking, Point Goal Navigation, Model Management | [gps-mission](docs/images/gps-mission.svg) · [autopilot](docs/images/autopilot.svg) · [object-tracking](docs/images/object-tracking.svg) · [point-goal](docs/images/point-goal-navigation.svg) · [models](docs/images/model-management.svg) |
