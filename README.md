@@ -19,6 +19,7 @@ You speak in English, Tiếng Việt or 中文 → the phone sends your voice to
 
 | Guide | What you learn | Diagram |
 |---|---|---|
+| [⭐ All app screens (Android + iOS)](docs/SCREENS_GUIDE.md) | Every screen of both apps in one guide, with a screen map | [app-navigation.svg](docs/images/app-navigation.svg) |
 | [1. Wiring](docs/WIRING.md) | Which wire goes to which ESP32 pin, power, safety resistors | [wiring.svg](docs/images/wiring.svg) |
 | [2. Firmware](docs/FIRMWARE.md) | How to flash, what each setting does, how the robot keeps itself safe | [firmware-flow.svg](docs/images/firmware-flow.svg) |
 | [3. Android app](docs/ANDROID_APP.md) | Install the APK, connect by USB or Bluetooth, pair Xiaozhi, talk | [android-app.svg](docs/images/android-app.svg) |

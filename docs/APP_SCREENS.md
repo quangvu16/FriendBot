@@ -1,3 +1,6 @@
+
+> All screens in one place: **[SCREENS_GUIDE.md](SCREENS_GUIDE.md)**
+
 # 6 · The other app screens (Android and iOS)
 
 Voice Control has its own guides ([Android](ANDROID_APP.md), [iOS](IOS_APP.md), [xiaozhi.me pairing](XIAOZHI_PAIRING.md)). This page covers **every other screen** you use with FriendBot. Both apps have the same screens. The differences are marked **Android** or **iOS**.

@@ -1,3 +1,6 @@
+
+> All screens in one place: **[SCREENS_GUIDE.md](SCREENS_GUIDE.md)**
+
 # 7 · GPS Mission and the AI screens (Android and iOS)
 
 This guide covers the five "smart" screens: **GPS Mission**, **Autopilot**, **Object Tracking**, **Point Goal Navigation** and **Model Management**. Each section has a diagram with the Android and iOS screens side by side, then what the screen does, how to use it, a worked example, and why it works that way.
