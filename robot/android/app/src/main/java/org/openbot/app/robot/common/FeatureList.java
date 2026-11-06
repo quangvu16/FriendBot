@@ -25,6 +25,22 @@ public class FeatureList {
   public static final String FREE_ROAM = "Free Roam";
   public static final String AR_MODE = "AR Mode";
 
+  // Vision Modes (camera behaviours adapted from Kirstin813/L4-Individual-Project
+  // and longpth/Android-Object-Tracking-OpenCV)
+  public static final String VISION_MODES = "Vision Modes";
+  public static final String FOLLOW_COLOUR = "Follow a Coloured Object";
+  public static final String FOLLOW_FACE = "Follow a Face";
+  public static final String FOLLOW_LINE = "Follow a Black Line";
+  public static final String OBJECT_AVOIDANCE = "Object Avoidance";
+  public static final String TARGET_TRACKING = "Target Tracking";
+
+  // Guides
+  public static final String GUIDES = "Guides";
+  public static final String GUIDE_COLOUR = "Coloured Object Instructions";
+  public static final String GUIDE_FACE = "Face Instructions";
+  public static final String GUIDE_LINE = "Black Line Instructions";
+  public static final String GUIDE_AVOIDANCE = "Object Avoidance Instructions";
+
   // Navigation
   public static final String GPS_NAVIGATION = "GPS Mission Navigation";
 
@@ -121,6 +137,37 @@ public class FeatureList {
             R.drawable.ic_list_bulleted_48,
             "#BC7680"));
     categories.add(new Category(AI, R.string.tile_ai, subCategories));
+
+    subCategories = new ArrayList<>();
+    subCategories.add(
+        new SubCategory(
+            FOLLOW_COLOUR, R.string.tile_follow_colour, R.drawable.ic_btn_center_focus_strong, "#F4511E"));
+    subCategories.add(
+        new SubCategory(
+            FOLLOW_FACE, R.string.tile_follow_face, R.drawable.ic_person_search, "#7E57C2"));
+    subCategories.add(
+        new SubCategory(
+            FOLLOW_LINE, R.string.tile_follow_line, R.drawable.ic_btn_straight, "#455A64"));
+    subCategories.add(
+        new SubCategory(
+            OBJECT_AVOIDANCE, R.string.tile_object_avoidance, R.drawable.ic_btn_sensors, "#26A69A"));
+    subCategories.add(
+        new SubCategory(
+            TARGET_TRACKING, R.string.tile_target_tracking, R.drawable.ic_btn_track_changes, "#FFB300"));
+    categories.add(new Category(VISION_MODES, R.string.tile_vision_modes, subCategories));
+
+    subCategories = new ArrayList<>();
+    subCategories.add(
+        new SubCategory(
+            GUIDE_COLOUR, R.string.tile_guide_colour, R.drawable.ic_btn_center_focus_strong, "#FF8A65"));
+    subCategories.add(
+        new SubCategory(GUIDE_FACE, R.string.tile_guide_face, R.drawable.ic_person_search, "#9575CD"));
+    subCategories.add(
+        new SubCategory(GUIDE_LINE, R.string.tile_guide_line, R.drawable.ic_btn_straight, "#607D8B"));
+    subCategories.add(
+        new SubCategory(
+            GUIDE_AVOIDANCE, R.string.tile_guide_avoidance, R.drawable.ic_btn_sensors, "#4DB6AC"));
+    categories.add(new Category(GUIDES, R.string.tile_guides, subCategories));
 
     subCategories = new ArrayList<>();
     subCategories.add(

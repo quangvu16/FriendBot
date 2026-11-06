@@ -46,6 +46,24 @@
         <action
             android:id="@+id/action_mainFragment_to_remoteMicFragment"
             app:destination="@id/remoteMicFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_followColourFragment"
+            app:destination="@id/followColourFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_followFaceFragment"
+            app:destination="@id/followFaceFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_followLineFragment"
+            app:destination="@id/followLineFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_avoidObjectFragment"
+            app:destination="@id/avoidObjectFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_targetTrackingFragment"
+            app:destination="@id/targetTrackingFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_guideFragment"
+            app:destination="@id/guideFragment" />
     </fragment>
 
     <fragment
@@ -156,4 +174,44 @@
         android:name="org.openbot.app.robot.voice.RemoteMicFragment"
         android:label="@string/tile_remote_mic"
         tools:layout="@layout/fragment_remote_mic" />
+
+    <fragment
+        android:id="@+id/followColourFragment"
+        android:name="org.openbot.app.robot.vision.FollowColourFragment"
+        android:label="@string/tile_follow_colour"
+        tools:layout="@layout/fragment_vision_mode" />
+
+    <fragment
+        android:id="@+id/followFaceFragment"
+        android:name="org.openbot.app.robot.vision.FollowFaceFragment"
+        android:label="@string/tile_follow_face"
+        tools:layout="@layout/fragment_vision_mode" />
+
+    <fragment
+        android:id="@+id/followLineFragment"
+        android:name="org.openbot.app.robot.vision.FollowLineFragment"
+        android:label="@string/tile_follow_line"
+        tools:layout="@layout/fragment_vision_mode" />
+
+    <fragment
+        android:id="@+id/avoidObjectFragment"
+        android:name="org.openbot.app.robot.vision.AvoidObjectFragment"
+        android:label="@string/tile_object_avoidance"
+        tools:layout="@layout/fragment_vision_mode" />
+
+    <fragment
+        android:id="@+id/targetTrackingFragment"
+        android:name="org.openbot.app.robot.vision.TargetTrackingFragment"
+        android:label="@string/tile_target_tracking"
+        tools:layout="@layout/fragment_vision_mode" />
+
+    <fragment
+        android:id="@+id/guideFragment"
+        android:name="org.openbot.app.robot.vision.GuideFragment"
+        android:label="@string/tile_guides"
+        tools:layout="@layout/fragment_guide">
+        <argument
+            android:name="guideId"
+            app:argType="string" />
+    </fragment>
 </navigation>

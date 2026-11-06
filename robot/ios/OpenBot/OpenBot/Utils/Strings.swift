@@ -235,4 +235,57 @@ struct Strings {
 
     // Data Collection / Autopilot server dropdown default state
     static var noServer: String { L10n.string("noServer") }
+
+    // Vision modes (coloured object / face / black line / avoidance / target tracking)
+    static var tileVisionModes: String { L10n.string("tile_vision_modes") }
+    static var tileGuides: String { L10n.string("tile_guides") }
+    static var tileFollowColour: String { L10n.string("tile_follow_colour") }
+    static var tileFollowFace: String { L10n.string("tile_follow_face") }
+    static var tileFollowLine: String { L10n.string("tile_follow_line") }
+    static var tileObjectAvoidance: String { L10n.string("tile_object_avoidance") }
+    static var tileTargetTracking: String { L10n.string("tile_target_tracking") }
+    static var tileGuideColour: String { L10n.string("tile_guide_colour") }
+    static var tileGuideFace: String { L10n.string("tile_guide_face") }
+    static var tileGuideLine: String { L10n.string("tile_guide_line") }
+    static var tileGuideAvoidance: String { L10n.string("tile_guide_avoidance") }
+
+    static var visionAuto: String { L10n.string("vision_auto") }
+    static var visionHelp: String { L10n.string("vision_help") }
+    static var visionRunning: String { L10n.string("vision_running") }
+    static var visionStopped: String { L10n.string("vision_stopped") }
+
+    static var followColourPickHint: String { L10n.string("follow_colour_pick_hint") }
+    static var followColourTolerance: String { L10n.string("follow_colour_tolerance") }
+    static var followColourNone: String { L10n.string("follow_colour_none") }
+
+    static var followFaceStatusScanning: String { L10n.string("follow_face_status_scanning") }
+    static var followFaceStatusFound: String { L10n.string("follow_face_status_found") }
+
+    static var followLineThreshold: String { L10n.string("follow_line_threshold") }
+    static var followLineHint: String { L10n.string("follow_line_hint") }
+    static var followLineSeeing: String { L10n.string("follow_line_seeing") }
+    static var followLineLost: String { L10n.string("follow_line_lost") }
+
+    static var avoidPickHint: String { L10n.string("avoid_pick_hint") }
+    static var avoidStatusClear: String { L10n.string("avoid_status_clear") }
+    static var avoidStatusBlocked: String { L10n.string("avoid_status_blocked") }
+    static var avoidThreshold: String { L10n.string("avoid_threshold") }
+
+    static var trackHint: String { L10n.string("track_hint") }
+    static var trackLock: String { L10n.string("track_lock") }
+    static var trackUnlock: String { L10n.string("track_unlock") }
+    static var trackStatusIdle: String { L10n.string("track_status_idle") }
+    static var trackStatusTracking: String { L10n.string("track_status_tracking") }
+    static var trackStatusLost: String { L10n.string("track_status_lost") }
+
+    // Vision mode and guide screen identifiers (built in code, not in the storyboard)
+    static let ScreenFollowColour: String = "FollowColourScreen"
+    static let ScreenFollowFace: String = "FollowFaceScreen"
+    static let ScreenFollowLine: String = "FollowLineScreen"
+    static let ScreenAvoidObject: String = "AvoidObjectScreen"
+    static let ScreenTargetTracking: String = "TargetTrackingScreen"
+    static let ScreenGuideColour: String = "GuideColourScreen"
+    static let ScreenGuideFace: String = "GuideFaceScreen"
+    static let ScreenGuideLine: String = "GuideLineScreen"
+    static let ScreenGuideAvoidance: String = "GuideAvoidanceScreen"
 }

@@ -27,6 +27,7 @@ import org.openbot.app.robot.model.SubCategory;
 import org.openbot.app.robot.original.DefaultActivity;
 import org.openbot.app.robot.vehicle.RcMode;
 import org.openbot.app.robot.vehicle.Vehicle;
+import org.openbot.app.robot.vision.GuideFragment;
 import timber.log.Timber;
 
 public class MainFragment extends Fragment implements OnItemClickListener<SubCategory> {
@@ -317,6 +318,54 @@ public class MainFragment extends Fragment implements OnItemClickListener<SubCat
         Intent intent = new Intent(requireActivity(), DefaultActivity.class);
         startActivity(intent);
         break;
+
+      case FeatureList.FOLLOW_COLOUR:
+        Navigation.findNavController(requireView())
+            .navigate(R.id.action_mainFragment_to_followColourFragment);
+        break;
+
+      case FeatureList.FOLLOW_FACE:
+        Navigation.findNavController(requireView())
+            .navigate(R.id.action_mainFragment_to_followFaceFragment);
+        break;
+
+      case FeatureList.FOLLOW_LINE:
+        Navigation.findNavController(requireView())
+            .navigate(R.id.action_mainFragment_to_followLineFragment);
+        break;
+
+      case FeatureList.OBJECT_AVOIDANCE:
+        Navigation.findNavController(requireView())
+            .navigate(R.id.action_mainFragment_to_avoidObjectFragment);
+        break;
+
+      case FeatureList.TARGET_TRACKING:
+        Navigation.findNavController(requireView())
+            .navigate(R.id.action_mainFragment_to_targetTrackingFragment);
+        break;
+
+      case FeatureList.GUIDE_COLOUR:
+        openGuide(GuideFragment.GUIDE_COLOUR);
+        break;
+
+      case FeatureList.GUIDE_FACE:
+        openGuide(GuideFragment.GUIDE_FACE);
+        break;
+
+      case FeatureList.GUIDE_LINE:
+        openGuide(GuideFragment.GUIDE_LINE);
+        break;
+
+      case FeatureList.GUIDE_AVOIDANCE:
+        openGuide(GuideFragment.GUIDE_AVOIDANCE);
+        break;
     }
+  }
+
+  private void openGuide(String guideId) {
+    Bundle args = new Bundle();
+    args.putString(GuideFragment.ARG_GUIDE_ID, guideId);
+    Navigation.findNavController(requireView())
+        .navigate(R.id.action_mainFragment_to_guideFragment, args);
   }
 }

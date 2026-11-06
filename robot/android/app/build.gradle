@@ -121,6 +121,9 @@ dependencies {
     implementation 'com.google.ai.edge.litert:litert:1.4.2'
     implementation 'com.google.ai.edge.litert:litert-gpu:1.4.2'
 
+    // ML Kit face detection for the Follow a Face vision mode
+    implementation 'com.google.mlkit:face-detection:16.1.7'
+
     implementation "com.google.android.gms:play-services-location:$location_version"
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
     implementation 'org.zeroturnaround:zt-zip:1.14'

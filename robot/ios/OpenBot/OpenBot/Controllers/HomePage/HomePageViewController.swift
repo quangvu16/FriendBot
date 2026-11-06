@@ -40,7 +40,7 @@ class HomePageViewController: CameraController, UICollectionViewDataSource, UICo
     @IBOutlet weak var settings: UIButton!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet var modesCollectionView: UICollectionView!;
-    let sectionHeaders = ["  General", "  AI"]
+    let sectionHeaders = ["  General", "  AI", "  Vision Modes", "  Guides"]
 
     // Car dashboard above the grid; the grid itself is "More features", hidden by default.
     private let dashboard = CarDashboardView()
@@ -333,6 +333,38 @@ class HomePageViewController: CameraController, UICollectionViewDataSource, UICo
         if identifier == Strings.ScreenRemoteMic {
             navigationController?.pushViewController(RemoteMicController(), animated: true)
             return
+        }
+        // Vision modes and guides are built in code, not in the storyboard.
+        switch identifier {
+        case Strings.ScreenFollowColour:
+            navigationController?.pushViewController(FollowColourController(), animated: true)
+            return
+        case Strings.ScreenFollowFace:
+            navigationController?.pushViewController(FollowFaceController(), animated: true)
+            return
+        case Strings.ScreenFollowLine:
+            navigationController?.pushViewController(FollowLineController(), animated: true)
+            return
+        case Strings.ScreenAvoidObject:
+            navigationController?.pushViewController(AvoidObjectController(), animated: true)
+            return
+        case Strings.ScreenTargetTracking:
+            navigationController?.pushViewController(TargetTrackingController(), animated: true)
+            return
+        case Strings.ScreenGuideColour:
+            navigationController?.pushViewController(GuideController(guideId: GuideController.guideColour), animated: true)
+            return
+        case Strings.ScreenGuideFace:
+            navigationController?.pushViewController(GuideController(guideId: GuideController.guideFace), animated: true)
+            return
+        case Strings.ScreenGuideLine:
+            navigationController?.pushViewController(GuideController(guideId: GuideController.guideLine), animated: true)
+            return
+        case Strings.ScreenGuideAvoidance:
+            navigationController?.pushViewController(GuideController(guideId: GuideController.guideAvoidance), animated: true)
+            return
+        default:
+            break
         }
         let viewController = (storyboard?.instantiateViewController(withIdentifier: identifier))!
         navigationController?.pushViewController(viewController, animated: true);

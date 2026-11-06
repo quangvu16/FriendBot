@@ -47,6 +47,14 @@ struct Images {
     static let pointGoalIcon = UIImage(named: "pointGoal")
     /// System symbol, so no image asset is needed for the GPS mission tile.
     static let gpsMissionIcon = UIImage(systemName: "location.fill") ?? UIImage()
+
+    // Vision mode and guide tiles — SF Symbols, so no image assets are needed.
+    static let followColourIcon = UIImage(systemName: "eyedropper")?.withTintColor(.white, renderingMode: .alwaysOriginal) ?? UIImage()
+    static let followFaceIcon = UIImage(systemName: "face.smiling")?.withTintColor(.white, renderingMode: .alwaysOriginal) ?? UIImage()
+    static let followLineIcon = UIImage(systemName: "line.diagonal")?.withTintColor(.white, renderingMode: .alwaysOriginal) ?? UIImage()
+    static let avoidObjectIcon = UIImage(systemName: "exclamationmark.triangle")?.withTintColor(.white, renderingMode: .alwaysOriginal) ?? UIImage()
+    static let targetTrackingIcon = UIImage(systemName: "scope")?.withTintColor(.white, renderingMode: .alwaysOriginal) ?? UIImage()
+    static let guideIcon = UIImage(systemName: "book.closed")?.withTintColor(.white, renderingMode: .alwaysOriginal) ?? UIImage()
 }
 
 /// Colors of the user inerface
@@ -73,6 +81,17 @@ struct Colors {
     /// Matches the Android GPS Mission Navigation tile (#26C6DA).
     static let gpsMissionColor = UIColor(red: 38.0 / 255.0, green: 198.0 / 255.0, blue: 218.0 / 255.0, alpha: 1.00)
     static let modelColor = UIColor(red: 183.0 / 255.0, green: 138.0 / 255.0, blue: 164.0 / 255.0, alpha: 1.00)
+
+    // Vision mode and guide tiles — matches the Android tile colors.
+    static let followColourColor = UIColor(red: 244.0 / 255.0, green: 81.0 / 255.0, blue: 30.0 / 255.0, alpha: 1.00)      // #F4511E
+    static let followFaceColor = UIColor(red: 126.0 / 255.0, green: 87.0 / 255.0, blue: 194.0 / 255.0, alpha: 1.00)      // #7E57C2
+    static let followLineColor = UIColor(red: 69.0 / 255.0, green: 90.0 / 255.0, blue: 100.0 / 255.0, alpha: 1.00)       // #455A64
+    static let avoidObjectColor = UIColor(red: 38.0 / 255.0, green: 166.0 / 255.0, blue: 154.0 / 255.0, alpha: 1.00)     // #26A69A
+    static let targetTrackingColor = UIColor(red: 255.0 / 255.0, green: 179.0 / 255.0, blue: 0.0 / 255.0, alpha: 1.00)   // #FFB300
+    static let guideColourColor = UIColor(red: 255.0 / 255.0, green: 138.0 / 255.0, blue: 101.0 / 255.0, alpha: 1.00)    // #FF8A65
+    static let guideFaceColor = UIColor(red: 149.0 / 255.0, green: 117.0 / 255.0, blue: 205.0 / 255.0, alpha: 1.00)      // #9575CD
+    static let guideLineColor = UIColor(red: 96.0 / 255.0, green: 125.0 / 255.0, blue: 139.0 / 255.0, alpha: 1.00)       // #607D8B
+    static let guideAvoidanceColor = UIColor(red: 77.0 / 255.0, green: 182.0 / 255.0, blue: 172.0 / 255.0, alpha: 1.00)   // #4DB6AC
 }
 
 /// Set of constants used in the code
@@ -108,6 +127,21 @@ struct Constants {
                 ModeItem(label: Strings.ObjectTracking, icon: Images.objectTrackingIcon!, identifier: Strings.ObjectTrackingFragment, color: Colors.objectTrackingColor),
                 ModeItem(label: Strings.navigation, icon: Images.pointGoalIcon!, identifier: Strings.ScreenNavigation, color: Colors.pointGoalColor),
                 ModeItem(label: Strings.modelManagement, icon: Images.modelManagementIcon!, identifier: Strings.ScreenModelManagement, color: Colors.modelColor)
+            ],
+            // Vision Modes
+            [
+                ModeItem(label: Strings.tileFollowColour, icon: Images.followColourIcon, identifier: Strings.ScreenFollowColour, color: Colors.followColourColor),
+                ModeItem(label: Strings.tileFollowFace, icon: Images.followFaceIcon, identifier: Strings.ScreenFollowFace, color: Colors.followFaceColor),
+                ModeItem(label: Strings.tileFollowLine, icon: Images.followLineIcon, identifier: Strings.ScreenFollowLine, color: Colors.followLineColor),
+                ModeItem(label: Strings.tileObjectAvoidance, icon: Images.avoidObjectIcon, identifier: Strings.ScreenAvoidObject, color: Colors.avoidObjectColor),
+                ModeItem(label: Strings.tileTargetTracking, icon: Images.targetTrackingIcon, identifier: Strings.ScreenTargetTracking, color: Colors.targetTrackingColor)
+            ],
+            // Guides
+            [
+                ModeItem(label: Strings.tileGuideColour, icon: Images.guideIcon, identifier: Strings.ScreenGuideColour, color: Colors.guideColourColor),
+                ModeItem(label: Strings.tileGuideFace, icon: Images.guideIcon, identifier: Strings.ScreenGuideFace, color: Colors.guideFaceColor),
+                ModeItem(label: Strings.tileGuideLine, icon: Images.guideIcon, identifier: Strings.ScreenGuideLine, color: Colors.guideLineColor),
+                ModeItem(label: Strings.tileGuideAvoidance, icon: Images.guideIcon, identifier: Strings.ScreenGuideAvoidance, color: Colors.guideAvoidanceColor)
             ],
             // Legacy
             []

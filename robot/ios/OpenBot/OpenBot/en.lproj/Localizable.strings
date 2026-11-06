@@ -375,3 +375,75 @@
 "remote_mic_mic_unavailable" = "Microphone unavailable";
 "tool_take_photo" = "Take a photo";
 "voice_camera_switch" = "Switch camera";
+
+/* Vision modes (coloured object / face / black line / avoidance / target tracking) */
+"tile_vision_modes" = "Vision Modes";
+"tile_guides" = "Guides";
+"tile_follow_colour" = "Follow a Coloured Object";
+"tile_follow_face" = "Follow a Face";
+"tile_follow_line" = "Follow a Black Line";
+"tile_object_avoidance" = "Object Avoidance";
+"tile_target_tracking" = "Target Tracking";
+"tile_guide_colour" = "Coloured Object Instructions";
+"tile_guide_face" = "Face Instructions";
+"tile_guide_line" = "Black Line Instructions";
+"tile_guide_avoidance" = "Object Avoidance Instructions";
+
+"vision_auto" = "Auto";
+"vision_help" = "How to use";
+"vision_running" = "Running";
+"vision_stopped" = "Stopped";
+"vision_speed" = "Speed";
+
+"follow_colour_pick_hint" = "Tap the camera view to pick the colour to follow";
+"follow_colour_tolerance" = "Colour tolerance";
+"follow_colour_target" = "Target";
+"follow_colour_none" = "No target colour yet";
+
+"follow_face_hint" = "The car turns to keep your face centred — it never drives at you";
+"follow_face_status_scanning" = "Looking for a face";
+"follow_face_status_found" = "Face found";
+
+"follow_line_threshold" = "Black threshold";
+"follow_line_hint" = "Line the circuit up with the middle sensor box";
+"follow_line_seeing" = "Line seen";
+"follow_line_lost" = "No line";
+
+"avoid_pick_hint" = "Tap the obstacle in the view to pick its colour";
+"avoid_status_clear" = "Clear";
+"avoid_status_blocked" = "Obstacle — turning away";
+"avoid_threshold" = "Stop distance";
+
+"track_hint" = "Drag a box around the object, then tap Lock target";
+"track_lock" = "Lock target";
+"track_unlock" = "Unlock";
+"track_status_idle" = "Draw a box to select a target";
+"track_status_tracking" = "Tracking target";
+"track_status_lost" = "Target lost — stop and re-lock";
+
+/* Guides: instruction pages adapted from Kirstin813/L4-Individual-Project */
+"guide_credit" = "Adapted from Kirstin813's L4 Individual Project: Self Driving Robot Using Web Bluetooth on a Smartphone.";
+"guide_section_about" = "What it does";
+"guide_section_materials" = "You will need";
+"guide_section_steps" = "Steps";
+"guide_section_tips" = "Tips";
+
+"guide_colour_intro" = "The robot follows an object of a chosen colour using the phone camera. The object must have a colour that stands out from the background — red, blue, green and yellow work best. When the object is in the middle third of the camera view the car drives forward; when it drifts to a side third the car turns toward it.";
+"guide_colour_materials" = "The FriendBot car, charged and connected (USB or Bluetooth)\nA phone mounted on the car, camera pointing forward\nA brightly coloured object (red, blue, green or yellow) that does not match the background";
+"guide_colour_steps" = "Connect the app to the car and mount the phone on the car.\nOpen Vision Modes → Follow a Coloured Object.\nTap the object in the camera view to sample its colour — the swatch shows what was picked.\nPress Auto. The car turns toward the object and drives forward while it sits in the middle third of the view.\nWalk or roll the object around and the car follows it.\nPress Auto off (or remove the object from view and wait for the car to stop) to end.";
+"guide_colour_tips" = "Use an object with a clear, solid colour that contrasts with the background.\nIf the car ignores the object, raise the colour tolerance; if it follows the wrong things, lower it.\nEven lighting gives the most reliable colour matching.\nKeep the object in view — when it is lost the car stops.";
+
+"guide_face_intro" = "The phone camera detects your face and the car pivots to keep you in the centre of the view. Unlike the other follow modes, the centre zone means stop: the car only turns left or right to face you and never drives toward you. Try putting the car on a table and walking around it.";
+"guide_face_materials" = "The FriendBot car, charged and connected\nA phone mounted on the car, front or back camera facing you\nA face! Good lighting on your face helps a lot";
+"guide_face_steps" = "Connect the app to the car and mount the phone on the car.\nOpen Vision Modes → Follow a Face.\nPress Auto. A box appears around your face when it is detected.\nMove left or right around the car — it pivots to face you.\nStand in the centre of the view to stop the car.\nPress Auto off to end.";
+"guide_face_tips" = "Face detection is tuned for short range (up to about 2 metres).\nKeep your face well lit; strong backlight hurts detection.\nOne face at a time works best — the car follows the first face it sees.";
+
+"guide_line_intro" = "The phone camera looks down at the floor and follows a black line with three virtual sensors along the bottom of the view. When the middle sensor sees black the car drives forward; when a side sensor sees the line the car turns that way. Build the circuit from black tape.";
+"guide_line_materials" = "The FriendBot car, charged and connected\nA phone mounted on the car, camera angled down toward the floor\nBlack tape (best) or black paint for the line\nA floor or table big enough for a circuit";
+"guide_line_steps" = "Build a circuit from black tape. Make the line thick enough to fill the middle sensor box, and avoid sharp 90° corners — the car cannot turn sharply enough for those.\nConnect the app to the car and mount the phone so the view shows mostly the circuit.\nOpen Vision Modes → Follow a Black Line.\nPlace the car on the line, lined up with the middle sensor box.\nCheck the boxes: a box highlights when it sees the line. Adjust the black threshold until the line shows reliably on dark and off the floor.\nPress Auto and the car follows the line.\nPress Auto off to end.";
+"guide_line_tips" = "Black tape works much better than black paint.\nThicker line = more reliable following.\nUse gentle curves, not harsh 90° angles.\nIf the car loses the line in bright light, lower the black threshold.";
+
+"guide_avoidance_intro" = "The car drives forward but steers around obstacles. This stage started as the Object Avoidance stage of the L4 project (which detected objects but never finished the driving part). Here you tap the obstacle in the camera view to mark its colour: while it is far away the car drives on, and when it gets too close the car stops and turns toward the clearer side. The car's own LiDAR object avoidance adds a second safety layer on top.";
+"guide_avoidance_materials" = "The FriendBot car, charged and connected\nA phone mounted on the car, camera pointing forward\nA colourful object to act as the obstacle";
+"guide_avoidance_steps" = "Connect the app to the car and mount the phone on the car.\nOpen Vision Modes → Object Avoidance.\nTap the obstacle in the camera view to pick its colour.\nPress Auto. The car drives forward while the way is clear.\nPut the obstacle in the car's path — when it is close (large in the view) the car stops and turns toward the side with more free space.\nPress Auto off to end.";
+"guide_avoidance_tips" = "Pick an obstacle colour that stands out from the floor and walls.\nTurn on LiDAR object avoidance too (the chip on the Drive page) for a safer car.\nLower the stop distance value to let the car get closer before turning away.";
