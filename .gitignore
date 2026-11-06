@@ -6,4 +6,5 @@ local.properties
 xcuserdata/
 Pods/
 *.apk
+!apk/FriendBot-android-debug.apk
 *.xapk
