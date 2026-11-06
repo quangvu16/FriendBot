@@ -1,0 +1,372 @@
+/* Screens */
+"OpenBot" = "FriendBot";
+"freeRoam" = "Mode Libre";
+"dataCollection" = "Collecte de Données";
+"controllerMapping" = "Configuration du Contrôleur";
+"autoPilot" = "Pilote Automatique";
+"objectTracking" = "Suivi d'Objets";
+"modelManagement" = "Gestion des Modèles";
+"robotInfo" = "Infos du Robot";
+"navigation" = "Navigation vers un Point";
+
+/* GPS Mission Navigation */
+"gpsMission" = "Navigation GPS de Mission";
+"gps_nav_start" = "Démarrer";
+"gps_nav_stop" = "Arrêter";
+"gps_nav_rtl" = "RTL";
+"gps_nav_add_wp" = "Ajouter WP";
+"gps_nav_clear" = "Effacer";
+"gps_nav_export" = "Exporter";
+"gps_nav_add_here" = "Ajouter comme point de passage";
+"gps_nav_go_here" = "Aller ici";
+"gps_nav_cancel" = "Annuler";
+"gps_nav_ok" = "OK";
+"gps_nav_no_fix" = "Pas encore de signal GPS utilisable. Passez en extérieur et patientez.";
+"gps_nav_no_waypoints" = "Ajoutez d'abord un point de passage, puis démarrez.";
+"gps_nav_no_home" = "Aucune position de départ enregistrée.";
+"gps_nav_paused" = "En pause";
+"gps_nav_exported" = "Enregistré : %@";
+
+
+/* Misc */
+"controller" = "Contrôleur";
+"speed" = "Vitesse";
+"driveMode" = "Mode de Conduite";
+"gamepad" = "Manette";
+"phone" = "Téléphone";
+"web" = "Web";
+"joystick" = "Joystick";
+"game" = "Jeu";
+"dual" = "Double";
+"slow" = "Lent";
+"medium" = "Moyen";
+"fast" = "Rapide";
+"logData" = "Enregistrer les Données";
+"previewResolutionMedium" = "Résolution d'Aperçu (1280 x 720)";
+"previewResolutionLow" = "Résolution d'Aperçu (960 x 540)";
+"previewResolutionHigh" = "Résolution d'Aperçu (1920 x 1080)";
+"low" = "Basse";
+"high" = "Haute";
+"modelResolution" = "Résolution du Modèle ";
+"server" = "Serveur";
+"preview" = "Aperçu";
+"training" = "Entraînement";
+"sensorData" = "Données des Capteurs";
+"vehicle" = "Véhicule";
+"gps" = "GPS";
+"accelerometer" = "Accéléromètre";
+"magnetic" = "Champ Magnétique";
+"gyroscope" = "Gyroscope";
+"delay" = "Délai (ms)";
+"Autopilot" = "Pilote Automatique";
+"ObjectTracking" = "Suivi d'Objets";
+"autoMode" = "Mode Automatique";
+"model" = "Modèle";
+"input" = "Entrée";
+"device" = "Appareil";
+"threads" = "Threads";
+"object" = "Objet";
+"confidence" = "Confiance";
+"dynamicSpeed" = "Vitesse Dynamique";
+
+/* Settings */
+"camera" = "Caméra";
+"microphone" = "Microphone";
+"location" = "Localisation";
+"permission" = "Autorisations";
+"bluetooth" = "Bluetooth";
+"general" = "Général";
+"language" = "Langue";
+"languageSubtitle" = "Choisissez la langue d'affichage de l'app";
+"systemDefault" = "Langue du système";
+"applyingLanguage" = "Application de la langue…";
+"webSignalingServer" = "Serveur de signalisation Web";
+"webSignalingServerPlaceholder" = "ws://192.168.1.40:8080/ws";
+
+/* Bluetooth Status */
+"connect" = "Connecter";
+"disconnect" = "Déconnecter";
+"connecting" = "Connexion en cours";
+"disconnecting" = "Déconnexion en cours";
+
+/* Model management */
+"modelDetails" = "Détails du Modèle";
+"name" = "Nom";
+"type" = "Type";
+"class" = "Classe";
+"inputOfModel" = "Entrée (l x h)";
+"tfliteLabel" = ".tflite";
+"cancel" = "Annuler";
+"done" = "Terminé";
+"file" = "Fichier";
+"url" = "URL";
+"addNewModel" = "Ajouter un Nouveau Modèle";
+
+/* Robot Info */
+"voltageDivider" = "Diviseur de Tension";
+"bumperText" = "Pare-chocs";
+"wheelOdometer" = "Odométrie des Roues";
+"status" = "État";
+"motors" = "Moteurs";
+"forward" = "Avancer";
+"backward" = "Reculer";
+"stopLabel" = "Arrêter";
+"readings" = "Relevés";
+"battery" = "Batterie **.* V";
+"speedText" = "Vitesse (g,d) ***,*** tr/min";
+"sendCommand" = "Envoyer des Commandes";
+
+/* Navigation */
+"setGoal" = "Définir l'Objectif";
+"setGoalText" = "Montez le téléphone sur le robot et \n indiquez un objectif. Le robot essaiera\n de l'atteindre après avoir appuyé sur démarrer.";
+"left" = "Gauche";
+"meter" = "[m]";
+"startLabel" = "DÉMARRER";
+"canceled" = "ANNULER";
+"info" = "Infos";
+"restart" = "Redémarrer";
+
+/* Settings > Permissions */
+"important" = "IMPORTANT";
+"cameraAccessRequiredMessage" = "FriendBot a besoin d'accéder à la caméra";
+"allowPermissionMessageFormat" = "Veuillez autoriser FriendBot à accéder à %@";
+"allowButtonFormat" = "Autoriser %@";
+
+/* Logout */
+"logOut" = "SE DÉCONNECTER";
+"confirmLogoutTitle" = "Confirmer la Déconnexion";
+"confirmLogoutMessage" = "Voulez-vous vraiment vous déconnecter ?";
+
+/* Tab bar */
+"homeTab" = "Accueil";
+"profileTab" = "Profil";
+
+/* Loading / generic alerts */
+"loadingTitle" = "Chargement";
+"loadingProfileMessage" = "Veuillez patienter pendant le chargement du profil...";
+"loadingDataMessage" = "Veuillez patienter pendant le chargement des données...";
+"pleaseWaitMessage" = "Veuillez patienter...";
+"errorHeading" = "Erreur";
+"genericErrorMessage" = "Oups ! Une erreur s'est produite. Veuillez réessayer.";
+"okAction" = "OK";
+
+/* Profile screen */
+"myProfileHeading" = "Mon Profil";
+"setupProfilePromptLine1" = "Configurez votre profil en vous connectant avec";
+"setupProfilePromptLine2" = "votre compte Google.";
+"editProfile" = "Modifier le Profil";
+"logoutMenuItem" = "Déconnexion";
+"firstNameFieldLabel" = "Prénom";
+"lastNameFieldLabel" = "Nom";
+"dateOfBirthFieldLabel" = "Date de Naissance";
+"emailFieldLabel" = "E-mail";
+"unknownFallback" = "Inconnu";
+"saveChangesButton" = "Enregistrer les Modifications";
+"profileUpdatedSuccessToast" = "Profil mis à jour avec succès";
+"profilePictureLoadErrorToast" = "Erreur lors du chargement de la photo de profil";
+"signInWithGoogle" = "Se connecter avec Google";
+
+
+
+
+/* Robot Info headings */
+"robotTypeHeading" = "Type de Robot";
+"sensorsHeading" = "Capteurs";
+"batteryReadingFormat" = "Batterie %@ V";
+
+/* Point Goal Navigation */
+"goalReachedMessage" = "Objectif atteint";
+
+/* Model Management filter dropdown */
+"modelFilterAll" = "Tous";
+"modelFilterAllCaps" = "TOUS";
+"modelFilterAutoPilot" = "Pilote Automatique";
+"modelFilterDetector" = "Détecteur";
+"modelFilterNavigation" = "Navigation";
+
+/* Data Collection / Autopilot server dropdown default state */
+"noServer" = "Aucun Serveur";
+
+/* Object avoidance and GPS mission files */
+"avoid_title" = "Object avoidance";
+"avoid_on" = "Avoid ON";
+"avoid_off" = "Avoid OFF";
+"avoid_enabled" = "Enabled";
+"avoid_margin" = "Margin (AVOID_MARGIN)";
+"avoid_backup" = "Back-up speed (AVOID_BACKUP_SPD)";
+"avoid_backup_off" = "Off";
+"avoid_note" = "Stops before obstacles closer than the margin, in every driving mode. Back-up speed reverses away when something closes in from the front; 0 turns it off.";
+"avoid_settings" = "Avoidance";
+"gps_nav_fix_lost" = "GPS fix lost, holding";
+"gps_nav_files" = "Files";
+"gps_nav_export_kml" = "Export KML";
+"gps_nav_share_waypoints" = "Share .waypoints";
+"gps_nav_open_waypoints" = "Open .waypoints";
+"gps_nav_imported" = "Loaded %ld waypoints";
+"gps_nav_compass_unreliable" = "Compass unreliable: calibrate (figure 8) or move the phone away from the motors";
+
+/* RC mode face (firmware 'm' report) */
+"rc_mode_manual" = "MANUEL – la radiocommande conduit";
+"rc_mode_hold" = "ARRÊT – à l'arrêt";
+"rc_mode_lost" = "Signal RC perdu – à l'arrêt";
+"rc_mode_tap_hint" = "Touchez pour masquer";
+
+/* Car dashboard and STOP button */
+"stop_button_stop" = "STOP";
+"stop_button_resume" = "REPRENDRE";
+"dash_title_connected_usb" = "Voiture connectée (USB)";
+"dash_title_connected_ble" = "Voiture connectée (Bluetooth)";
+"dash_title_disconnected" = "Voiture non connectée";
+"dash_detail_usb" = "Branchez le téléphone sur le port USB de la voiture, puis touchez Connecter.";
+"dash_detail_ble" = "Allumez la voiture, touchez Connecter et choisissez-la dans la liste.";
+"dash_detail_connected" = "Prête. Choisissez ci-dessous ce que vous voulez faire.";
+"dash_detail_stopped" = "Arrêtée avec STOP. Touchez REPRENDRE pour rouler à nouveau.";
+"dash_connect" = "Connecter";
+"dash_connection_settings" = "Connexion";
+"dash_rc_none" = "RC : –";
+"dash_rc_manual" = "RC : Manuel";
+"dash_rc_auto" = "RC : Auto";
+"dash_rc_hold" = "RC : Arrêt";
+"dash_rc_lost" = "RC : signal perdu";
+"dash_chip_avoid_on" = "Évitement : activé";
+"dash_chip_avoid_off" = "Évitement : désactivé";
+"dash_tasks_header" = "Que voulez-vous faire ?";
+"dash_drive_title" = "Conduire";
+"dash_drive_desc" = "Conduisez avec le téléphone ou une manette.";
+"dash_mission_title" = "Mission GPS";
+"dash_mission_desc" = "Rejoindre des points sur la carte ou revenir au départ.";
+"dash_setup_title" = "Réglages de la voiture";
+"dash_setup_desc" = "Vérifier capteurs et évitement d'obstacles.";
+"dash_more_show" = "Plus de fonctions";
+"dash_more_hide" = "Moins de fonctions";
+
+/* GPS Mission panel */
+"gps_panel_hide" = "Masquer les données";
+"gps_panel_show" = "Afficher les données";
+"gps_panel_toggle" = "Afficher ou masquer les données de mission";
+"gps_panel_connection" = "Connexion à la voiture";
+"gps_mode_idle" = "Prête – ajoutez des points ou touchez la carte";
+"gps_mode_mission" = "Mission en cours";
+"gps_mode_guided" = "Vers le point choisi";
+"gps_mode_rtl" = "Retour au départ";
+"sensor_link_button" = "Lien capteurs";
+"sensor_link_off" = "Lien capteurs : désactivé";
+"sensor_link_server" = "Ouvrez %1$@ dans un navigateur · %2$d connectés";
+"sensor_link_server_no_ip" = "Capteurs partagés sur le port %1$d · rejoignez le Wi-Fi ou le partage de connexion du téléphone";
+"sensor_link_server_failed" = "Le serveur de capteurs n'a pas pu démarrer : %1$@";
+"sensor_link_client_connecting" = "Connexion à %1$@…";
+"sensor_link_client_connected" = "Connecté à %1$@ · en attente du GPS";
+"sensor_link_client_gps" = "Connecté à %1$@ · GPS ±%2$.0f m";
+"sensor_link_client_no_address" = "Lien capteurs : saisissez l'adresse de l'autre téléphone";
+"sensor_link_title" = "Lien capteurs (SensorServer)";
+"sensor_link_mode_off" = "Désactivé";
+"sensor_link_mode_server" = "Partager les capteurs de ce téléphone (serveur, page web)";
+"sensor_link_mode_client" = "Utiliser les capteurs d'un autre téléphone (client)";
+"sensor_link_port" = "Port";
+"sensor_link_address" = "Adresse de l'autre téléphone, ex. 192.168.43.1:8080";
+"sensor_link_use_gps" = "Utiliser son GPS et sa boussole pour la mission GPS";
+"sensor_link_help" = "Serveur : ouvrez http://adresse-du-téléphone:port dans un navigateur sur le même Wi-Fi ou partage de connexion pour voir capteurs et GPS en direct. Les scripts peuvent utiliser l'API WebSocket de SensorServer (ws://adresse:port/sensor/connect, /sensors/connect, /gps). Le lien fonctionne tant que la mission GPS, le suivi d'objet ou le pilote automatique est ouvert.";
+"sensor_link_save" = "Enregistrer";
+"sensor_link_cancel" = "Annuler";
+"sensor_link_bad_port" = "Le port doit être entre 1024 et 65535";
+"setup_drive_ackermann" = "Accélérateur ESC · servo de direction (voiture Ackermann)";
+"setup_drive_unknown" = "Connectez la voiture pour lire ce qu'elle a";
+"setup_features" = "Ce que la voiture signale";
+"setup_feat_rc" = "Récepteur RC";
+"setup_rc_mode" = "Interrupteur RC";
+"setup_rc_manual" = "MANUEL (la radio conduit)";
+"setup_rc_auto" = "AUTO (l'appli conduit)";
+"setup_rc_hold" = "ARRÊT (immobile)";
+"setup_rc_lost" = "Liaison RC perdue (arrêt)";
+"setup_link" = "Liaison avec la voiture";
+"setup_link_usb" = "Câble USB";
+"setup_link_ble" = "Bluetooth";
+"setup_link_none" = "Non connectée";
+"setup_steering" = "Direction";
+"setup_left" = "Gauche";
+"setup_right" = "Droite";
+"setup_centre" = "Centre";
+"setup_off" = "Éteint";
+"setup_test_note" = "Testez roues levées. Chaque test dure environ 1 s, puis la voiture s'arrête et se remet droite.";
+"gps_nav_pause" = "Pause";
+"gps_nav_resume" = "Reprendre";
+
+/* Voice Control (Xiaozhi) */
+"tile_voice_control" = "Contrôle vocal";
+"voice_tap_to_speak" = "Touchez le micro et parlez";
+"voice_listening" = "Écoute…";
+"voice_thinking" = "Réflexion…";
+"voice_you_said" = "Vous avez dit";
+"voice_command" = "Commande";
+"voice_speed" = "Vitesse";
+"voice_speed_value" = "%1$d%%";
+"voice_forward" = "Avancer";
+"voice_backward" = "Reculer";
+"voice_left" = "Tourner à gauche";
+"voice_right" = "Tourner à droite";
+"voice_stop" = "Arrêt";
+"voice_faster" = "Plus vite";
+"voice_slower" = "Moins vite";
+"voice_send" = "Envoyer";
+"voice_type_hint" = "Ou tapez une commande, p. ex. avance";
+"voice_log" = "Journal";
+"voice_log_ready" = "Prêt. Touchez le micro pour parler.";
+"voice_not_connected" = "Robot non connecté";
+"voice_connected" = "Connecté (%1$@)";
+"voice_no_match" = "Désolé, je n'ai pas compris";
+"voice_no_speech_recognizer" = "Aucune reconnaissance vocale disponible sur ce téléphone";
+"voice_mic_permission_denied" = "La permission du micro est nécessaire pour le contrôle vocal";
+"voice_status_stopped" = "Arrêté";
+"voice_action_move" = "%1$@ pendant %2$d ms";
+"voice_xiaozhi_settings" = "Paramètres Xiaozhi";
+"voice_xiaozhi_settings_help" = "Les commandes vocales sont comprises par le LLM Xiaozhi quand un serveur est configuré, et par les mots clés intégrés sinon. Laissez le jeton vide pour utiliser les mots clés intégrés.";
+"voice_xiaozhi_endpoint_hint" = "URL du serveur (chat completions)";
+"voice_xiaozhi_token_hint" = "Jeton d'accès";
+"voice_xiaozhi_model_hint" = "Nom du modèle";
+"voice_save" = "Enregistrer";
+"voice_cancel" = "Annuler";
+"voice_xiaozhi_saved" = "Paramètres Xiaozhi enregistrés";
+"voice_xiaozhi_fallback" = "Xiaozhi indisponible (%1$@), mots clés intégrés utilisés";
+"voice_xiaozhi_sign_in" = "Se connecter avec xiaozhi.me";
+"voice_xiaozhi_login_title" = "Connexion à Xiaozhi";
+"voice_xiaozhi_login_waiting" = "Création de l'appareil, veuillez patienter…";
+"voice_xiaozhi_login_code" = "Votre code : %1$@ — ouvrez xiaozhi.me, connectez-vous, ajoutez un appareil et saisissez ce code.";
+"voice_xiaozhi_login_success" = "Connecté — clé API enregistrée";
+"voice_xiaozhi_login_error" = "Échec de la connexion : %1$@";
+"voice_xiaozhi_login_cancelled" = "Connexion annulée";
+"voice_pair_title" = "Premier appairage";
+"voice_pair_instructions" = "Ouvrez xiaozhi.me, connectez-vous, ajoutez un nouvel appareil et saisissez le code affiché ici. Une fois lié, l'appareil se connecte automatiquement. Les identifiants sont enregistrés localement — la prochaine fois, l'application ignore l'appairage et se connecte d'elle-même.";
+"voice_pair_waiting" = "En attente de liaison…";
+"voice_pair_bound" = "Lié ! Connexion en cours…";
+"voice_pair_retry" = "Réessayer";
+"voice_pair_skip" = "Utiliser le mode hors ligne";
+"voice_pair_code" = "Code : %1$@";
+"voice_ws_ready" = "Xiaozhi prêt";
+"voice_ws_offline" = "Xiaozhi hors ligne";
+"voice_log_you" = "Vous :";
+"voice_log_bot" = "Xiaozhi :";
+"voice_assistant_silent" = "Assistant silencieux, cerveau intégré utilisé";
+"voice_state_idle" = "Prêt";
+"voice_state_connecting" = "Connexion…";
+"voice_state_listening" = "Écoute…";
+"voice_state_speaking" = "Parle…";
+"voice_language_title" = "Langue de la voix";
+"voice_language_system" = "Langue du système";
+
+"voice_sharing_wifi" = "Connecté (%1$@) · Partagé en WiFi";
+"voice_relay_connected" = "Pilotage via %1$@ (WiFi)";
+"voice_relay_searching" = "Recherche d'un robot sur le WiFi…";
+"voice_robot_picker_title" = "Choisir le robot";
+"voice_robot_this_phone" = "Ce téléphone · %1$@";
+"voice_robot_wifi_item" = "%1$@ · WiFi";
+"voice_robot_none_found" = "Aucun robot partagé en WiFi pour l'instant. Ouvrez la page vocale sur le téléphone qui a la liaison au robot.";
+"tile_remote_mic" = "Micro distant";
+"remote_mic_help" = "Le micro de ce téléphone parle à Xiaozhi sur le téléphone qui a la liaison au robot. Donnez votre commande ici — la conversation et les réponses de Xiaozhi restent sur ce téléphone.";
+"remote_mic_tap_to_start" = "Touchez le micro pour parler";
+"remote_mic_streaming" = "À l'écoute — touchez pour arrêter";
+"remote_mic_host" = "Conversation avec %1$@ (WiFi)";
+"remote_mic_live_on" = "En direct sur %1$@";
+"remote_mic_host_not_ready" = "Ouvrez d'abord la page de contrôle vocal sur %1$@";
+"remote_mic_mic_unavailable" = "Micro indisponible";
+"tool_take_photo" = "Prendre une photo";
+"voice_camera_switch" = "Changer de caméra";

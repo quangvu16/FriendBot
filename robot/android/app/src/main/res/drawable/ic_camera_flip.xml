@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Flip-camera glyph: circular swap arrows (white, tinted by the ImageButton). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M12,6C9.33,6 6.94,6.96 5.07,8.55L3,6.5V12H8.5L6.38,9.88C7.78,8.66 9.76,8 12,8C14.24,8 16.22,8.66 17.62,9.88L15.5,12H21V6.5L18.93,8.55C17.06,6.96 14.67,6 12,6ZM6.38,14.12L8.5,12H3V17.5L5.07,15.45C6.94,17.04 9.33,18 12,18C14.67,18 17.06,17.04 18.93,15.45L21,17.5V12H15.5L17.62,14.12C16.22,15.34 14.24,16 12,16C9.76,16 7.78,15.34 6.38,14.12Z" />
+</vector>

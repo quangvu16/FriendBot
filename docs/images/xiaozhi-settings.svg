@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 580" font-family="Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <style>
+      .title { font-size: 18px; font-weight: bold; fill: #111827; }
+      .help { font-size: 12px; fill: #6B7280; }
+      .flabel { font-size: 11px; fill: #6B7280; font-weight: bold; letter-spacing: 0.5px; }
+      .fval { font-size: 13px; fill: #111827; }
+      .btn { font-size: 14px; font-weight: bold; }
+    </style>
+  </defs>
+
+  <!-- dimmed app behind -->
+  <rect x="0" y="0" width="440" height="580" fill="#9CA3AF"/>
+  <rect x="30" y="30" width="380" height="520" rx="10" fill="#E5E7EB"/>
+
+  <!-- dialog -->
+  <rect x="40" y="60" width="360" height="450" rx="14" fill="#FFFFFF"/>
+  <text x="60" y="100" class="title">Xiaozhi settings</text>
+  <text x="60" y="124" class="help">Voice commands are understood by the Xiaozhi LLM</text>
+  <text x="60" y="140" class="help">when a server is configured, and by built-in keywords</text>
+  <text x="60" y="156" class="help">when it is not.</text>
+
+  <!-- sign-in button (device pairing, whisplay-xiaozhi style) -->
+  <rect x="60" y="172" width="320" height="42" rx="21" fill="#0277BD"/>
+  <text x="220" y="198" text-anchor="middle" font-size="13" font-weight="bold" fill="#FFFFFF">SIGN IN WITH XIAOZHI.ME</text>
+  <text x="220" y="232" text-anchor="middle" class="help">Get the API key automatically: enter the shown code at xiaozhi.me</text>
+
+  <!-- field 1 -->
+  <text x="60" y="268" class="flabel">SERVER URL (CHAT COMPLETIONS)</text>
+  <rect x="60" y="276" width="320" height="40" rx="8" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1.5"/>
+  <text x="72" y="301" class="fval">https://api.tenclass.net/v1/chat/completions</text>
+
+  <!-- field 2 -->
+  <text x="60" y="344" class="flabel">ACCESS TOKEN</text>
+  <rect x="60" y="352" width="320" height="40" rx="8" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1.5"/>
+  <text x="72" y="377" class="fval">••••••••••••••••</text>
+  <circle cx="356" cy="372" r="8" stroke="#9CA3AF" stroke-width="1.5" fill="none"/>
+  <circle cx="356" cy="372" r="3" fill="#9CA3AF"/>
+
+  <!-- field 3 -->
+  <text x="60" y="420" class="flabel">MODEL NAME</text>
+  <rect x="60" y="428" width="320" height="40" rx="8" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1.5"/>
+  <text x="72" y="453" class="fval">xz-lite</text>
+
+  <!-- buttons -->
+  <text x="252" y="492" class="btn" fill="#6B7280">CANCEL</text>
+  <text x="330" y="492" class="btn" fill="#0277BD">SAVE</text>
+
+  <!-- side annotations -->
+  <text x="40" y="540" class="help">Any OpenAI-compatible endpoint works: the Xiaozhi gateway,</text>
+  <text x="40" y="556" class="help">your own LLM key, or a proxy in front of a self-hosted server.</text>
+</svg>

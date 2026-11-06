@@ -1,0 +1,24 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:tint="?attr/colorControlNormal"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- A phone tilted for tilt driving: rounded handset leaning right, top edge forward. -->
+    <group
+        android:name="phone"
+        android:pivotX="12"
+        android:pivotY="12"
+        android:rotation="-25">
+        <path
+            android:fillColor="@android:color/white"
+            android:pathData="M7,2h10c1.1,0 2,0.9 2,2v16c0,1.1 -0.9,2 -2,2H7c-1.1,0 -2,-0.9 -2,-2V4c0,-1.1 0.9,-2 2,-2zM7,4v14h10V4H7z" />
+        <path
+            android:fillColor="@android:color/white"
+            android:pathData="M11,5.5h2v1h-2zM11,17.5h2v1h-2z" />
+    </group>
+    <!-- Motion arcs to the right of the handset. -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M19,6.5c1.3,1 2,2.2 2,3.5s-0.7,2.5 -2,3.5l-0.7,-0.9c1,-0.8 1.5,-1.7 1.5,-2.6s-0.5,-1.8 -1.5,-2.6z" />
+</vector>

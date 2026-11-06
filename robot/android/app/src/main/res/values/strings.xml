@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="app_name">FriendBot</string>
+    <string name="activity_name">FriendBot</string>
+    <string name="description_info">Info</string>
+    <string name="camera_error">This device doesn\'t support Camera2 API.</string>
+    <string name="threads">Threads</string>
+    <string name="camera_permission_denied">Camera permission is necessary</string>
+    <string name="storage_permission_denied">External storage permission is necessary</string>
+    <string name="location_permission_denied">Location permission is necessary</string>
+    <string name="record_audio_permission_denied">Recording audio permission is necessary</string>
+    <string name="nearby_permission_denied">Nearby devices permission is necessary</string>
+    <string name="permission_reason_logging"> to log datasets.</string>
+    <string name="permission_reason_ai"> to run AI models.</string>
+    <string name="permission_reason_ar_core"> to run AR Core.</string>
+    <string name="permission_reason_stream_video"> to stream video to the controller.</string>
+    <string name="permission_reason_preview"> to preview video.</string>
+    <string name="permission_reason_stream_audio"> to stream audio to the controller.</string>
+    <string name="permission_reason_find_controller"> to find the controller.</string>
+    <string name="permission_reason_model_from_phone"> to select a model from phone storage.</string>
+    <string name="permission_reason_settings"> to use all features of the app.</string>
+
+    <string name="off">Off</string>
+    <string name="on">On</string>
+
+    <string name="server">Server</string>
+    <string name="save_as">Save As</string>
+    <string name="ip_placeholder">x.x.x.x</string>
+    <string name="model">Model</string>
+
+    <string name="device">Device</string>
+    <string name="baud_rate">Baud Rate</string>
+
+    <string name="log_setting">Log Setting</string>
+    <string name="camera_facing_back">Back</string>
+
+    <string name="camera_facing_front">Front</string>
+    <string name="logging">Logging</string>
+
+    <string name="not_logging">Not Logging</string>
+
+    <string name="no_device">No Device</string>
+
+    <string name="data_log">Data Log</string>
+
+    <string name="usb_connection">USB Connection</string>
+
+    <string name="camera">Camera</string>
+
+    <string name="control">Control</string>
+    <string name="battery">Battery</string>
+    <string name="speed">Speed (l,r)</string>
+    <string name="objectAvoidance">Avoid</string>
+    <string name="objectAvoidanceIdle">Object avoidance off</string>
+    <string name="objectAvoidanceClear">Object avoidance on — clear</string>
+    <string name="objectAvoidanceHolding">Obstacle held at %1$.1f m</string>
+    <string name="objectAvoidanceBacking">Backing away from %1$.1f m</string>
+    <string name="avoidMargin">Avoid margin</string>
+    <string name="avoidMarginInfo">%1$.1f m</string>
+    <string name="avoidMarginValue">%1$.1f m</string>
+    <string name="avoidBackup">Back-up speed</string>
+    <string name="avoidBackupValue">%1$.0f%%</string>
+    <string name="avoidBackupOff">Off</string>
+    <string name="control_info">***,***</string>
+    <string name="rpm">***,*** rpm</string>
+    <string name="voltage">**.* V</string>
+    <string name="time_ms">*** ms</string>
+    <string name="time_fps">*** fps</string>
+    <string name="resolution">*** x ***</string>
+    <string name="drive_mode">Drive Mode</string>
+    <string name="speed_mode">Speed Mode</string>
+    <string name="plus">plus</string>
+    <string name="arrow">arrow</string>
+    <string name="minus">minus</string>
+    <string name="controller">Controller</string>
+    <string name="control_mode">Control Mode</string>
+    <string name="crop">Crop</string>
+    <string name="frame">Frame</string>
+    <string name="_1">1</string>
+    <string name="settings">Settings</string>
+    <string name="bluetooth">Bluetooth</string>
+    <string name="inference">Speed</string>
+    <string name="input">Resolution</string>
+    <string name="confidence">Confidence</string>
+    <string name="object">Object</string>
+    <string name="speedTitle">Speed</string>
+    <string name="voltageInfo">%1$s V</string>
+    <string name="speedInfo">%1$s rpm</string>
+    <string name="preview_resolution">Preview Resolution</string>
+    <string name="save_option">Save Options</string>
+    <string name="file_available_body">A model with the same name already exists. Would you like to replace it?</string>
+    <string name="file_available_title">File found</string>
+    <string name="model_delete_body">Are you sure you want to delete this model?</string>
+    <string name="model_delete_title">Confirm</string>
+    <string name="permissions">Permissions</string>
+    <string name="goal_reached">Goal reached.</string>
+    <string name="model_download_body">Going back would cancel the download. Are you sure?</string>
+    <string name="model_download_title">Model Download In Progress</string>
+    <string name="save">Save</string>
+    <string name="confirm_title">Are you sure?</string>
+    <string name="stream_change_body">The app needs to be restarted for this setting to take effect</string>
+    <string name="selectAll">Select All</string>
+    <string name="clearAll">Clear All</string>
+    <string name="tracking_lost">Tracking lost.</string>
+    <string name="no_initial_ar_core_pose">No initial AR Core pose.</string>
+    <string name="ar_core_session_paused">AR Core session paused.</string>
+    <string name="tips_connect_timeout">connect timeout</string>
+    <string name="tips_connect_fail">connect fail</string>
+    <string name="tips_connection_disconnected">connection has disconnected</string>
+    <string name="tips_write_operation">please enter a hex string</string>
+    <string-array name="servers">
+        <item>No server</item>
+    </string-array>
+    <string-array name="models">
+        <item>Autopilot_F</item>
+        <item>MobileNetV1_1_0_Q</item>
+        <item>MobileNetV3_S_Q</item>
+        <item>YoloV4</item>
+    </string-array>
+    <string-array name="devices">
+        <item>CPU</item>
+        <item>GPU</item>
+        <item>NNAPI</item>
+    </string-array>
+    <string-array name="baud_rates">
+        <item>9600</item>
+        <item>14400</item>
+        <item>19200</item>
+        <item>38400</item>
+        <item>57600</item>
+        <item>115200</item>
+        <item>230400</item>
+        <item>460800</item>
+        <item>921600</item>
+    </string-array>
+    <string-array name="log_settings">
+        <item>all_imgs</item>
+        <item>crop_img</item>
+        <item>preview_img</item>
+        <item>only_sensors</item>
+    </string-array>
+    <string-array name="control_modes">
+        <item>Gamepad</item>
+        <item>Phone</item>
+        <!--        <item>WebRTC</item>-->
+    </string-array>
+    <string-array name="drive_modes">
+        <item>Dual</item>
+        <item>Game</item>
+        <item>Joystick</item>
+        <item>@string/drive_mode_tilt</item>
+    </string-array>
+
+    <string name="drive_mode_tilt">Tilt</string>
+    <string name="drive_tilt_hint">Tilt the phone to drive</string>
+
+    <string-array name="preview_resolutions">
+        <item>Low</item>
+        <item>Medium</item>
+        <item>High</item>
+    </string-array>
+
+    <string-array name="save_data">
+        <item>Local Storage</item>
+        <item>Google Drive</item>
+        <item>Local Server</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string-array name="stream_server">
+        <item>WebRTC</item>
+        <item>RTSP</item>
+    </string-array>
+    <string-array name="connection_type">
+        <item>Bluetooth</item>
+        <item>USB</item>
+    </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string-array name="speed_modes">
+        <item>Slow</item>
+        <item>Normal</item>
+        <item>Fast</item>
+    </string-array>
+    <string name="profile">Profile</string>
+    <string name="home">Home</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="logout">Logout</string>
+    <string name="auto_mode">Auto Mode</string>
+    <string name="dynamic_speed">Dynamic Speed</string>
+    <string name="bumpers">Bumpers</string>
+    <string name="n_a">N/A</string>
+    <string name="robot_type">Robot Type:</string>
+    <string name="back">Back</string>
+    <string name="voltage_divider">Voltage Divider</string>
+    <string name="status">Status</string>
+    <string name="front">Front</string>
+    <string name="robot_icon">Robot Icon</string>
+    <string name="wheel_odometry_front">Wheel Odometry Front</string>
+    <string name="wheel_odometry_back">Wheel Odometry Back</string>
+    <string name="backward">Backward</string>
+    <string name="forward">Forward</string>
+    <string name="stop">Stop</string>
+    <string name="motors">Motors</string>
+    <string name="sensors">Sensors</string>
+    <string name="send_commands">Send Commands</string>
+    <string name="wheel_odometry">Wheel Odometry</string>
+    <string name="readings">Readings</string>
+    <string name="usb">USB</string>
+    <string name="cancel">Cancel</string>
+    <string name="general">General</string>
+    <string name="language">Language</string>
+    <string name="language_summary">Choose the app display language</string>
+    <string name="applying_language">Applying language…</string>
+    <string name="system_default">System Default</string>
+    <string name="storage">Storage</string>
+    <string name="location">Location</string>
+    <string name="microphone">Microphone</string>
+    <string name="nearby">Nearby Devices</string>
+    <string name="video_streaming">Video Streaming</string>
+    <string name="stream_mode">Stream Mode</string>
+    <string name="connection_type_category">Connection Type</string>
+    <string name="connectivity_mode">Connectivity Mode</string>
+    <string name="web_controller_category">Web Controller</string>
+    <string name="web_signaling_server">Web Signaling Server</string>
+    <string name="tile_general">General</string>
+    <string name="tile_ai">AI</string>
+    <string name="tile_legacy">Legacy</string>
+    <string name="tile_free_roam">Drive</string>
+    <string name="tile_data_collection">Data Collection</string>
+    <string name="tile_controller_mapping">Controller Mapping</string>
+    <string name="tile_robot_info">Car setup</string>
+    <string name="tile_autopilot">Autopilot</string>
+    <string name="tile_object_nav">Object Tracking</string>
+    <string name="tile_point_goal_navigation">Point Goal Navigation</string>
+    <string name="tile_model_management">Model Management</string>
+    <string name="tile_default_mode">Default</string>
+
+    <string name="set_goal_title">Set Goal</string>
+    <string name="set_goal_message">Mount the phone on the robot and specify a goal. The robot will try to reach the goal after pressing start.</string>
+    <string name="start">Start</string>
+    <string name="forward_hint_m">Forward [m]</string>
+    <string name="left_hint_m">Left [m]</string>
+    <string name="log_data">Log Data</string>
+    <string name="model_resolution">Model Resolution</string>
+    <string name="sensor_data">Sensor Data</string>
+    <string name="preview_images">Preview Images</string>
+    <string name="training_images">Training Images</string>
+    <string name="sign_in_description">Set up your profile by signing in with your Google account.</string>
+    <string name="sign_in_with_google">Sign-in with Google</string>
+    <string name="usb_check_connection">Please check the USB connection.</string>
+    <string name="ble_connecting">Connecting</string>
+    <string name="ble_disconnect">Disconnect</string>
+    <string name="ble_connect">Connect</string>
+
+    <!-- GPS Mission Navigation -->
+    <string name="tile_gps_navigation">GPS Mission</string>
+    <string name="gps_nav_status_idle">Ready — add waypoints or tap the map</string>
+    <string name="gps_nav_status_navigating">Driving the mission</string>
+    <string name="gps_nav_status_paused">Paused</string>
+    <string name="gps_nav_status_returning">Returning home</string>
+    <string name="gps_nav_status_completed">Mission complete</string>
+    <string name="gps_nav_status_waiting_gps">Waiting for GPS — move to open sky</string>
+    <string name="gps_nav_status_held">Stopped — obstacle ahead</string>
+    <string name="gps_nav_distance_placeholder">Dist  -- m</string>
+    <string name="gps_nav_bearing_placeholder">Brng  --°</string>
+    <string name="gps_nav_speed_placeholder">Spd  -- m/s</string>
+    <string name="gps_nav_accuracy_placeholder">Acc  -- m</string>
+    <string name="gps_nav_start">Start</string>
+    <string name="gps_nav_pause">Pause</string>
+    <string name="gps_nav_resume">Resume</string>
+    <string name="gps_nav_stop">Stop</string>
+    <string name="gps_nav_rtl">Return home</string>
+    <string name="gps_nav_add_wp_here">Add WP here</string>
+    <string name="gps_nav_clear">Clear</string>
+    <string name="gps_nav_save">Save</string>
+    <string name="gps_nav_export_kml">Export KML</string>
+    <string name="gps_nav_import_waypoints">Open .waypoints</string>
+    <string name="gps_nav_export_waypoints">Share .waypoints</string>
+    <string name="gps_nav_waypoints_exported">Mission saved as .waypoints</string>
+    <string name="gps_nav_waypoints_imported">Loaded %1$d waypoints</string>
+    <string name="gps_nav_waypoints_failed">.waypoints file error: %1$s</string>
+    <string name="gps_nav_fix_lost">No GPS signal — the car stopped and waits. Move to open sky.</string>
+    <string name="gps_nav_compass_unreliable">COMPASS UNRELIABLE — calibrate (figure 8) or move the phone away from motors</string>
+    <string name="gps_nav_delete_waypoint">Delete waypoint</string>
+    <string name="gps_nav_mission_empty">Mission: 0 waypoints</string>
+    <string name="gps_nav_mission_info">Mission: %1$d waypoints • %2$.0f m total</string>
+    <string name="gps_nav_mission_progress">Mission: WP %1$d / %2$d • %3$.0f m to go</string>
+    <string name="gps_nav_waypoint_added">Waypoint %1$d added</string>
+    <string name="gps_nav_waypoint_removed">Waypoint removed</string>
+    <string name="gps_nav_mission_cleared">Mission cleared</string>
+    <string name="gps_nav_mission_saved">Mission saved</string>
+    <string name="gps_nav_mission_loaded">Mission loaded (%1$d waypoints)</string>
+    <string name="gps_nav_mission_failed">Could not read mission: %1$s</string>
+    <string name="gps_nav_map_type">Map type</string>
+    <string name="gps_nav_map_type_satellite">Satellite</string>
+    <string name="gps_nav_map_type_hybrid">Hybrid</string>
+    <string name="gps_nav_map_type_street">Street</string>
+    <string name="gps_nav_map_type_terrain">Terrain</string>
+    <string name="gps_nav_map_no_tiles">Map tiles need an internet connection</string>
+    <string name="gps_nav_export_done">KML exported to %1$s</string>
+    <string name="gps_nav_export_failed">KML export failed: %1$s</string>
+    <string name="gps_nav_no_fix">Waiting for a GPS fix…</string>
+    <string name="gps_nav_need_fix">Start navigating once a GPS fix is available.</string>
+    <string name="gps_nav_need_waypoints">Add at least one waypoint before starting.</string>
+    <string name="gps_nav_accuracy_poor">GPS accuracy too poor (%1$.0f m) — holding</string>
+    <string name="gps_nav_permission_needed">Location permission is required for GPS navigation.</string>
+    <string name="gps_nav_vehicle_not_ready">Vehicle is not connected.</string>
+    <string name="gps_nav_tap_dialog_title">Map point</string>
+    <string name="gps_nav_tap_dialog_message">%1$s\n%2$s</string>
+    <string name="gps_nav_tap_add_waypoint">Add as waypoint</string>
+    <string name="gps_nav_tap_go_here">Go here now</string>
+    <string name="gps_nav_cancel">Cancel</string>
+    <string name="gps_nav_guided_set">Going to the point you tapped</string>
+    <string name="gps_nav_arrived">Arrived at waypoint %1$d</string>
+    <string name="gps_nav_mission_complete">Mission complete</string>
+    <string name="gps_nav_rtl_complete">Back home</string>
+    <!-- RC mode face (firmware 'm' report) -->
+    <string name="rc_mode_manual">MANUAL – RC is driving</string>
+    <string name="rc_mode_hold">HOLD – stopped</string>
+    <string name="rc_mode_lost">RC signal lost – stopped</string>
+    <string name="rc_mode_tap_hint">Tap to hide</string>
+    <!-- Car dashboard and STOP button -->
+    <string name="stop_button_stop">STOP</string>
+    <string name="stop_button_resume">RESUME</string>
+    <string name="dash_title_connected_usb">Car connected (USB)</string>
+    <string name="dash_title_connected_ble">Car connected (Bluetooth)</string>
+    <string name="dash_title_disconnected">Car not connected</string>
+    <string name="dash_detail_usb">Plug the phone into the car\'s USB port, then tap Connect.</string>
+    <string name="dash_detail_ble">Turn on the car, then tap Connect and pick it from the list.</string>
+    <string name="dash_detail_connected">Ready. Choose what you want to do below.</string>
+    <string name="dash_detail_stopped">Stopped with the STOP button. Tap RESUME to drive again.</string>
+    <string name="dash_connect">Connect</string>
+    <string name="dash_connection_settings">Connection</string>
+    <string name="dash_rc_none">RC: –</string>
+    <string name="dash_rc_manual">RC: Manual</string>
+    <string name="dash_rc_auto">RC: Auto</string>
+    <string name="dash_rc_hold">RC: Hold</string>
+    <string name="dash_rc_lost">RC: signal lost</string>
+    <string name="dash_chip_avoid_on">Avoidance: on</string>
+    <string name="dash_chip_avoid_off">Avoidance: off</string>
+    <string name="dash_tasks_header">What do you want to do?</string>
+    <string name="dash_drive_title">Drive</string>
+    <string name="dash_drive_desc">Drive the car with the phone or a game controller.</string>
+    <string name="dash_mission_title">GPS Mission</string>
+    <string name="dash_mission_desc">Drive to points on a map, or return home.</string>
+    <string name="dash_setup_title">Car setup</string>
+    <string name="dash_setup_desc">Check sensors and obstacle avoidance.</string>
+    <string name="dash_more_show">More features</string>
+    <string name="dash_more_hide">Fewer features</string>
+    <!-- GPS Mission panel -->
+    <string name="gps_panel_hide">Hide data</string>
+    <string name="gps_panel_show">Show data</string>
+    <string name="gps_panel_toggle">Show or hide the mission data</string>
+    <string name="gps_panel_connection">Car connection</string>
+    <string name="sensor_link_button">Sensor link</string>
+    <string name="sensor_link_off">Sensor link: off</string>
+    <string name="sensor_link_server">Open %1$s in a browser · %2$d connected</string>
+    <string name="sensor_link_server_no_ip">Sharing sensors on port %1$d · join the phone\'s Wi-Fi or hotspot</string>
+    <string name="sensor_link_server_failed">Sensor server could not start: %1$s</string>
+    <string name="sensor_link_client_connecting">Connecting to %1$s…</string>
+    <string name="sensor_link_client_connected">Connected to %1$s · waiting for GPS</string>
+    <string name="sensor_link_client_gps">Connected to %1$s · GPS ±%2$.0f m</string>
+    <string name="sensor_link_client_no_address">Sensor link: set the other phone\'s address</string>
+    <string name="sensor_link_title">Sensor link (SensorServer)</string>
+    <string name="sensor_link_mode_off">Off</string>
+    <string name="sensor_link_mode_server">Share this phone\'s sensors (server, browser page)</string>
+    <string name="sensor_link_mode_client">Use another phone\'s sensors (client)</string>
+    <string name="sensor_link_port">Port</string>
+    <string name="sensor_link_address">Other phone\'s address, e.g. 192.168.43.1:8080</string>
+    <string name="sensor_link_use_gps">Use its GPS and compass for GPS Mission</string>
+    <string name="sensor_link_help">Server: open http://phone-address:port in any browser on the same Wi-Fi or hotspot to see live sensors and GPS. Scripts can use the SensorServer WebSocket API (ws://address:port/sensor/connect, /sensors/connect, /gps). The link runs while GPS Mission, Object Tracking or Autopilot is open.</string>
+    <string name="sensor_link_save">Save</string>
+    <string name="sensor_link_cancel">Cancel</string>
+    <string name="sensor_link_bad_port">Port must be 1024–65535</string>
+    <string name="setup_drive_ackermann">ESC throttle · steering servo (Ackermann car)</string>
+    <string name="setup_drive_unknown">Connect the car to read what it has</string>
+    <string name="setup_features">What the car reports</string>
+    <string name="setup_feat_rc">RC receiver</string>
+    <string name="setup_rc_mode">RC switch</string>
+    <string name="setup_rc_manual">MANUAL (transmitter drives)</string>
+    <string name="setup_rc_auto">AUTO (the app drives)</string>
+    <string name="setup_rc_hold">HOLD (stopped)</string>
+    <string name="setup_rc_lost">RC link lost (stopped)</string>
+    <string name="setup_link">Link to the car</string>
+    <string name="setup_link_usb">USB cable</string>
+    <string name="setup_link_ble">Bluetooth</string>
+    <string name="setup_link_none">Not connected</string>
+    <string name="setup_steering">Steering</string>
+    <string name="setup_left">Left</string>
+    <string name="setup_right">Right</string>
+    <string name="setup_centre">Centre</string>
+    <string name="setup_off">Off</string>
+    <string name="setup_test_note">Test with the wheels off the ground. Each drive or steering test lasts about 1 s, then the car stops and straightens by itself.</string>
+
+    <!-- Voice Control (Xiaozhi) -->
+    <string name="tile_voice_control">Voice Control</string>
+    <string name="tile_remote_mic">Remote Mic</string>
+    <string name="voice_tap_to_speak">Tap the microphone and speak</string>
+    <string name="voice_listening">Listening…</string>
+    <string name="voice_thinking">Thinking…</string>
+    <string name="voice_you_said">You said</string>
+    <string name="voice_command">Command</string>
+    <string name="voice_speed">Speed</string>
+    <string name="voice_speed_value">%1$d%%</string>
+    <string name="voice_forward">Forward</string>
+    <string name="voice_backward">Backward</string>
+    <string name="voice_left">Turn left</string>
+    <string name="voice_right">Turn right</string>
+    <string name="voice_stop">Stop</string>
+    <string name="voice_faster">Faster</string>
+    <string name="voice_slower">Slower</string>
+    <string name="voice_send">Send</string>
+    <string name="voice_type_hint">Or type a command, e.g. go forward</string>
+    <string name="voice_log">Log</string>
+    <string name="voice_log_ready">Ready. Tap the microphone to speak.</string>
+    <string name="voice_not_connected">Robot not connected</string>
+    <string name="voice_connected">Connected (%1$s)</string>
+    <string name="voice_sharing_wifi">Connected (%1$s) · Sharing over WiFi</string>
+    <string name="voice_relay_connected">Controlling via %1$s (WiFi)</string>
+    <string name="voice_relay_searching">Searching for a robot on WiFi…</string>
+    <string name="voice_robot_picker_title">Choose robot</string>
+    <string name="voice_robot_this_phone">This phone · %1$s</string>
+    <string name="voice_robot_wifi_item">%1$s · WiFi</string>
+    <string name="voice_robot_none_found">No robot shared on WiFi yet. Open the voice page on the phone that has the robot link.</string>
+    <string name="remote_mic_help">This phone\'s microphone speaks to Xiaozhi on the phone that holds the robot link. Say your command here — the conversation and Xiaozhi\'s replies stay on that phone.</string>
+    <string name="remote_mic_tap_to_start">Tap the microphone to speak</string>
+    <string name="remote_mic_streaming">Listening — tap to stop</string>
+    <string name="remote_mic_host">Speaking to %1$s (WiFi)</string>
+    <string name="remote_mic_live_on">Live on %1$s</string>
+    <string name="remote_mic_host_not_ready">Open the voice control page on %1$s first</string>
+    <string name="remote_mic_mic_unavailable">Microphone unavailable</string>
+    <string name="tool_take_photo">Take a photo</string>
+    <string name="voice_camera_switch">Switch camera</string>
+    <string name="voice_no_match">Sorry, I did not understand that</string>
+    <string name="voice_no_speech_recognizer">No speech recognizer is available on this phone</string>
+    <string name="voice_mic_permission_denied">Microphone permission is needed for voice control</string>
+    <string name="voice_status_stopped">Stopped</string>
+    <string name="voice_action_move">%1$s for %2$d ms</string>
+    <string name="voice_xiaozhi_settings">Xiaozhi settings</string>
+    <string name="voice_xiaozhi_settings_help">Voice commands are understood by the Xiaozhi LLM when a server is configured, and by built-in keywords when it is not. Leave the token empty to use the built-in keywords.</string>
+    <string name="voice_xiaozhi_endpoint_hint">Server URL (chat completions)</string>
+    <string name="voice_xiaozhi_token_hint">Access token</string>
+    <string name="voice_xiaozhi_model_hint">Model name</string>
+    <string name="voice_save">Save</string>
+    <string name="voice_cancel">Cancel</string>
+    <string name="voice_xiaozhi_saved">Xiaozhi settings saved</string>
+    <string name="voice_xiaozhi_fallback">Xiaozhi unavailable (%1$s), used built-in keywords</string>
+    <string name="voice_xiaozhi_sign_in">Sign in with xiaozhi.me</string>
+    <string name="voice_xiaozhi_login_title">Xiaozhi login</string>
+    <string name="voice_xiaozhi_login_waiting">Creating device, please wait…</string>
+    <string name="voice_xiaozhi_login_code">Your code: %1$s — open xiaozhi.me, sign in, add a device and enter this code.</string>
+    <string name="voice_xiaozhi_login_success">Signed in — API key saved</string>
+    <string name="voice_xiaozhi_login_error">Login failed: %1$s</string>
+    <string name="voice_xiaozhi_login_cancelled">Login cancelled</string>
+    <!-- Voice Control v2: Xiaozhi companion pairing + conversation -->
+    <string name="voice_pair_title">First-time pairing</string>
+    <string name="voice_pair_instructions">Open xiaozhi.me, sign in, add a new device and enter the code shown here. Once bound, the device connects automatically. Credentials are saved locally — next time the app skips pairing and connects on its own.</string>
+    <string name="voice_pair_waiting">Waiting for binding…</string>
+    <string name="voice_pair_bound">Bound! Connecting…</string>
+    <string name="voice_pair_retry">Retry</string>
+    <string name="voice_pair_skip">Use offline mode</string>
+    <string name="voice_pair_code">Code: %1$s</string>
+    <string name="voice_ws_ready">Xiaozhi ready</string>
+    <string name="voice_ws_offline">Xiaozhi offline</string>
+    <string name="voice_log_you">You:</string>
+    <string name="voice_log_bot">Xiaozhi:</string>
+    <string name="voice_assistant_silent">Assistant silent, used built-in brain</string>
+    <string name="voice_state_idle">Ready</string>
+    <string name="voice_state_connecting">Connecting…</string>
+    <string name="voice_state_listening">Listening…</string>
+    <string name="voice_state_speaking">Speaking…</string>
+    <string name="voice_state_thinking">Thinking…</string>
+    <!-- Voice Control redesign: emotional face + Lily-style listening -->
+    <string name="voice_mode_handsfree">Hands-free</string>
+    <string name="voice_mode_ptt">Push to speak</string>
+    <string name="voice_language_title">Voice language</string>
+    <string name="voice_language_system">System default</string>
+</resources>

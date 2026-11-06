@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Segment label: dark when selected, secondary gray otherwise. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="#1C1C1E" android:state_checked="true" />
+    <item android:color="#636366" />
+</selector>

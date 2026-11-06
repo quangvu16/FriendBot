@@ -1,0 +1,557 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Voice Control redesign: friendly Apple look. Grouped #F2F2F7 ground, white rounded
+     cards, deep system blue accent, pill capsules. Top to bottom: large title + gear,
+     connection capsule, face hero card (face + state caption + listen-mode toggle + live
+     level waveform), chat-bubble transcript (You: right / Xiaozhi: left / "»" chips),
+     then the controls — mic orb + message capsule with Send, quick-drive tiles (no
+     lights, they are pruned) and the speed card. First-time pairing still replaces the
+     live UI with the verification-code panel. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#F2F2F7"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="10dp">
+
+    <!-- Header: large title + Xiaozhi settings gear -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/tile_voice_control"
+            android:textColor="#000000"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/settingsButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/voice_xiaozhi_settings"
+            android:src="@drawable/ic_settings"
+            app:tint="#636366" />
+    </LinearLayout>
+
+    <!-- Connection status as a pill capsule -->
+    <TextView
+        android:id="@+id/connectionText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:background="@drawable/voice_capsule_bg"
+        android:drawablePadding="6dp"
+        android:drawableStart="@drawable/ic_voice_bluetooth"
+        android:drawableTint="#636366"
+        android:paddingStart="12dp"
+        android:paddingTop="6dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="6dp"
+        android:text="@string/voice_not_connected"
+        android:textColor="#48484A"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        tools:text="Connected (BLE) · Xiaozhi ready" />
+
+    <!-- First-time pairing panel: replaces the live UI until the device is bound -->
+    <LinearLayout
+        android:id="@+id/pairingPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="16dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/pairTitleText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/voice_pair_title"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/pairCodeText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="16dp"
+            android:textColor="#000000"
+            android:textSize="48sp"
+            android:textStyle="bold"
+            android:typeface="monospace"
+            tools:text="Code: 123456" />
+
+        <TextView
+            android:id="@+id/pairInstructionsText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/voice_pair_instructions"
+            android:textColor="#1C1C1E" />
+
+        <TextView
+            android:id="@+id/pairStatusText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:text="@string/voice_pair_waiting"
+            android:textColor="#636366" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="8dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/pairRetryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:text="@string/voice_pair_retry"
+                android:visibility="gone" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/pairSkipButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:text="@string/voice_pair_skip" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Live voice UI -->
+    <LinearLayout
+        android:id="@+id/voiceUiPanel"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <!-- Face hero card: emotional face + state caption + listen mode + waveform -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/voice_card_bg"
+            android:elevation="2dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <FrameLayout
+                android:id="@+id/faceContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal">
+
+                <View
+                    android:id="@+id/faceRing"
+                    android:layout_width="132dp"
+                    android:layout_height="132dp"
+                    android:layout_gravity="center"
+                    android:alpha="0" />
+
+                <TextView
+                    android:id="@+id/faceEmoji"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="😊"
+                    android:textSize="72sp"
+                    tools:text="😊" />
+            </FrameLayout>
+
+            <!-- State caption under the face -->
+            <TextView
+                android:id="@+id/micStatusText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:text="@string/voice_state_idle"
+                android:textColor="#636366"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                tools:text="Listening…" />
+
+            <!-- Listen-mode toggle: hands-free (default) vs push-to-talk -->
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/modeToggleGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/voice_segment_track_bg"
+                android:padding="2dp"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/handsfreeButton"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp"
+                    android:text="@string/voice_mode_handsfree"
+                    android:textColor="@color/voice_segment_text"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="@color/voice_segment_tint"
+                    app:shapeAppearanceOverlay="@style/VoiceSegmentShape" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/pttButton"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp"
+                    android:text="@string/voice_mode_ptt"
+                    android:textColor="@color/voice_segment_text"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="@color/voice_segment_tint"
+                    app:shapeAppearanceOverlay="@style/VoiceSegmentShape" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            <!-- Live level waveform (mic RMS while listening, playback level while speaking) -->
+            <FrameLayout
+                android:id="@+id/waveformContainer"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="2dp" />
+        </LinearLayout>
+
+        <!-- Conversation transcript: bubbles, newest last -->
+        <ScrollView
+            android:id="@+id/conversationScroll"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fadeScrollbars="true">
+
+            <LinearLayout
+                android:id="@+id/conversationList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp" />
+        </ScrollView>
+
+        <!-- Controls: mic orb + message capsule with Send inside -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingTop="8dp">
+
+            <ImageButton
+                android:id="@+id/micButton"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@drawable/voice_mic_orb"
+                android:contentDescription="@string/voice_tap_to_speak"
+                android:elevation="3dp"
+                android:padding="15dp"
+                android:src="@drawable/ic_mic"
+                android:scaleType="fitCenter"
+                app:tint="@android:color/white" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/voice_input_capsule_bg"
+                android:elevation="1dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="4dp">
+
+                <EditText
+                    android:id="@+id/typedCommand"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:hint="@string/voice_type_hint"
+                    android:importantForAutofill="no"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="0dp"
+                    android:textColor="#1C1C1E"
+                    android:textColorHint="#8E8E93"
+                    android:textSize="15sp" />
+
+                <ImageButton
+                    android:id="@+id/sendTypedButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/voice_send_orb"
+                    android:contentDescription="@string/voice_send"
+                    android:padding="10dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_voice_send"
+                    app:tint="@android:color/white" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Quick-drive tiles: Forward / Backward / Turn left / Turn right / Stop (no lights) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="8dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/forwardButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:layout_weight="1"
+                android:minHeight="64dp"
+                android:minWidth="0dp"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:text="@string/voice_forward"
+                android:textColor="#3A3A3C"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                app:backgroundTint="@android:color/white"
+                app:icon="@drawable/ic_btn_arrow_upward"
+                app:iconGravity="top"
+                app:iconPadding="3dp"
+                app:iconSize="18dp"
+                app:iconTint="#3A3A3C"
+                app:shapeAppearanceOverlay="@style/VoiceTileShape" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/backwardButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:layout_weight="1"
+                android:minHeight="64dp"
+                android:minWidth="0dp"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:text="@string/voice_backward"
+                android:textColor="#3A3A3C"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                app:backgroundTint="@android:color/white"
+                app:icon="@drawable/ic_btn_arrow_downward"
+                app:iconGravity="top"
+                app:iconPadding="3dp"
+                app:iconSize="18dp"
+                app:iconTint="#3A3A3C"
+                app:shapeAppearanceOverlay="@style/VoiceTileShape" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/leftButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:layout_weight="1"
+                android:minHeight="64dp"
+                android:minWidth="0dp"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:text="@string/voice_left"
+                android:textColor="#3A3A3C"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                app:backgroundTint="@android:color/white"
+                app:icon="@drawable/ic_btn_turn_left"
+                app:iconGravity="top"
+                app:iconPadding="3dp"
+                app:iconSize="18dp"
+                app:iconTint="#3A3A3C"
+                app:shapeAppearanceOverlay="@style/VoiceTileShape" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/rightButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:layout_weight="1"
+                android:minHeight="64dp"
+                android:minWidth="0dp"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:text="@string/voice_right"
+                android:textColor="#3A3A3C"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                app:backgroundTint="@android:color/white"
+                app:icon="@drawable/ic_btn_turn_right"
+                app:iconGravity="top"
+                app:iconPadding="3dp"
+                app:iconSize="18dp"
+                app:iconTint="#3A3A3C"
+                app:shapeAppearanceOverlay="@style/VoiceTileShape" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/stopButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:layout_weight="1"
+                android:minHeight="64dp"
+                android:minWidth="0dp"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:text="@string/voice_stop"
+                android:textColor="#D70015"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                app:backgroundTint="#FDECEA"
+                app:icon="@drawable/ic_btn_stop"
+                app:iconGravity="top"
+                app:iconPadding="3dp"
+                app:iconSize="18dp"
+                app:iconTint="#D70015"
+                app:shapeAppearanceOverlay="@style/VoiceTileShape" />
+        </LinearLayout>
+
+        <!-- Speed card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/voice_card_bg"
+            android:elevation="2dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="12dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="@string/voice_speed"
+                android:src="@drawable/ic_voice_gauge"
+                app:tint="#636366" />
+
+            <TextView
+                android:id="@+id/speedLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="8dp"
+                android:text="@string/voice_speed"
+                android:textColor="#48484A"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.slider.Slider
+                android:id="@+id/speedSlider"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:stepSize="0.05"
+                android:value="0.75"
+                android:valueFrom="0.25"
+                android:valueTo="1"
+                android:contentDescription="@string/voice_speed" />
+
+            <TextView
+                android:id="@+id/speedValueText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="8dp"
+                android:textColor="#1C1C1E"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                tools:text="75%" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Log -->
+    <TextView
+        android:id="@+id/logLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:text="@string/voice_log"
+        android:textColor="#636366"
+        android:textSize="11sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/logText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="32dp"
+        android:textColor="#636366"
+        android:textSize="11sp"
+        tools:text="..." />
+    </LinearLayout>
+
+    <!-- Live phone-camera corner: the vision tool's eye. Tap = look around now,
+         the button flips between the phone's back and front cameras. -->
+    <FrameLayout
+        android:id="@+id/cameraCorner"
+        android:layout_width="88dp"
+        android:layout_height="118dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="56dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/voice_camera_corner_bg"
+        android:elevation="6dp"
+        android:visibility="gone">
+
+        <androidx.camera.view.PreviewView
+            android:id="@+id/cameraPreview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:id="@+id/cameraStill"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/tool_take_photo"
+            android:scaleType="centerCrop"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/cameraFlipButton"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="4dp"
+            android:background="@drawable/voice_camera_flip_bg"
+            android:contentDescription="@string/voice_camera_switch"
+            android:padding="6dp"
+            android:src="@drawable/ic_camera_flip"
+            app:tint="#FFFFFF" />
+    </FrameLayout>
+</FrameLayout>

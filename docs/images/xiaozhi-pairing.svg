@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 810" font-family="Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <style>
+      .bar { font-size: 17px; font-weight: bold; fill: #FFFFFF; }
+      .h1 { font-size: 16px; fill: #111827; font-weight: bold; }
+      .body { font-size: 13px; fill: #4B5563; }
+      .code { font-size: 52px; font-weight: bold; fill: #0277BD; letter-spacing: 10px; font-family: Menlo, monospace; }
+      .status { font-size: 13px; fill: #16A34A; }
+      .btnw { font-size: 13px; fill: #FFFFFF; font-weight: bold; }
+      .btng { font-size: 13px; fill: #0277BD; font-weight: bold; }
+    </style>
+  </defs>
+
+  <!-- phone frame -->
+  <rect x="4" y="4" width="382" height="802" rx="28" fill="#111827"/>
+  <rect x="12" y="12" width="366" height="786" rx="22" fill="#FFFFFF"/>
+
+  <!-- status bar -->
+  <rect x="12" y="12" width="366" height="26" fill="#0277BD"/>
+  <text x="30" y="30" fill="#FFFFFF" font-size="12">12:30</text>
+  <text x="352" y="30" fill="#FFFFFF" font-size="12" text-anchor="end">●●● ▮</text>
+
+  <!-- app bar -->
+  <rect x="12" y="38" width="366" height="52" fill="#0277BD"/>
+  <text x="30" y="70" class="bar">Voice Control</text>
+
+  <!-- pairing card -->
+  <text x="30" y="150" class="h1">First-time pairing</text>
+  <text x="30" y="182" class="body">Open xiaozhi.me, sign in, add a new device</text>
+  <text x="30" y="202" class="body">and enter the code shown here. Once bound,</text>
+  <text x="30" y="222" class="body">the device connects automatically.</text>
+  <text x="30" y="248" class="body">Credentials are saved locally — next time the</text>
+  <text x="30" y="268" class="body">app skips pairing and connects on its own.</text>
+
+  <!-- big code -->
+  <rect x="40" y="308" width="310" height="110" rx="14" fill="#E0F2FE" stroke="#0277BD" stroke-width="2"/>
+  <text x="195" y="378" text-anchor="middle" class="code">123456</text>
+
+  <!-- status -->
+  <text x="195" y="456" text-anchor="middle" class="status">Waiting for binding…</text>
+
+  <!-- spinner-ish dots -->
+  <circle cx="171" cy="480" r="5" fill="#0277BD"/>
+  <circle cx="195" cy="480" r="5" fill="#90CAF9"/>
+  <circle cx="219" cy="480" r="5" fill="#E3F2FD"/>
+
+  <!-- buttons -->
+  <rect x="40" y="530" width="140" height="44" rx="22" fill="#0277BD"/>
+  <text x="110" y="558" text-anchor="middle" class="btnw">RETRY</text>
+  <rect x="210" y="530" width="140" height="44" rx="22" fill="#FFFFFF" stroke="#0277BD" stroke-width="2"/>
+  <text x="280" y="558" text-anchor="middle" class="btng">USE OFFLINE</text>
+
+  <!-- footnote -->
+  <text x="30" y="640" class="body" font-size="12">Skip pairing to drive with built-in keywords</text>
+  <text x="30" y="658" class="body" font-size="12">(English / Vietnamese / Chinese) or a manually</text>
+  <text x="30" y="676" class="body" font-size="12">configured API key in the gear settings.</text>
+
+  <!-- nav bar -->
+  <rect x="12" y="768" width="366" height="30" fill="#FFFFFF"/>
+  <rect x="155" y="786" width="80" height="5" rx="2.5" fill="#111827"/>
+</svg>
