@@ -40,7 +40,7 @@ The full feature grid:
 * **AI:** Autopilot, Object Tracking, Point Goal Navigation, Model Management
 * **Legacy** (Android only): Default, the original OpenBot screen
 
-The AI features are OpenBot's camera neural networks. *Example:* **Object Tracking** with class "person" makes FriendBot follow you using the phone's back camera. The firmware still stops for obstacles.
+The AI features are OpenBot's camera neural networks, explained step by step in [AI_AND_MISSION.md](AI_AND_MISSION.md). *Example:* **Object Tracking** with class "person" makes FriendBot follow you using the phone's back camera. The firmware still stops for obstacles.
 
 ## 3 · Bluetooth
 
@@ -75,6 +75,8 @@ Lists nearby Bluetooth LE devices. Tap **Connect** next to **`FriendBot: MTV`**.
 *Example:* Normal speed, both thumbs fully up → `c192,192`; with a box 30 cm ahead the firmware reduces it to about `c82,82`.
 
 ## 6 · GPS Mission
+
+> Detailed guide for GPS Mission and the AI screens (Autopilot, Object Tracking, Point Goal Navigation, Model Management): **[AI_AND_MISSION.md](AI_AND_MISSION.md)**.
 
 Mission Planner-style waypoint driving with the **phone's GPS** (no external GPS needed).
 
@@ -126,6 +128,12 @@ One file per screen, in `docs/images/screens/android/` and `docs/images/screens/
 | 7. Remote Mic | <img src="images/screens/android/07-remote-mic.svg" width="220" alt="Android Remote Mic"> | <img src="images/screens/ios/07-remote-mic.svg" width="220" alt="iOS Remote Mic"> |
 | 8. Settings | <img src="images/screens/android/08-settings.svg" width="220" alt="Android Settings"> | <img src="images/screens/ios/08-settings.svg" width="220" alt="iOS Settings"> |
 | 9. Voice Control | <img src="images/screens/android/09-voice-control.svg" width="220" alt="Android Voice Control"> | <img src="images/screens/ios/09-voice-control.svg" width="220" alt="iOS Voice Control"> |
+| 10. GPS Mission (tap menu) | <img src="images/screens/android/10-gps-mission-detail.svg" width="220" alt="Android GPS Mission (tap menu)"> | <img src="images/screens/ios/10-gps-mission-detail.svg" width="220" alt="iOS GPS Mission (tap menu)"> |
+| 11. Autopilot | <img src="images/screens/android/11-autopilot.svg" width="220" alt="Android Autopilot"> | <img src="images/screens/ios/11-autopilot.svg" width="220" alt="iOS Autopilot"> |
+| 12. Object Tracking | <img src="images/screens/android/12-object-tracking.svg" width="220" alt="Android Object Tracking"> | <img src="images/screens/ios/12-object-tracking.svg" width="220" alt="iOS Object Tracking"> |
+| 13. Point Goal Navigation | <img src="images/screens/android/13-point-goal-navigation.svg" width="220" alt="Android Point Goal Navigation"> | <img src="images/screens/ios/13-point-goal-navigation.svg" width="220" alt="iOS Point Goal Navigation"> |
+| 14. Model Management | <img src="images/screens/android/14-model-management.svg" width="220" alt="Android Model Management"> | <img src="images/screens/ios/14-model-management.svg" width="220" alt="iOS Model Management"> |
+| 15. Model Details dialog | <img src="images/screens/android/15-model-details-dialog.svg" width="220" alt="Android Model Details dialog"> | <img src="images/screens/ios/15-model-details-dialog.svg" width="220" alt="iOS Model Details dialog"> |
 
 ## Questions to go deeper
 

@@ -1,6 +1,6 @@
 # FriendBot app screens (SVG)
 
-One SVG per screen, drawn from the app layout code. Explained in [docs/APP_SCREENS.md](../../APP_SCREENS.md) and, for Voice Control, [ANDROID_APP.md](../../ANDROID_APP.md) / [IOS_APP.md](../../IOS_APP.md).
+One SVG per screen, drawn from the app layout code. Explained in [docs/APP_SCREENS.md](../../APP_SCREENS.md), [docs/AI_AND_MISSION.md](../../AI_AND_MISSION.md) and, for Voice Control, [ANDROID_APP.md](../../ANDROID_APP.md) / [IOS_APP.md](../../IOS_APP.md).
 
 - `01-home.svg`: Home · car dashboard
 - `02-more-features.svg`: More features
@@ -11,3 +11,9 @@ One SVG per screen, drawn from the app layout code. Explained in [docs/APP_SCREE
 - `07-remote-mic.svg`: Remote Mic
 - `08-settings.svg`: Settings
 - `09-voice-control.svg`: Voice Control
+- `10-gps-mission-detail.svg`: GPS Mission (tap menu)
+- `11-autopilot.svg`: Autopilot
+- `12-object-tracking.svg`: Object Tracking
+- `13-point-goal-navigation.svg`: Point Goal Navigation
+- `14-model-management.svg`: Model Management
+- `15-model-details-dialog.svg`: Model Details dialog

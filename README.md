@@ -25,6 +25,7 @@ You speak in English, Tiếng Việt or 中文 → the phone sends your voice to
 | [4. iOS app](docs/IOS_APP.md) | Build in Xcode, connect by Bluetooth, pair Xiaozhi, talk | [ios-app.svg](docs/images/ios-app.svg) |
 | [5. Connect to xiaozhi.me](docs/XIAOZHI_PAIRING.md) | Create the account and agent, get the 6-digit code, bind the phone | [xiaozhi-connect.svg](docs/images/xiaozhi-connect.svg) |
 | [6. Other app screens](docs/APP_SCREENS.md) | Home dashboard, Bluetooth, Car setup, Drive, GPS Mission, Remote Mic, Settings | [android-screens.svg](docs/images/android-screens.svg) · [ios-screens.svg](docs/images/ios-screens.svg) |
+| [7. GPS Mission + AI screens](docs/AI_AND_MISSION.md) | GPS Mission, Autopilot, Object Tracking, Point Goal Navigation, Model Management | [gps-mission](docs/images/gps-mission.svg) · [autopilot](docs/images/autopilot.svg) · [object-tracking](docs/images/object-tracking.svg) · [point-goal](docs/images/point-goal-navigation.svg) · [models](docs/images/model-management.svg) |
 
 ## Quick start (about 1 hour)
 

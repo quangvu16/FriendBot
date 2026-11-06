@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="330" height="640" viewBox="-20 -20 330 640" font-family="Inter, Helvetica, Arial, sans-serif">
+<title>FriendBot Android · GPS Mission</title>
+<rect x="-20" y="-20" width="330" height="640" fill="#f8fafc"/>
+<g transform="translate(0,0)">
+<rect x="-10" y="-10" width="310" height="620" rx="34" fill="#0f172a"/>
+<clipPath id="c0"><rect x="0" y="0" width="290" height="600" rx="26"/></clipPath>
+<g clip-path="url(#c0)"><rect width="290" height="600" fill="#f6f7fb"/>
+<text x="14" y="18" font-size="10" font-weight="400" fill="#374151" text-anchor="start">9:41</text>
+<circle cx="145.0" cy="12" r="4" fill="#0f172a"/>
+<text x="276" y="18" font-size="10" font-weight="400" fill="#374151" text-anchor="end">▾ ◢ ▮</text>
+<rect x="0" y="26" width="290" height="44" rx="0" fill="#ffffff"/>
+<text x="14" y="54" font-size="16" font-weight="400" fill="#111827" text-anchor="start">←</text>
+<text x="42" y="54" font-size="15" font-weight="600" fill="#111827" text-anchor="start">GPS Mission</text>
+<line x1="0" y1="70" x2="290" y2="70" stroke="#e5e7eb"/>
+<rect x="0" y="72" width="290" height="290" rx="0" fill="#e8efe3"/>
+<line x1="0" y1="110" x2="290" y2="90" stroke="#ffffff" stroke-width="6"/>
+<line x1="0" y1="158" x2="290" y2="142" stroke="#ffffff" stroke-width="6"/>
+<line x1="0" y1="206" x2="290" y2="194" stroke="#ffffff" stroke-width="6"/>
+<line x1="0" y1="254" x2="290" y2="246" stroke="#ffffff" stroke-width="6"/>
+<line x1="0" y1="302" x2="290" y2="298" stroke="#ffffff" stroke-width="6"/>
+<line x1="0" y1="350" x2="290" y2="350" stroke="#ffffff" stroke-width="6"/>
+<line x1="60" y1="72" x2="120" y2="362" stroke="#ffffff" stroke-width="8"/>
+<rect x="180" y="100" width="70" height="50" rx="6" fill="#cfe3c4"/>
+<polyline points="70,300 110,210 200,180 230,280" fill="none" stroke="#0A66D6" stroke-width="3" stroke-dasharray="6 4"/>
+<circle cx="70" cy="300" r="10" fill="#ffffff" stroke="#0A66D6" stroke-width="2.5"/>
+<text x="70" y="304" font-size="10" font-weight="800" fill="#0A66D6" text-anchor="middle">1</text>
+<circle cx="110" cy="210" r="10" fill="#ffffff" stroke="#0A66D6" stroke-width="2.5"/>
+<text x="110" y="214" font-size="10" font-weight="800" fill="#0A66D6" text-anchor="middle">2</text>
+<circle cx="200" cy="180" r="10" fill="#ffffff" stroke="#0A66D6" stroke-width="2.5"/>
+<text x="200" y="184" font-size="10" font-weight="800" fill="#0A66D6" text-anchor="middle">3</text>
+<circle cx="230" cy="280" r="10" fill="#ffffff" stroke="#0A66D6" stroke-width="2.5"/>
+<text x="230" y="284" font-size="10" font-weight="800" fill="#0A66D6" text-anchor="middle">4</text>
+<path d="M66,338 l8,0 l-4,-14 z" fill="#dc2626"/>
+<text x="80" y="338" font-size="9" font-weight="700" fill="#dc2626" text-anchor="start">FriendBot</text>
+<text x="76" y="316" font-size="9" font-weight="800" fill="#7c3aed" text-anchor="start">H</text>
+<rect x="150" y="230" width="128" height="58" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="160" y="250" font-size="10" font-weight="600" fill="#0A66D6" text-anchor="start">Add as waypoint</text>
+<line x1="150" y1="259" x2="278" y2="259" stroke="#e5e7eb"/>
+<text x="160" y="277" font-size="10" font-weight="600" fill="#0A66D6" text-anchor="start">Go here now</text>
+<rect x="208" y="80" width="70" height="22" rx="8" fill="#ffffff"/>
+<text x="243.0" y="94.24" font-size="9" font-weight="700" fill="#374151" text-anchor="middle">Satellite</text>
+<rect x="0" y="356" width="290" height="244" rx="16" fill="#ffffff"/>
+<rect x="127.0" y="362" width="36" height="4" rx="2" fill="#d1d5db"/>
+<text x="14" y="386" font-size="12" font-weight="700" fill="#16a34a" text-anchor="start">Driving the mission</text>
+<rect x="14" y="396" width="84" height="28" rx="8" fill="#0A66D6"/>
+<text x="56.0" y="413.6" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">Pause</text>
+<rect x="104" y="396" width="84" height="28" rx="8" fill="#dc2626"/>
+<text x="146.0" y="413.6" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">Stop</text>
+<rect x="194" y="396" width="84" height="28" rx="8" fill="#7c3aed"/>
+<text x="236.0" y="413.6" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">Return home</text>
+<text x="14" y="446" font-size="9.5" font-weight="600" fill="#111827" text-anchor="start" font-family="Menlo, monospace">Dist 23 m</text>
+<text x="82" y="446" font-size="9.5" font-weight="600" fill="#111827" text-anchor="start" font-family="Menlo, monospace">Brng 41°</text>
+<text x="150" y="446" font-size="9.5" font-weight="600" fill="#111827" text-anchor="start" font-family="Menlo, monospace">Spd 0.6 m/s</text>
+<text x="218" y="446" font-size="9.5" font-weight="600" fill="#111827" text-anchor="start" font-family="Menlo, monospace">Acc 4 m</text>
+<text x="14" y="468" font-size="10" font-weight="400" fill="#6b7280" text-anchor="start">Mission: 4 waypoints • 86 m total</text>
+<rect x="14" y="478" width="49" height="22" rx="8" fill="#f3f4f6"/>
+<text x="38.5" y="492.06" font-size="8.5" font-weight="700" fill="#374151" text-anchor="middle">+ WP here</text>
+<rect x="67" y="478" width="49" height="22" rx="8" fill="#f3f4f6"/>
+<text x="91.5" y="492.06" font-size="8.5" font-weight="700" fill="#374151" text-anchor="middle">Clear</text>
+<rect x="120" y="478" width="49" height="22" rx="8" fill="#f3f4f6"/>
+<text x="144.5" y="492.06" font-size="8.5" font-weight="700" fill="#374151" text-anchor="middle">Save</text>
+<rect x="173" y="478" width="49" height="22" rx="8" fill="#f3f4f6"/>
+<text x="197.5" y="492.06" font-size="8.5" font-weight="700" fill="#374151" text-anchor="middle">.waypoints</text>
+<rect x="226" y="478" width="49" height="22" rx="8" fill="#f3f4f6"/>
+<text x="250.5" y="492.06" font-size="8.5" font-weight="700" fill="#374151" text-anchor="middle">KML</text>
+<text x="14" y="524" font-size="10" font-weight="400" fill="#374151" text-anchor="start" font-family="Menlo, monospace">1  10.7769, 106.7009</text>
+<text x="180" y="524" font-size="10" font-weight="400" fill="#6b7280" text-anchor="start">0 m</text>
+<text x="14" y="542" font-size="10" font-weight="400" fill="#374151" text-anchor="start" font-family="Menlo, monospace">2  10.7773, 106.7013</text>
+<text x="180" y="542" font-size="10" font-weight="400" fill="#6b7280" text-anchor="start">62 m</text>
+<circle cx="250" cy="556" r="26" fill="#dc2626" stroke="#fff" stroke-width="3"/>
+<text x="250" y="560" font-size="10" font-weight="800" fill="#fff" text-anchor="middle">STOP</text>
+</g></g>
+</svg>

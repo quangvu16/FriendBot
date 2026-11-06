@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="330" height="640" viewBox="-20 -20 330 640" font-family="Inter, Helvetica, Arial, sans-serif">
+<title>FriendBot iOS · Point Goal Navigation</title>
+<rect x="-20" y="-20" width="330" height="640" fill="#f8fafc"/>
+<g transform="translate(0,0)">
+<rect x="-10" y="-10" width="310" height="620" rx="48" fill="#0f172a"/>
+<clipPath id="c0"><rect x="0" y="0" width="290" height="600" rx="40"/></clipPath>
+<g clip-path="url(#c0)"><rect width="290" height="600" fill="#f2f2f7"/>
+<text x="22" y="24" font-size="11.5" font-weight="700" fill="#111827" text-anchor="start">9:41</text>
+<rect x="99.0" y="9" width="92" height="22" rx="11" fill="#0f172a"/>
+<text x="12" y="64" font-size="13" font-weight="400" fill="#0A66D6" text-anchor="start">‹ Back</text>
+<text x="145.0" y="64" font-size="13.5" font-weight="700" fill="#111827" text-anchor="middle">Point Goal Navigation</text>
+<rect x="0" y="74" width="290" height="526" rx="0" fill="#94a3b8"/>
+<rect x="0" y="74" width="290" height="236.70000000000002" fill="#cbd5e1"/>
+<polygon points="0,600 290,600 179.8,310.70000000000005 110.2,310.70000000000005" fill="#64748b"/>
+<line x1="145.0" y1="315.96000000000004" x2="145.0" y2="600" stroke="#f8fafc" stroke-width="3" stroke-dasharray="10 8"/>
+<rect x="10" y="179.2" width="40" height="263.0" fill="#a3b1c2"/>
+<rect x="234" y="205.5" width="46" height="236.70000000000002" fill="#a3b1c2"/>
+<circle cx="79.01202243435863" cy="274.80679888536764" r="2" fill="#fde047"/>
+<circle cx="119.01456065267026" cy="291.2811821151665" r="2" fill="#fde047"/>
+<circle cx="36.628773919897476" cy="369.7059426062538" r="2" fill="#fde047"/>
+<circle cx="249.48876077192972" cy="496.54384777566713" r="2" fill="#fde047"/>
+<circle cx="211.29065062635962" cy="312.573159869521" r="2" fill="#fde047"/>
+<circle cx="154.1700020437034" cy="329.98508061438116" r="2" fill="#fde047"/>
+<circle cx="63.166132321342225" cy="275.7662869932266" r="2" fill="#fde047"/>
+<circle cx="73.60010814472912" cy="536.9372507941232" r="2" fill="#fde047"/>
+<circle cx="227.23001219460485" cy="498.51544625133886" r="2" fill="#fde047"/>
+<circle cx="220.11195963574156" cy="303.51252653011835" r="2" fill="#fde047"/>
+<circle cx="97.46248932488389" cy="441.37824156737537" r="2" fill="#fde047"/>
+<circle cx="202.9736772196795" cy="513.7781778412484" r="2" fill="#fde047"/>
+<circle cx="240.01268784029983" cy="269.57640433790516" r="2" fill="#fde047"/>
+<circle cx="171.46297092996997" cy="455.60106317223847" r="2" fill="#fde047"/>
+<circle cx="146.48844392760384" cy="298.5372754085695" r="2" fill="#fde047"/>
+<circle cx="138.3969718962863" cy="270.4120939103941" r="2" fill="#fde047"/>
+<circle cx="253.647090974977" cy="517.2239661188564" r="2" fill="#fde047"/>
+<circle cx="156.90971739676348" cy="337.4781451843172" r="2" fill="#fde047"/>
+<circle cx="247.21757235367159" cy="424.0126429361135" r="2" fill="#fde047"/>
+<circle cx="240.57930996969748" cy="511.67802005511584" r="2" fill="#fde047"/>
+<circle cx="147.09309383318788" cy="373.6348417158908" r="2" fill="#fde047"/>
+<circle cx="169.72811804749736" cy="379.0716794992717" r="2" fill="#fde047"/>
+<circle cx="60.33015153040212" cy="339.02548766561097" r="2" fill="#fde047"/>
+<circle cx="223.14807965865518" cy="255.74983316497503" r="2" fill="#fde047"/>
+<circle cx="31.58049975087816" cy="441.1795370816893" r="2" fill="#fde047"/>
+<circle cx="90.10830290405468" cy="412.0097307716562" r="2" fill="#fde047"/>
+<circle cx="137.81002152874825" cy="351.0241584042456" r="2" fill="#fde047"/>
+<circle cx="269.3197185430281" cy="304.1923711979943" r="2" fill="#fde047"/>
+<circle cx="123.19866410183126" cy="306.44925594282205" r="2" fill="#fde047"/>
+<circle cx="178.16624544775476" cy="329.8649375171792" r="2" fill="#fde047"/>
+<circle cx="108.95768865183801" cy="479.5277725549671" r="2" fill="#fde047"/>
+<circle cx="100.16722581243549" cy="419.6122167795187" r="2" fill="#fde047"/>
+<circle cx="246.07877538266445" cy="274.11146151227933" r="2" fill="#fde047"/>
+<circle cx="35.40256051004396" cy="314.7804819959272" r="2" fill="#fde047"/>
+<circle cx="211.29056033156897" cy="437.70739989092567" r="2" fill="#fde047"/>
+<circle cx="79.35429245633148" cy="347.27930452821164" r="2" fill="#fde047"/>
+<circle cx="64.38492337413925" cy="387.96796319011594" r="2" fill="#fde047"/>
+<circle cx="30.70279694550491" cy="463.73881830476284" r="2" fill="#fde047"/>
+<circle cx="243.98194477795565" cy="545.6065562728656" r="2" fill="#fde047"/>
+<circle cx="203.71948911848145" cy="547.2378941329184" r="2" fill="#fde047"/>
+<ellipse cx="155.0" cy="322" rx="26" ry="8" fill="#16a34a" opacity="0.5"/>
+<line x1="155.0" y1="322" x2="155.0" y2="278" stroke="#16a34a" stroke-width="4"/>
+<path d="M155.0,278 l24,8 l-24,8 z" fill="#16a34a"/>
+<rect x="22" y="282" width="246" height="214" rx="16" fill="#ffffff"/>
+<text x="145.0" y="310" font-size="15" font-weight="700" fill="#111827" text-anchor="middle">Set Goal</text>
+<text x="145.0" y="332" font-size="10" font-weight="400" fill="#4b5563" text-anchor="middle">Mount the phone on the robot and</text>
+<text x="145.0" y="347" font-size="10" font-weight="400" fill="#4b5563" text-anchor="middle">specify a goal. The robot will try</text>
+<text x="145.0" y="362" font-size="10" font-weight="400" fill="#4b5563" text-anchor="middle">to reach the goal after pressing start.</text>
+<rect x="38" y="386" width="214" height="34" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="46" y="398" font-size="8.5" font-weight="400" fill="#0A66D6" text-anchor="start">Forward [m]</text>
+<text x="46" y="413" font-size="12" font-weight="600" fill="#111827" text-anchor="start">1.0</text>
+<rect x="38" y="428" width="214" height="34" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="46" y="440" font-size="8.5" font-weight="400" fill="#0A66D6" text-anchor="start">Left [m]</text>
+<text x="46" y="455" font-size="12" font-weight="600" fill="#111827" text-anchor="start">0</text>
+<text x="158" y="482" font-size="11.5" font-weight="700" fill="#0A66D6" text-anchor="middle">Cancel</text>
+<text x="228" y="482" font-size="11.5" font-weight="700" fill="#0A66D6" text-anchor="middle">Start</text>
+<circle cx="250" cy="556" r="26" fill="#dc2626" stroke="#fff" stroke-width="3"/>
+<text x="250" y="560" font-size="10" font-weight="800" fill="#fff" text-anchor="middle">STOP</text>
+<rect x="85.0" y="588" width="120" height="4" rx="2" fill="#0f172a"/>
+</g></g>
+</svg>
