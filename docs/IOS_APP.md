@@ -34,6 +34,14 @@ This guide covers the FriendBot iOS (iPhone) app from install to the last screen
   16. [Point Goal Navigation](#16-point-goal-navigation)
   17. [Model Management](#17-model-management)
   18. [Model Details (add your own model)](#18-model-details-add-your-own-model)
+* **Vision Modes**
+  19. [Vision Modes and Guides tiles](#19-vision-modes-and-guides-tiles)
+  20. [Follow a Coloured Object](#20-follow-a-coloured-object)
+  21. [Follow a Face](#21-follow-a-face)
+  22. [Follow a Black Line](#22-follow-a-black-line)
+  23. [Object Avoidance](#23-object-avoidance)
+  24. [Target Tracking](#24-target-tracking)
+  25. [Instruction pages (Guides)](#25-instruction-pages-guides)
 * [Several phones, one robot](#several-phones-one-robot)
 * [Safety, layer by layer](#safety-layer-by-layer)
 * [Troubleshooting](#troubleshooting)
@@ -99,6 +107,8 @@ The full grid of features:
 
 * **General:** Drive · Data Collection · Controller Mapping · Car setup · GPS Mission · Voice Control · Remote Mic
 * **AI:** Autopilot · Object Tracking · Point Goal Navigation · Model Management
+* **Vision Modes:** Follow a Coloured Object · Follow a Face · Follow a Black Line · Object Avoidance · Target Tracking
+* **Guides:** Coloured Object · Face · Black Line · Object Avoidance Instructions
 
 (The Android app also has a "Legacy" group; the iOS app does not.)
 
@@ -366,6 +376,86 @@ All neural networks: 3 are built in, and 11 detectors can be downloaded with **�
 *Example:* `my-friendbot-v1.tflite`, AUTOPILOT, 256 × 96 → it appears under Autopilot → Model.
 
 *Source (in `robot/ios/OpenBot/OpenBot/`):* `Controllers/ModelManagement/`
+
+---
+
+# Vision Modes
+
+## 19 Vision Modes and Guides tiles
+
+<p align="center"><img src="images/screens/ios/26-vision-modes-grid.svg" width="280" alt="iOS (iPhone) · Vision Modes and Guides tiles"></p>
+
+In **More features**, two groups were added for FriendBot: **Vision Modes** (5 camera behaviours) and **Guides** (4 instruction pages). They are based on Kirstin813/L4-Individual-Project and longpth/Android-Object-Tracking-OpenCV. All five modes share one screen layout: camera view, status line (top left), and a dark panel with **Auto**, speed **»** (Slow/Normal/Fast), camera flip **⟲**, **How to use**, the mode's own setting, and the live `left …, right …` values.
+
+*Source (in `robot/ios/OpenBot/OpenBot/`):* `Utils/Constants.swift`, `Controllers/Vision/VisionModeController.swift`
+
+## 20 Follow a Coloured Object
+
+<p align="center"><img src="images/screens/ios/20-follow-colour.svg" width="280" alt="iOS (iPhone) · Follow a Coloured Object"></p>
+
+1. Mount the phone with the camera facing forward → **tap the object** in the view (the swatch top right shows the colour).
+2. **Auto** on. Middle third → forward, left/right third → turn that way, colour lost → **stop**.
+3. **Colour tolerance** − / + : 5–60, default 15 (R, G and B each within the tolerance).
+
+*Example:* red ball in the middle → `c192,192` at Normal speed. More: [VISION_MODES.md §1](VISION_MODES.md#1--follow-a-coloured-object).
+
+*Source (in `robot/ios/OpenBot/OpenBot/`):* `Controllers/Vision/FollowColourController.swift`
+
+## 21 Follow a Face
+
+<p align="center"><img src="images/screens/ios/21-follow-face.svg" width="280" alt="iOS (iPhone) · Follow a Face"></p>
+
+1. **Auto** on. A box appears round your face (Apple **Vision** face landmarks).
+2. Face in the left third → spin left, right third → spin right, **centre → stop**. It never drives at you. It steers by the nose landmark.
+3. Best up to about 2 m, with your face well lit.
+
+*Example:* you step to its left → "◀ Face found" → `c-192,192`. More: [VISION_MODES.md §2](VISION_MODES.md#2--follow-a-face).
+
+*Source (in `robot/ios/OpenBot/OpenBot/`):* `Controllers/Vision/FollowFaceController.swift` (VNDetectFaceLandmarksRequest)
+
+## 22 Follow a Black Line
+
+<p align="center"><img src="images/screens/ios/22-follow-line.svg" width="280" alt="iOS (iPhone) · Follow a Black Line"></p>
+
+1. Make a black-tape circuit (thick, no 90° corners). Angle the camera **down** at the floor.
+2. Put the robot on the line with the **middle box** on it. Boxes light up green when they see black.
+3. **Black threshold** − / + : 30–150, default 90 (average grey below it = black). Then **Auto**.
+
+Middle → forward, left → turn left, right → turn right, none → **stop** ("No line"). More: [VISION_MODES.md §3](VISION_MODES.md#3--follow-a-black-line).
+
+*Source (in `robot/ios/OpenBot/OpenBot/`):* `Controllers/Vision/FollowLineController.swift`
+
+## 23 Object Avoidance
+
+<p align="center"><img src="images/screens/ios/23-object-avoidance.svg" width="280" alt="iOS (iPhone) · Object Avoidance"></p>
+
+1. **Tap the obstacle** to pick its colour → **Auto**. The robot drives forward while the way is clear.
+2. When the obstacle colour fills more than the **Stop distance** % of the view (2–40, default 10), it pivots toward the side with fewer obstacle pixels.
+3. The firmware sonars still stop the robot for obstacles of any colour.
+
+*Example:* an orange box on the right → "◀ Obstacle — turning away" → `c-192,192`. More: [VISION_MODES.md §4](VISION_MODES.md#4--object-avoidance).
+
+*Source (in `robot/ios/OpenBot/OpenBot/`):* `Controllers/Vision/AvoidObjectController.swift`
+
+## 24 Target Tracking
+
+<p align="center"><img src="images/screens/ios/24-target-tracking.svg" width="280" alt="iOS (iPhone) · Target Tracking"></p>
+
+1. **Drag a box** round any object → **Lock target** (the button becomes **Unlock**) → **Auto**.
+2. Box centre in the left / middle / right third → spin left / forward / spin right.
+3. "Target lost — stop and re-lock": the robot stops. Draw and lock again.
+
+Tracker: Apple Vision **VNTrackObjectRequest** (the system's object tracker). More: [VISION_MODES.md §5](VISION_MODES.md#5--target-tracking).
+
+*Source (in `robot/ios/OpenBot/OpenBot/`):* `Controllers/Vision/TargetTrackingController.swift`
+
+## 25 Instruction pages (Guides)
+
+<p align="center"><img src="images/screens/ios/25-guide-instructions.svg" width="280" alt="iOS (iPhone) · Instruction pages (Guides)"></p>
+
+**Coloured Object**, **Face**, **Black Line** and **Object Avoidance Instructions**: *What it does · You will need · Steps · Tips*, adapted from Kirstin813's L4 project. Open them from **More features → Guides** or from **How to use** on a Vision Mode. (Target Tracking's **How to use** shows a short hint.)
+
+*Source (in `robot/ios/OpenBot/OpenBot/`):* `Controllers/Vision/GuideController.swift`, `en.lproj/Localizable.strings`
 
 ---
 

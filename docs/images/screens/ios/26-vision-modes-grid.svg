@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="330" height="640" viewBox="-20 -20 330 640" font-family="Inter, Helvetica, Arial, sans-serif">
+<title>FriendBot iOS · Vision Modes and Guides tiles</title>
+<rect x="-20" y="-20" width="330" height="640" fill="#f8fafc"/>
+<g transform="translate(0,0)">
+<rect x="-10" y="-10" width="310" height="620" rx="48" fill="#0f172a"/>
+<clipPath id="c0"><rect x="0" y="0" width="290" height="600" rx="40"/></clipPath>
+<g clip-path="url(#c0)"><rect width="290" height="600" fill="#f2f2f7"/>
+<text x="22" y="24" font-size="11.5" font-weight="700" fill="#111827" text-anchor="start">9:41</text>
+<rect x="99.0" y="9" width="92" height="22" rx="11" fill="#0f172a"/>
+<text x="16" y="76" font-size="24" font-weight="800" fill="#111827" text-anchor="start">FriendBot</text>
+<text x="14" y="98" font-size="11" font-weight="600" fill="#6b7280" text-anchor="start">More features (full list, continued)</text>
+<text x="14" y="124" font-size="12.5" font-weight="700" fill="#111827" text-anchor="start">Vision Modes</text>
+<rect x="12" y="132" width="84" height="70" rx="12" fill="#F4511E"/>
+<circle cx="54" cy="151" r="10" fill="#fff" opacity="0.45"/>
+<text x="54" y="172" font-size="8.4" font-weight="700" fill="#fff" text-anchor="middle">Follow a</text>
+<text x="54" y="182" font-size="8.4" font-weight="700" fill="#fff" text-anchor="middle">Coloured</text>
+<text x="54" y="192" font-size="8.4" font-weight="700" fill="#fff" text-anchor="middle">Object</text>
+<rect x="102" y="132" width="84" height="70" rx="12" fill="#7E57C2"/>
+<circle cx="144" cy="151" r="10" fill="#fff" opacity="0.45"/>
+<text x="144" y="172" font-size="8.4" font-weight="700" fill="#fff" text-anchor="middle">Follow a</text>
+<text x="144" y="182" font-size="8.4" font-weight="700" fill="#fff" text-anchor="middle">Face</text>
+<rect x="192" y="132" width="84" height="70" rx="12" fill="#455A64"/>
+<circle cx="234" cy="151" r="10" fill="#fff" opacity="0.45"/>
+<text x="234" y="172" font-size="8.4" font-weight="700" fill="#fff" text-anchor="middle">Follow a</text>
+<text x="234" y="182" font-size="8.4" font-weight="700" fill="#fff" text-anchor="middle">Black Line</text>
+<rect x="12" y="208" width="84" height="70" rx="12" fill="#26A69A"/>
+<circle cx="54" cy="227" r="10" fill="#fff" opacity="0.45"/>
+<text x="54" y="248" font-size="8.4" font-weight="700" fill="#fff" text-anchor="middle">Object</text>
+<text x="54" y="258" font-size="8.4" font-weight="700" fill="#fff" text-anchor="middle">Avoidance</text>
+<rect x="102" y="208" width="84" height="70" rx="12" fill="#FFB300"/>
+<circle cx="144" cy="227" r="10" fill="#fff" opacity="0.45"/>
+<text x="144" y="248" font-size="8.4" font-weight="700" fill="#fff" text-anchor="middle">Target</text>
+<text x="144" y="258" font-size="8.4" font-weight="700" fill="#fff" text-anchor="middle">Tracking</text>
+<text x="14" y="302" font-size="12.5" font-weight="700" fill="#111827" text-anchor="start">Guides</text>
+<rect x="12" y="310" width="84" height="70" rx="12" fill="#FF8A65"/>
+<circle cx="54" cy="329" r="10" fill="#fff" opacity="0.45"/>
+<text x="54" y="350" font-size="8.4" font-weight="700" fill="#fff" text-anchor="middle">Coloured</text>
+<text x="54" y="360" font-size="8.4" font-weight="700" fill="#fff" text-anchor="middle">Object</text>
+<text x="54" y="370" font-size="8.4" font-weight="700" fill="#fff" text-anchor="middle">Instructions</text>
+<rect x="102" y="310" width="84" height="70" rx="12" fill="#9575CD"/>
+<circle cx="144" cy="329" r="10" fill="#fff" opacity="0.45"/>
+<text x="144" y="350" font-size="8.4" font-weight="700" fill="#fff" text-anchor="middle">Face</text>
+<text x="144" y="360" font-size="8.4" font-weight="700" fill="#fff" text-anchor="middle">Instructions</text>
+<rect x="192" y="310" width="84" height="70" rx="12" fill="#607D8B"/>
+<circle cx="234" cy="329" r="10" fill="#fff" opacity="0.45"/>
+<text x="234" y="350" font-size="8.4" font-weight="700" fill="#fff" text-anchor="middle">Black Line</text>
+<text x="234" y="360" font-size="8.4" font-weight="700" fill="#fff" text-anchor="middle">Instructions</text>
+<rect x="12" y="386" width="84" height="70" rx="12" fill="#4DB6AC"/>
+<circle cx="54" cy="405" r="10" fill="#fff" opacity="0.45"/>
+<text x="54" y="426" font-size="8.4" font-weight="700" fill="#fff" text-anchor="middle">Object</text>
+<text x="54" y="436" font-size="8.4" font-weight="700" fill="#fff" text-anchor="middle">Avoidance</text>
+<text x="54" y="446" font-size="8.4" font-weight="700" fill="#fff" text-anchor="middle">Instructions</text>
+<circle cx="250" cy="556" r="26" fill="#dc2626" stroke="#fff" stroke-width="3"/>
+<text x="250" y="560" font-size="10" font-weight="800" fill="#fff" text-anchor="middle">STOP</text>
+<rect x="85.0" y="588" width="120" height="4" rx="2" fill="#0f172a"/>
+</g></g>
+</svg>

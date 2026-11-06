@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" font-family="Inter, Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1080" viewBox="0 0 1400 1080" font-family="Inter, Helvetica, Arial, sans-serif">
 <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker></defs>
 <rect width="100%" height="100%" fill="#f8fafc"/>
 <text x="40" y="52" font-size="28" font-weight="700" fill="#0f172a">FriendBot app · map of all screens (Android + iOS)</text>
@@ -39,7 +39,7 @@
 <path d="M700.0,172 C700.0,211.0 700.0,211.0 700.0,248" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar)"/>
 <path d="M700.0,172 C700.0,211.0 1000.0,211.0 1000.0,248" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar)"/>
 <text x="700" y="232" text-anchor="middle" font-size="11.5" fill="#475569">3 main tiles</text>
-<rect x="40" y="370" width="1320" height="420" rx="18" fill="#ffffff" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="10 6"/>
+<rect x="40" y="370" width="1320" height="600" rx="18" fill="#ffffff" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="10 6"/>
 <text x="60" y="400" font-size="16" font-weight="700" fill="#0f172a">2 · More features (full grid)</text>
 <path d="M840,160 C1290,170 1290,300 1290,366" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar)"/>
 <text x="1300" y="300" font-size="11.5" fill="#475569">More features ▾</text>
@@ -86,11 +86,44 @@
 <circle cx="860" cy="596" r="12" fill="#bc7680"/><text x="860" y="600" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">17</text>
 <text x="880" y="601" font-size="14" font-weight="700" fill="#0f172a">Model Management</text>
 <text x="854" y="622" font-size="11.5" fill="#475569">add / download</text>
-<text x="60" y="684" font-size="13" font-weight="700" fill="#64748b">LEGACY (Android only)</text>
-<rect x="60" y="698" width="248" height="62" rx="12" fill="#ffffff" stroke="#f86363" stroke-width="2"/>
-<circle cx="80" cy="720" r="12" fill="#f86363"/><text x="80" y="724" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">18</text>
-<text x="100" y="725" font-size="14" font-weight="700" fill="#0f172a">Default</text>
-<text x="74" y="746" font-size="11.5" fill="#475569">original OpenBot screen</text>
+<text x="60" y="892" font-size="13" font-weight="700" fill="#64748b">LEGACY (Android only)</text>
+<rect x="60" y="906" width="248" height="44" rx="12" fill="#ffffff" stroke="#f86363" stroke-width="2"/>
+<circle cx="80" cy="928" r="12" fill="#f86363"/><text x="80" y="932" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">24</text>
+<text x="100" y="933" font-size="14" font-weight="700" fill="#0f172a">Default (original OpenBot)</text>
+<text x="60" y="684" font-size="13" font-weight="700" fill="#64748b">VISION MODES</text>
+<rect x="60" y="698" width="196" height="62" rx="12" fill="#ffffff" stroke="#F4511E" stroke-width="2"/>
+<circle cx="80" cy="720" r="12" fill="#F4511E"/><text x="80" y="724" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">18</text>
+<text x="100" y="725" font-size="14" font-weight="700" fill="#0f172a">Coloured Object</text>
+<text x="74" y="746" font-size="11.5" fill="#475569">tap a colour</text>
+<rect x="265" y="698" width="196" height="62" rx="12" fill="#ffffff" stroke="#7E57C2" stroke-width="2"/>
+<circle cx="285" cy="720" r="12" fill="#7E57C2"/><text x="285" y="724" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">19</text>
+<text x="305" y="725" font-size="14" font-weight="700" fill="#0f172a">Follow a Face</text>
+<text x="279" y="746" font-size="11.5" fill="#475569">turn to face you</text>
+<rect x="470" y="698" width="196" height="62" rx="12" fill="#ffffff" stroke="#455A64" stroke-width="2"/>
+<circle cx="490" cy="720" r="12" fill="#455A64"/><text x="490" y="724" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">20</text>
+<text x="510" y="725" font-size="14" font-weight="700" fill="#0f172a">Black Line</text>
+<text x="484" y="746" font-size="11.5" fill="#475569">3 floor sensors</text>
+<rect x="675" y="698" width="196" height="62" rx="12" fill="#ffffff" stroke="#26A69A" stroke-width="2"/>
+<circle cx="695" cy="720" r="12" fill="#26A69A"/><text x="695" y="724" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">21</text>
+<text x="715" y="725" font-size="14" font-weight="700" fill="#0f172a">Object Avoidance</text>
+<text x="689" y="746" font-size="11.5" fill="#475569">turn away</text>
+<rect x="880" y="698" width="196" height="62" rx="12" fill="#ffffff" stroke="#FFB300" stroke-width="2"/>
+<circle cx="900" cy="720" r="12" fill="#FFB300"/><text x="900" y="724" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">22</text>
+<text x="920" y="725" font-size="14" font-weight="700" fill="#0f172a">Target Tracking</text>
+<text x="894" y="746" font-size="11.5" fill="#475569">draw a box</text>
+<text x="60" y="788" font-size="13" font-weight="700" fill="#64748b">GUIDES</text>
+<rect x="60" y="802" width="248" height="44" rx="12" fill="#ffffff" stroke="#8d6e63" stroke-width="2"/>
+<circle cx="80" cy="824" r="12" fill="#8d6e63"/><text x="80" y="828" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">23</text>
+<text x="100" y="829" font-size="14" font-weight="700" fill="#0f172a">Coloured Object Instructions</text>
+<rect x="320" y="802" width="248" height="44" rx="12" fill="#ffffff" stroke="#8d6e63" stroke-width="2"/>
+<circle cx="340" cy="824" r="12" fill="#8d6e63"/><text x="340" y="828" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">23</text>
+<text x="360" y="829" font-size="14" font-weight="700" fill="#0f172a">Face Instructions</text>
+<rect x="580" y="802" width="248" height="44" rx="12" fill="#ffffff" stroke="#8d6e63" stroke-width="2"/>
+<circle cx="600" cy="824" r="12" fill="#8d6e63"/><text x="600" y="828" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">23</text>
+<text x="620" y="829" font-size="14" font-weight="700" fill="#0f172a">Black Line Instructions</text>
+<rect x="840" y="802" width="248" height="44" rx="12" fill="#ffffff" stroke="#8d6e63" stroke-width="2"/>
+<circle cx="860" cy="824" r="12" fill="#8d6e63"/><text x="860" y="828" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">23</text>
+<text x="880" y="829" font-size="14" font-weight="700" fill="#0f172a">Avoidance Instructions</text>
 <rect x="1100" y="574" width="240" height="62" rx="12" fill="#eff6ff" stroke="#0277bd" stroke-width="2"/>
 <circle cx="1120" cy="596" r="12" fill="#0277bd"/><text x="1120" y="600" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">11</text>
 <text x="1140" y="601" font-size="14" font-weight="700" fill="#0f172a">Xiaozhi pairing</text>
@@ -101,8 +134,8 @@
 <text x="1114" y="746" font-size="11.5" fill="#475569">gear on Voice Control</text>
 <path d="M1078,512 C1078,545 1200,540 1220,570" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#ar)"/>
 <path d="M1340,606 C1370,640 1370,670 1342,700" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#ar)"/>
-<rect x="40" y="812" width="1320" height="66" rx="12" fill="#fef2f2" stroke="#fecaca"/>
-<circle cx="76" cy="845" r="22" fill="#dc2626"/><text x="76" y="849" text-anchor="middle" font-size="10" font-weight="800" fill="#fff">STOP</text>
-<text x="112" y="840" font-size="14" font-weight="700" fill="#7f1d1d">The red STOP button floats on every screen while the robot is connected.</text>
-<text x="112" y="861" font-size="12.5" fill="#7f1d1d">It overrides drive commands from every screen, the AI and the voice assistant until you tap RESUME. Dashed arrows = opened from a button or the top bar.</text>
+<rect x="40" y="992" width="1320" height="66" rx="12" fill="#fef2f2" stroke="#fecaca"/>
+<circle cx="76" cy="1025" r="22" fill="#dc2626"/><text x="76" y="1029" text-anchor="middle" font-size="10" font-weight="800" fill="#fff">STOP</text>
+<text x="112" y="1020" font-size="14" font-weight="700" fill="#7f1d1d">The red STOP button floats on every screen while the robot is connected.</text>
+<text x="112" y="1041" font-size="12.5" fill="#7f1d1d">It overrides drive commands from every screen, the AI and the voice assistant until you tap RESUME. Dashed arrows = opened from a button or the top bar. “How to use” on a Vision Mode opens its guide.</text>
 </svg>

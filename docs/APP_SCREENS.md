@@ -137,6 +137,13 @@ One file per screen, in `docs/images/screens/android/` and `docs/images/screens/
 | 13. Point Goal Navigation | <img src="images/screens/android/13-point-goal-navigation.svg" width="220" alt="Android Point Goal Navigation"> | <img src="images/screens/ios/13-point-goal-navigation.svg" width="220" alt="iOS Point Goal Navigation"> |
 | 14. Model Management | <img src="images/screens/android/14-model-management.svg" width="220" alt="Android Model Management"> | <img src="images/screens/ios/14-model-management.svg" width="220" alt="iOS Model Management"> |
 | 15. Model Details dialog | <img src="images/screens/android/15-model-details-dialog.svg" width="220" alt="Android Model Details dialog"> | <img src="images/screens/ios/15-model-details-dialog.svg" width="220" alt="iOS Model Details dialog"> |
+| 20. Follow a Coloured Object | <img src="images/screens/android/20-follow-colour.svg" width="220" alt="Android Follow a Coloured Object"> | <img src="images/screens/ios/20-follow-colour.svg" width="220" alt="iOS Follow a Coloured Object"> |
+| 21. Follow a Face | <img src="images/screens/android/21-follow-face.svg" width="220" alt="Android Follow a Face"> | <img src="images/screens/ios/21-follow-face.svg" width="220" alt="iOS Follow a Face"> |
+| 22. Follow a Black Line | <img src="images/screens/android/22-follow-line.svg" width="220" alt="Android Follow a Black Line"> | <img src="images/screens/ios/22-follow-line.svg" width="220" alt="iOS Follow a Black Line"> |
+| 23. Object Avoidance | <img src="images/screens/android/23-object-avoidance.svg" width="220" alt="Android Object Avoidance"> | <img src="images/screens/ios/23-object-avoidance.svg" width="220" alt="iOS Object Avoidance"> |
+| 24. Target Tracking | <img src="images/screens/android/24-target-tracking.svg" width="220" alt="Android Target Tracking"> | <img src="images/screens/ios/24-target-tracking.svg" width="220" alt="iOS Target Tracking"> |
+| 25. Instruction page (Face) | <img src="images/screens/android/25-guide-instructions.svg" width="220" alt="Android Instruction page (Face)"> | <img src="images/screens/ios/25-guide-instructions.svg" width="220" alt="iOS Instruction page (Face)"> |
+| 26. Vision Modes and Guides tiles | <img src="images/screens/android/26-vision-modes-grid.svg" width="220" alt="Android Vision Modes and Guides tiles"> | <img src="images/screens/ios/26-vision-modes-grid.svg" width="220" alt="iOS Vision Modes and Guides tiles"> |
 
 ## Questions to go deeper
 

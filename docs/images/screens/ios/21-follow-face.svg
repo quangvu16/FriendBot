@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="330" height="640" viewBox="-20 -20 330 640" font-family="Inter, Helvetica, Arial, sans-serif">
+<title>FriendBot iOS · Follow a Face</title>
+<rect x="-20" y="-20" width="330" height="640" fill="#f8fafc"/>
+<g transform="translate(0,0)">
+<rect x="-10" y="-10" width="310" height="620" rx="48" fill="#0f172a"/>
+<clipPath id="c0"><rect x="0" y="0" width="290" height="600" rx="40"/></clipPath>
+<g clip-path="url(#c0)"><rect width="290" height="600" fill="#f2f2f7"/>
+<text x="22" y="24" font-size="11.5" font-weight="700" fill="#111827" text-anchor="start">9:41</text>
+<rect x="99.0" y="9" width="92" height="22" rx="11" fill="#0f172a"/>
+<text x="12" y="64" font-size="13" font-weight="400" fill="#0A66D6" text-anchor="start">‹ Back</text>
+<text x="145.0" y="64" font-size="13.5" font-weight="700" fill="#111827" text-anchor="middle">Follow a Face</text>
+<rect x="0" y="74" width="290" height="422" rx="0" fill="#cbd5e1"/>
+<rect x="0" y="327.2" width="290" height="168.8" rx="0" fill="#94a3b8"/>
+<ellipse cx="62" cy="352" rx="56" ry="60" fill="#475569"/>
+<ellipse cx="62" cy="232" rx="34" ry="42" fill="#f1c27d"/>
+<path d="M26,220 q36,-56 72,0 q-10,-30 -36,-32 q-26,2 -36,32 z" fill="#3f2a1d"/>
+<circle cx="50" cy="228" r="3.5" fill="#1f2937"/>
+<circle cx="74" cy="228" r="3.5" fill="#1f2937"/>
+<path d="M52,250 q10,8 20,0" fill="none" stroke="#7c2d12" stroke-width="2.5"/>
+<circle cx="62" cy="240" r="3" fill="#ef4444"/>
+<rect x="22" y="182" width="80" height="98" fill="none" stroke="#06b6d4" stroke-width="4" rx="4"/>
+<rect x="22" y="162" width="84" height="18" rx="3" fill="#06b6d4"/>
+<text x="28" y="175" font-size="9.5" font-weight="700" fill="#fff" text-anchor="start">Follow a Face</text>
+<line x1="96.66666666666666" y1="74" x2="96.66666666666666" y2="496" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.85"/>
+<line x1="193.33333333333331" y1="74" x2="193.33333333333331" y2="496" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.85"/>
+<rect x="8" y="82" width="94.80000000000001" height="24" rx="6" fill="#00000099"/>
+<text x="16" y="98" font-size="11" font-weight="700" fill="#ffffff" text-anchor="start">◀ Face found</text>
+<rect x="0" y="488" width="290" height="112" rx="16" fill="#1f2937"/>
+<text x="16" y="518" font-size="12.5" font-weight="700" fill="#ffffff" text-anchor="start">Auto</text>
+<rect x="56" y="506" width="34" height="20" rx="10" fill="#16a34a"/>
+<circle cx="80" cy="516" r="8" fill="#fff"/>
+<circle cx="140" cy="514" r="15" fill="#374151"/>
+<text x="140" y="519" font-size="14" font-weight="800" fill="#ffffff" text-anchor="middle">»</text>
+<circle cx="178" cy="514" r="15" fill="#374151"/>
+<text x="178" y="519" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">⟲</text>
+<rect x="202" y="500" width="78" height="28" rx="8" fill="#ffffff33"/>
+<text x="241" y="518" font-size="10" font-weight="700" fill="#ffffff" text-anchor="middle">How to use</text>
+<text x="16" y="582" font-size="10.5" font-weight="400" fill="#9ca3af" text-anchor="start" font-family="Menlo, monospace">left -192, right 192</text>
+<rect x="85.0" y="588" width="120" height="4" rx="2" fill="#0f172a"/>
+</g></g>
+</svg>

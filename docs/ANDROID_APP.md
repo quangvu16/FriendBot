@@ -34,8 +34,16 @@ This guide covers the FriendBot Android app from install to the last screen. **E
   16. [Point Goal Navigation](#16-point-goal-navigation)
   17. [Model Management](#17-model-management)
   18. [Model Details (add your own model)](#18-model-details-add-your-own-model)
+* **Vision Modes**
+  19. [Vision Modes and Guides tiles](#19-vision-modes-and-guides-tiles)
+  20. [Follow a Coloured Object](#20-follow-a-coloured-object)
+  21. [Follow a Face](#21-follow-a-face)
+  22. [Follow a Black Line](#22-follow-a-black-line)
+  23. [Object Avoidance](#23-object-avoidance)
+  24. [Target Tracking](#24-target-tracking)
+  25. [Instruction pages (Guides)](#25-instruction-pages-guides)
 * **Legacy**
-  19. [Default (original OpenBot screen)](#19-default-original-openbot-screen)
+  26. [Default (original OpenBot screen)](#26-default-original-openbot-screen)
 * [Several phones, one robot](#several-phones-one-robot)
 * [Safety, layer by layer](#safety-layer-by-layer)
 * [Troubleshooting](#troubleshooting)
@@ -100,6 +108,8 @@ The full grid of features:
 
 * **General:** Drive · GPS Mission · Data Collection · Controller Mapping · Car setup · Voice Control · Remote Mic
 * **AI:** Autopilot · Object Tracking · Point Goal Navigation · Model Management
+* **Vision Modes:** Follow a Coloured Object · Follow a Face · Follow a Black Line · Object Avoidance · Target Tracking
+* **Guides:** Coloured Object · Face · Black Line · Object Avoidance Instructions
 * **Legacy:** Default (the original OpenBot screen)
 
 *Example:* to make FriendBot follow you, open **More features → AI → Object Tracking**.
@@ -369,9 +379,89 @@ All neural networks: 3 are built in, and 11 detectors can be downloaded with **�
 
 ---
 
+# Vision Modes
+
+## 19 Vision Modes and Guides tiles
+
+<p align="center"><img src="images/screens/android/26-vision-modes-grid.svg" width="280" alt="Android · Vision Modes and Guides tiles"></p>
+
+In **More features**, two groups were added for FriendBot: **Vision Modes** (5 camera behaviours) and **Guides** (4 instruction pages). They are based on Kirstin813/L4-Individual-Project and longpth/Android-Object-Tracking-OpenCV. All five modes share one screen layout: camera view, status line (top left), and a dark panel with **Auto**, speed **»** (Slow/Normal/Fast), camera flip **⟲**, **How to use**, the mode's own setting, and the live `left …, right …` values.
+
+*Source (in `robot/android/app/src/main/`; Java files under `java/org/openbot/app/robot/`):* `common/FeatureList.java`, `vision/VisionModeFragment.java`, `res/layout/fragment_vision_mode.xml`
+
+## 20 Follow a Coloured Object
+
+<p align="center"><img src="images/screens/android/20-follow-colour.svg" width="280" alt="Android · Follow a Coloured Object"></p>
+
+1. Mount the phone with the camera facing forward → **tap the object** in the view (the swatch top right shows the colour).
+2. **Auto** on. Middle third → forward, left/right third → turn that way, colour lost → **stop**.
+3. **Colour tolerance** − / + : 5–60, default 15 (R, G and B each within the tolerance).
+
+*Example:* red ball in the middle → `c192,192` at Normal speed. More: [VISION_MODES.md §1](VISION_MODES.md#1--follow-a-coloured-object).
+
+*Source (in `robot/android/app/src/main/`; Java files under `java/org/openbot/app/robot/`):* `vision/FollowColourFragment.java`
+
+## 21 Follow a Face
+
+<p align="center"><img src="images/screens/android/21-follow-face.svg" width="280" alt="Android · Follow a Face"></p>
+
+1. **Auto** on. A cyan box appears round your face (Google **ML Kit** face detection).
+2. Face in the left third → spin left, right third → spin right, **centre → stop**. It never drives at you. It steers by the nose landmark.
+3. Best up to about 2 m, with your face well lit.
+
+*Example:* you step to its left → "◀ Face found" → `c-192,192`. More: [VISION_MODES.md §2](VISION_MODES.md#2--follow-a-face).
+
+*Source (in `robot/android/app/src/main/`; Java files under `java/org/openbot/app/robot/`):* `vision/FollowFaceFragment.java` (ML Kit `face-detection:16.1.7`)
+
+## 22 Follow a Black Line
+
+<p align="center"><img src="images/screens/android/22-follow-line.svg" width="280" alt="Android · Follow a Black Line"></p>
+
+1. Make a black-tape circuit (thick, no 90° corners). Angle the camera **down** at the floor.
+2. Put the robot on the line with the **middle box** on it. Boxes light up green when they see black.
+3. **Black threshold** − / + : 30–150, default 90 (average grey below it = black). Then **Auto**.
+
+Middle → forward, left → turn left, right → turn right, none → **stop** ("No line"). More: [VISION_MODES.md §3](VISION_MODES.md#3--follow-a-black-line).
+
+*Source (in `robot/android/app/src/main/`; Java files under `java/org/openbot/app/robot/`):* `vision/FollowLineFragment.java`
+
+## 23 Object Avoidance
+
+<p align="center"><img src="images/screens/android/23-object-avoidance.svg" width="280" alt="Android · Object Avoidance"></p>
+
+1. **Tap the obstacle** to pick its colour → **Auto**. The robot drives forward while the way is clear.
+2. When the obstacle colour fills more than the **Stop distance** % of the view (2–40, default 10), it pivots toward the side with fewer obstacle pixels.
+3. The firmware sonars still stop the robot for obstacles of any colour.
+
+*Example:* an orange box on the right → "◀ Obstacle — turning away" → `c-192,192`. More: [VISION_MODES.md §4](VISION_MODES.md#4--object-avoidance).
+
+*Source (in `robot/android/app/src/main/`; Java files under `java/org/openbot/app/robot/`):* `vision/AvoidObjectFragment.java`
+
+## 24 Target Tracking
+
+<p align="center"><img src="images/screens/android/24-target-tracking.svg" width="280" alt="Android · Target Tracking"></p>
+
+1. **Drag a box** round any object → **Lock target** (the button becomes **Unlock**) → **Auto**.
+2. Box centre in the left / middle / right third → spin left / forward / spin right.
+3. "Target lost — stop and re-lock": the robot stops. Draw and lock again.
+
+Tracker: `TemplateTracker.java`, a 24 × 24 grey-patch match (score ≥ 0.55) that stands in for OpenCV MedianFlow from longpth's app. More: [VISION_MODES.md §5](VISION_MODES.md#5--target-tracking).
+
+*Source (in `robot/android/app/src/main/`; Java files under `java/org/openbot/app/robot/`):* `vision/TargetTrackingFragment.java`, `TemplateTracker.java`
+
+## 25 Instruction pages (Guides)
+
+<p align="center"><img src="images/screens/android/25-guide-instructions.svg" width="280" alt="Android · Instruction pages (Guides)"></p>
+
+**Coloured Object**, **Face**, **Black Line** and **Object Avoidance Instructions**: *What it does · You will need · Steps · Tips*, adapted from Kirstin813's L4 project. Open them from **More features → Guides** or from **How to use** on a Vision Mode. (Target Tracking's **How to use** shows a short hint.)
+
+*Source (in `robot/android/app/src/main/`; Java files under `java/org/openbot/app/robot/`):* `vision/GuideFragment.java`, `res/values/strings.xml` (`guide_*`)
+
+---
+
 # Legacy
 
-## 19 Default (original OpenBot screen)
+## 26 Default (original OpenBot screen)
 
 <p align="center"><img src="images/screens/android/19-legacy-default.svg" width="280" alt="Android · Default (original OpenBot screen)"></p>
 

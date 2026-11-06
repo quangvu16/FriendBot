@@ -29,7 +29,13 @@ A red **STOP** floats on every screen while the robot is connected. It overrides
 15. [Object Tracking](#15-object-tracking)
 16. [Point Goal Navigation](#16-point-goal-navigation)
 17. [Model Management](#17-model-management)
-18. [Default (Legacy, Android only)](#18-default-legacy-android-only)
+18. [Follow a Coloured Object](#18-follow-a-coloured-object)
+19. [Follow a Face](#19-follow-a-face)
+20. [Follow a Black Line](#20-follow-a-black-line)
+21. [Object Avoidance](#21-object-avoidance)
+22. [Target Tracking](#22-target-tracking)
+23. [Instruction pages (Guides)](#23-instruction-pages-guides)
+24. [Default (Legacy, Android only)](#24-default-legacy-android-only)
 
 ---
 
@@ -62,6 +68,8 @@ A red **STOP** floats on every screen while the robot is connected. It overrides
 **What it is.** The full feature grid.
 * **General:** Drive, GPS Mission, Data Collection, Controller Mapping, Car setup, Voice Control, Remote Mic.
 * **AI:** Autopilot, Object Tracking, Point Goal Navigation, Model Management.
+* **Vision Modes:** Follow a Coloured Object, Follow a Face, Follow a Black Line, Object Avoidance, Target Tracking.
+* **Guides:** Coloured Object, Face, Black Line and Object Avoidance Instructions.
 * **Legacy** (Android only): Default.
 
 **Example.** Want "follow me"? **More features → AI → Object Tracking**.
@@ -335,9 +343,93 @@ More: [AI_AND_MISSION.md §5](AI_AND_MISSION.md#5--model-management) · [model-m
 
 ---
 
+# Vision Modes
+
+## 18 Follow a Coloured Object
+
+| Android | iOS |
+|:---:|:---:|
+| <img src="images/screens/android/20-follow-colour.svg" width="230" alt="Android 20-follow-colour"> | <img src="images/screens/ios/20-follow-colour.svg" width="230" alt="iOS 20-follow-colour"> |
+**What it is.** The robot follows an object of a colour you pick: middle third of the view → forward, left or right third → turn that way, colour not seen → stop.
+
+**How:** Vision Modes → Follow a Coloured Object → **tap the object** (the swatch shows the colour) → **Auto** on. **Colour tolerance** − / + (5–60, default 15).
+
+**Example.** Red ball in the middle → `c192,192` (Normal speed). The robot ignores the ball → raise the tolerance; it follows the red sofa too → lower it.
+
+*Why stop when the colour is lost:* the original project kept doing its last move; a real robot is safer stopping.
+
+More: [VISION_MODES.md §1](VISION_MODES.md#1--follow-a-coloured-object) · [follow-colour.svg](images/follow-colour.svg).
+
+## 19 Follow a Face
+
+| Android | iOS |
+|:---:|:---:|
+| <img src="images/screens/android/21-follow-face.svg" width="230" alt="Android 21-follow-face"> | <img src="images/screens/ios/21-follow-face.svg" width="230" alt="iOS 21-follow-face"> |
+**What it is.** The robot pivots to keep your face in the centre. **The centre means stop**, so it turns to face you but never drives at you. Android uses Google ML Kit, iOS uses Apple Vision; both steer by your nose.
+
+**How:** Vision Modes → Follow a Face → **Auto** → walk round the robot. Best up to about 2 m, with good light on your face.
+
+**Example.** You step to its left → "◀ Face found" → `c-192,192` → the robot spins left until you are centred, then stops.
+
+More: [VISION_MODES.md §2](VISION_MODES.md#2--follow-a-face) · [follow-face.svg](images/follow-face.svg).
+
+## 20 Follow a Black Line
+
+| Android | iOS |
+|:---:|:---:|
+| <img src="images/screens/android/22-follow-line.svg" width="230" alt="Android 22-follow-line"> | <img src="images/screens/ios/22-follow-line.svg" width="230" alt="iOS 22-follow-line"> |
+**What it is.** Three virtual sensors along the bottom 12 % of the camera view look for black tape: middle → forward, left → turn left, right → turn right, none → stop.
+
+**How:** a black-tape circuit (no 90° corners) → camera angled **down** → Vision Modes → Follow a Black Line → middle box on the line → **Black threshold** − / + (30–150, default 90) until only the line lights up → **Auto**.
+
+**Example.** Box averages 214 / 41 / 208 → only the middle is black → forward.
+
+More: [VISION_MODES.md §3](VISION_MODES.md#3--follow-a-black-line) · [follow-line.svg](images/follow-line.svg).
+
+## 21 Object Avoidance
+
+| Android | iOS |
+|:---:|:---:|
+| <img src="images/screens/android/23-object-avoidance.svg" width="230" alt="Android 23-object-avoidance"> | <img src="images/screens/ios/23-object-avoidance.svg" width="230" alt="iOS 23-object-avoidance"> |
+**What it is.** The robot drives forward and turns away from an obstacle you mark by colour. The reference project never finished this stage; FriendBot completes it.
+
+**How:** Vision Modes → Object Avoidance → **tap the obstacle** → **Auto**. When the obstacle colour fills more than the **Stop distance** % of the view (2–40, default 10), the robot pivots toward the side with fewer obstacle pixels.
+
+**Example.** An orange box fills the right half → "◀ Obstacle — turning away" → `c-192,192`.
+
+The firmware's sonar stop (50 cm slow, 15 cm stop) still protects the robot from obstacles of any colour.
+
+More: [VISION_MODES.md §4](VISION_MODES.md#4--object-avoidance) · [object-avoidance.svg](images/object-avoidance.svg).
+
+## 22 Target Tracking
+
+| Android | iOS |
+|:---:|:---:|
+| <img src="images/screens/android/24-target-tracking.svg" width="230" alt="Android 24-target-tracking"> | <img src="images/screens/ios/24-target-tracking.svg" width="230" alt="iOS 24-target-tracking"> |
+**What it is.** Draw a box round **any** object. The robot keeps it in the middle and drives to it (like longpth's OpenCV app, but without OpenCV). Android uses its own template tracker; iOS uses Apple Vision's `VNTrackObjectRequest`.
+
+**How:** Vision Modes → Target Tracking → **drag a box** → **Lock target** (becomes **Unlock**) → **Auto**. "Target lost — stop and re-lock" means the robot has stopped: draw and lock again.
+
+**Example.** A toy car in the middle → "▲ Tracking target" → `c192,192`. Push it left → the robot spins left.
+
+More: [VISION_MODES.md §5](VISION_MODES.md#5--target-tracking) · [target-tracking.svg](images/target-tracking.svg).
+
+## 23 Instruction pages (Guides)
+
+| Android | iOS |
+|:---:|:---:|
+| <img src="images/screens/android/25-guide-instructions.svg" width="230" alt="Android 25-guide-instructions"> | <img src="images/screens/ios/25-guide-instructions.svg" width="230" alt="iOS 25-guide-instructions"> |
+| <img src="images/screens/android/26-vision-modes-grid.svg" width="230" alt="Android 26-vision-modes-grid"> | <img src="images/screens/ios/26-vision-modes-grid.svg" width="230" alt="iOS 26-vision-modes-grid"> |
+**What it is.** Four built-in pages: **Coloured Object**, **Face**, **Black Line** and **Object Avoidance Instructions**. Each has *What it does · You will need · Steps · Tips*, adapted from Kirstin813's L4 project. Open them from **More features → Guides** (second picture) or from **How to use** on each Vision Mode. Target Tracking's **How to use** shows a short hint instead.
+
+More: [VISION_MODES.md §6](VISION_MODES.md#6--instruction-pages-guides).
+
+
+---
+
 # Legacy
 
-## 18 Default (Legacy, Android only)
+## 24 Default (Legacy, Android only)
 
 | Android | iOS |
 |:---:|:---:|
