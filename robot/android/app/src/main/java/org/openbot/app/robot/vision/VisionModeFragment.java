@@ -222,6 +222,60 @@ public abstract class VisionModeFragment extends CameraFragment {
     return button;
   }
 
+  /**
+   * Adds a "label [colour swatches]" row to the mode panel: one tappable square per colour, the
+   * selected one ringed in openBotBlue.
+   */
+  protected void addColorRow(
+      String label, String[] names, int[] colors, java.util.function.IntConsumer onChange) {
+    LinearLayout row = newRow();
+    row.addView(
+        newRowLabel(label),
+        new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 2f));
+
+    LinearLayout swatches = new LinearLayout(requireContext());
+    swatches.setOrientation(LinearLayout.HORIZONTAL);
+    swatches.setGravity(android.view.Gravity.CENTER_VERTICAL);
+
+    int chipSize = (int) (28 * density());
+    int gap = (int) (5 * density());
+    int ringWidth = (int) (3 * density());
+    int ringColor =
+        androidx.core.content.ContextCompat.getColor(requireContext(), R.color.openBotBlue);
+    android.graphics.drawable.GradientDrawable[] backgrounds =
+        new android.graphics.drawable.GradientDrawable[colors.length];
+
+    for (int i = 0; i < colors.length; i++) {
+      android.graphics.drawable.GradientDrawable background =
+          new android.graphics.drawable.GradientDrawable();
+      background.setShape(android.graphics.drawable.GradientDrawable.RECTANGLE);
+      background.setCornerRadius(8 * density());
+      background.setColor(colors[i]);
+      backgrounds[i] = background;
+
+      View chip = new View(requireContext());
+      chip.setBackground(background);
+      chip.setContentDescription(names[i]);
+      LinearLayout.LayoutParams chipLp = new LinearLayout.LayoutParams(chipSize, chipSize);
+      chipLp.rightMargin = gap;
+      final int index = i;
+      chip.setOnClickListener(
+          v -> {
+            for (int j = 0; j < backgrounds.length; j++) {
+              if (j == index) backgrounds[j].setStroke(ringWidth, ringColor);
+              else backgrounds[j].setStroke((int) density(), 0xFFBBBBBB);
+            }
+            onChange.accept(colors[index]);
+          });
+      swatches.addView(chip, chipLp);
+    }
+
+    row.addView(
+        swatches, new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 2f));
+    binding.modePanel.addView(row);
+    swatches.getChildAt(0).performClick();
+  }
+
   /** A horizontal row with weightSum 4, like the rows of the Autopilot bottom sheet. */
   private LinearLayout newRow() {
     LinearLayout row = new LinearLayout(requireContext());
@@ -290,9 +344,41 @@ public abstract class VisionModeFragment extends CameraFragment {
       return;
     }
     lastControl = control;
-    // The robot's drive polarity is opposite the app convention: negate both
-    // wheels so the commanded motion is what the robot physically does.
-    vehicle.setControl(new Control(-control.getLeft(), -control.getRight()));
+    // The robot's motor channels are cross-wired with inverted polarity: negating both wheels
+    // fixes forward/back but also mirrors left/right. Negate-and-swap instead — that reverses the
+    // throttle and keeps the commanded turn direction.
+    vehicle.setControl(new Control(-control.getRight(), -control.getLeft()));
+    float left = vehicle.getLeftSpeed();
+    float right = vehicle.getRightSpeed();
+    if (binding != null) {
+      binding.controllerContainer.controlInfo.post(
+          () ->
+              binding.controllerContainer.controlInfo.setText(
+                  String.format(Locale.US, "%.0f,%.0f", left, right)));
+    }
+  }
+
+  /**
+   * Steers toward the side of the screen where the target appears: left of the preview turns the
+   * robot left, right of the preview turns it right.
+   */
+  protected void sendTurn(boolean screenLeft, String status) {
+    setStatus((screenLeft ? "◀ " : "▶ ") + status);
+    sendControl(screenLeft ? new Control(-1f, 1f) : new Control(1f, -1f));
+  }
+
+  /**
+   * Sends a drive command exactly like the AI tab's Object Tracking page
+   * (ObjectNavFragment.handleDriveCommand): the control goes to the vehicle as-is, with no
+   * polarity or left/right correction. Repeats are still skipped, and lastControl is kept in
+   * step so a later stop through sendControl(0, 0) is never skipped.
+   */
+  protected void sendTrackingControl(Control control) {
+    if (control.getLeft() == lastControl.getLeft() && control.getRight() == lastControl.getRight()) {
+      return;
+    }
+    lastControl = control;
+    vehicle.setControl(control);
     float left = vehicle.getLeftSpeed();
     float right = vehicle.getRightSpeed();
     if (binding != null) {

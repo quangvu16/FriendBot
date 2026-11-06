@@ -154,11 +154,9 @@ public class TargetTrackingFragment extends VisionModeFragment {
 
     float third = fitted.width() / 3f;
     if (viewXY[0] < fitted.left + third) {
-      setStatus("◀ " + getString(R.string.track_status_tracking));
-      sendControl(new Control(-1f, 1f));
+      sendTurn(true, getString(R.string.track_status_tracking));
     } else if (viewXY[0] > fitted.right - third) {
-      setStatus("▶ " + getString(R.string.track_status_tracking));
-      sendControl(new Control(1f, -1f));
+      sendTurn(false, getString(R.string.track_status_tracking));
     } else {
       setStatus("▲ " + getString(R.string.track_status_tracking));
       sendControl(new Control(1f, 1f));

@@ -146,12 +146,10 @@ public class FollowColourFragment extends VisionModeFragment {
     int action = zoneAction(centroidX, centroidY);
     switch (action) {
       case LEFT:
-        setStatus("◀ " + getString(R.string.vision_running));
-        sendControl(new Control(-1f, 1f));
+        sendTurn(true, getString(R.string.vision_running));
         break;
       case RIGHT:
-        setStatus("▶ " + getString(R.string.vision_running));
-        sendControl(new Control(1f, -1f));
+        sendTurn(false, getString(R.string.vision_running));
         break;
       case FORWARD:
         setStatus("▲ " + getString(R.string.vision_running));

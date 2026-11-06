@@ -508,6 +508,12 @@
     <string name="follow_line_hint">Line the circuit up with the middle sensor box</string>
     <string name="follow_line_seeing">Line seen</string>
     <string name="follow_line_lost">No line</string>
+    <string name="follow_line_color">Line Colour</string>
+    <string name="color_black">Black</string>
+    <string name="color_red">Red</string>
+    <string name="color_green">Green</string>
+    <string name="color_blue">Blue</string>
+    <string name="color_yellow">Yellow</string>
 
     <string name="avoid_pick_hint">Tap the obstacle in the view to pick its colour</string>
     <string name="avoid_status_clear">Clear</string>

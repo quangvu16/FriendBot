@@ -16,9 +16,11 @@ import org.openbot.app.robot.vehicle.Control;
  * <p>The original watches three virtual sensors along the bottom of the camera image — the frame is
  * split into thirds, each sensor is a strip along the bottom edge — and treats a sensor as "black"
  * when its mean greyscale brightness is under 90/255. Control follows the priority centre → left →
- * right: centre drives forward, a side sensor turns that way. No sensor black stops the car (the
- * original keeps the last action; a real car is safer stopping). Point the camera down at a black
- * tape circuit.
+ * right. Driving follows the AI tab's Object Tracking page: the line position goes through the
+ * same steering law as MultiBoxTracker.updateTarget (centre → straight on, side → curve that way)
+ * and the command is sent unchanged. No sensor on the line stops the car. The line colour is
+ * choosable — black by default (matched by brightness), any preset colour matched per pixel. Use
+ * the back camera, phone upright (top up), pointed down at a tape circuit.
  */
 public class FollowLineFragment extends VisionModeFragment {
 
@@ -27,8 +29,14 @@ public class FollowLineFragment extends VisionModeFragment {
   /** Sensor strip height as a fraction of the fitted preview (L4 used 50 px of ~480). */
   private static final float SENSOR_HEIGHT_FRACTION = 0.12f;
   private static final int SCAN_STRIDE = 2;
+  /** Per-channel RGB tolerance when matching a coloured line. */
+  private static final int COLOR_TOLERANCE = 60;
+  /** A sensor counts as on-line when this fraction of its pixels matches the line colour. */
+  private static final float MATCH_FRACTION = 0.12f;
 
   private int blackThreshold = DEFAULT_THRESHOLD;
+  /** Line colour to follow: black by default (matched by brightness), any preset otherwise. */
+  private volatile int lineColor = Color.BLACK;
   private int[] pixelBuffer = null;
 
   @Override
@@ -38,6 +46,17 @@ public class FollowLineFragment extends VisionModeFragment {
 
   @Override
   protected void setupModeControls() {
+    addColorRow(
+        getString(R.string.follow_line_color),
+        new String[] {
+          getString(R.string.color_black),
+          getString(R.string.color_red),
+          getString(R.string.color_green),
+          getString(R.string.color_blue),
+          getString(R.string.color_yellow)
+        },
+        new int[] {Color.BLACK, 0xFFE53935, 0xFF43A047, 0xFF1E88E5, 0xFFFDD835},
+        v -> lineColor = v);
     addStepper(
         getString(R.string.follow_line_threshold),
         30,
@@ -54,7 +73,7 @@ public class FollowLineFragment extends VisionModeFragment {
 
     RectF fitted = getFittedFrameRect();
     if (fitted == null) {
-      sendControl(new Control(0, 0));
+      sendTrackingControl(new Control(0, 0));
       return;
     }
 
@@ -84,27 +103,58 @@ public class FollowLineFragment extends VisionModeFragment {
     binding.overlay.setSensorBoxes(overlaySensors);
     binding.overlay.postInvalidate();
 
-    boolean[] black = new boolean[SENSOR_COUNT];
+    // Black keeps the original brightness-threshold test; other colours match per pixel.
+    boolean blackLine = lineColor == Color.BLACK;
+    boolean[] onLine = new boolean[SENSOR_COUNT];
     for (int i = 0; i < SENSOR_COUNT; i++) {
-      black[i] = meanBrightness(frameSensors[i], width, height) < blackThreshold;
+      onLine[i] =
+          blackLine
+              ? meanBrightness(frameSensors[i], width, height) < blackThreshold
+              : matchFraction(frameSensors[i], width, height) >= MATCH_FRACTION;
     }
 
-    // Priority: centre → left → right, like the original sketch.
-    if (black[1]) {
-      setStatus("▲ " + getString(R.string.follow_line_seeing));
-      sendControl(new Control(1f, 1f));
-    } else if (black[0]) {
-      setStatus("◀ " + getString(R.string.follow_line_seeing));
-      sendControl(new Control(-1f, 1f));
-    } else if (black[2]) {
-      setStatus("▶ " + getString(R.string.follow_line_seeing));
-      sendControl(new Control(1f, -1f));
+    // Priority centre → left → right picks where the line is; the robot then drives like the AI
+    // tab's Object Tracking page: the line's position goes through MultiBoxTracker's steering
+    // law and the result is sent unchanged (sendTrackingControl), as handleDriveCommand does.
+    String seeing = getString(R.string.follow_line_seeing);
+    if (onLine[1]) {
+      setStatus("▲ " + seeing);
+      sendTrackingControl(trackingControl(0.5f));
+    } else if (onLine[0]) {
+      setStatus("◀ " + seeing);
+      sendTrackingControl(trackingControl(0.5f / SENSOR_COUNT));
+    } else if (onLine[2]) {
+      setStatus("▶ " + seeing);
+      sendTrackingControl(trackingControl(1f - 0.5f / SENSOR_COUNT));
     } else {
-      // No sensor sees the line: stop rather than blindly keep the last turn.
+      // No sensor sees the line: stop, as Object Tracking does when nothing is tracked.
       setStatus(getString(R.string.follow_line_lost));
-      sendControl(new Control(0, 0));
+      sendTrackingControl(new Control(0, 0));
     }
     showBoxes(new ArrayList<>());
+  }
+
+  /**
+   * MultiBoxTracker.updateTarget's steering law (AI tab, Object Tracking) for a target at
+   * {@code screenX} (0 = left edge of the preview, 1 = right edge). With the back camera and the
+   * phone upright (top up), the tracker's rotated-frame maths reduces to
+   * x = 1 − 2·screenX: line on the left → x &gt; 0 → left wheel slows → curve left.
+   */
+  private Control trackingControl(float screenX) {
+    float xPosScaled = 1.0f - 2.0f * Math.max(0f, Math.min(1f, screenX));
+    float leftControl;
+    float rightControl;
+    if (xPosScaled < 0) {
+      leftControl = 1.0f;
+      rightControl = 1.0f + xPosScaled;
+    } else {
+      leftControl = 1.0f - xPosScaled;
+      rightControl = 1.0f;
+    }
+    int sensorOrientation = getSensorOrientation();
+    return new Control(
+        (0 > sensorOrientation) ? rightControl : leftControl,
+        (0 > sensorOrientation) ? leftControl : rightControl);
   }
 
   /** Maps a preview-space rectangle to an axis-aligned frame-space rectangle. */
@@ -151,6 +201,32 @@ public class FollowLineFragment extends VisionModeFragment {
       }
     }
     return count == 0 ? 255f : sum / (float) count;
+  }
+
+  /** Fraction of pixels in a frame rectangle within COLOR_TOLERANCE of the line colour. */
+  private float matchFraction(RectF rect, int frameWidth, int frameHeight) {
+    int targetR = Color.red(lineColor);
+    int targetG = Color.green(lineColor);
+    int targetB = Color.blue(lineColor);
+    int x0 = clamp((int) rect.left, 0, frameWidth - 1);
+    int x1 = clamp((int) rect.right, 0, frameWidth - 1);
+    int y0 = clamp((int) rect.top, 0, frameHeight - 1);
+    int y1 = clamp((int) rect.bottom, 0, frameHeight - 1);
+    int matches = 0;
+    int count = 0;
+    for (int y = y0; y <= y1; y += SCAN_STRIDE) {
+      int row = y * frameWidth;
+      for (int x = x0; x <= x1; x += SCAN_STRIDE) {
+        int pixel = pixelBuffer[row + x];
+        if (Math.abs(Color.red(pixel) - targetR) <= COLOR_TOLERANCE
+            && Math.abs(Color.green(pixel) - targetG) <= COLOR_TOLERANCE
+            && Math.abs(Color.blue(pixel) - targetB) <= COLOR_TOLERANCE) {
+          matches++;
+        }
+        count++;
+      }
+    }
+    return count == 0 ? 0f : matches / (float) count;
   }
 
   private static int clamp(int v, int min, int max) {

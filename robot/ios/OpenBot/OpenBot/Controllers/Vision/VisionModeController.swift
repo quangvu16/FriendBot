@@ -271,6 +271,58 @@ class VisionModeController: CameraController {
         return button
     }
 
+    /// Adds a "label [colour swatches]" row to the mode panel; the selected swatch is ringed.
+    @discardableResult
+    func addColorRow(
+        label: String, names: [String], colors: [UIColor], initial: Int = 0,
+        onChange: @escaping (Int) -> Void
+    ) -> UIView {
+        let labelView = UILabel()
+        labelView.text = label
+        labelView.textColor = .white
+        labelView.font = UIFont.systemFont(ofSize: 13)
+
+        var selected = initial
+        var swatches: [UIView] = []
+        let row = UIStackView()
+        row.axis = .horizontal
+        row.alignment = .center
+        row.spacing = 6
+
+        func refresh() {
+            for (i, swatch) in swatches.enumerated() {
+                swatch.layer.borderWidth = i == selected ? 2.5 : 1
+                swatch.layer.borderColor =
+                    (i == selected ? UIColor.white : UIColor.gray).cgColor
+            }
+        }
+
+        for (i, color) in colors.enumerated() {
+            let swatch = UIView()
+            swatch.backgroundColor = color
+            swatch.layer.cornerRadius = 6
+            swatch.translatesAutoresizingMaskIntoConstraints = false
+            swatch.widthAnchor.constraint(equalToConstant: 26).isActive = true
+            swatch.heightAnchor.constraint(equalToConstant: 26).isActive = true
+            swatch.isAccessibilityElement = true
+            swatch.accessibilityLabel = names[i]
+            swatch.accessibilityTraits = .button
+            swatch.addGestureRecognizer(UITapGestureRecognizer { _ in
+                selected = i
+                refresh()
+                onChange(i)
+            })
+            swatches.append(swatch)
+            row.addArrangedSubview(swatch)
+        }
+
+        row.addArrangedSubview(UIView())
+        modePanel.addArrangedSubview(row)
+        refresh()
+        onChange(selected)
+        return row
+    }
+
     private func makePanelButton(title: String) -> UIButton {
         let button = UIButton(type: .system)
         button.setTitle(title, for: .normal)
@@ -303,6 +355,9 @@ class VisionModeController: CameraController {
     }
 
     /// Sends a drive command, skipping repeats (the car only hears changes).
+    /// The robot's motor channels are cross-wired with inverted polarity: negating both wheels
+    /// fixes forward/back but also mirrors left/right. Negate-and-swap instead — that reverses the
+    /// throttle and keeps the commanded turn direction.
     func sendControl(_ control: Control) {
         DispatchQueue.main.async {
             if control.getLeft() == self.lastControl.getLeft(),
@@ -310,9 +365,10 @@ class VisionModeController: CameraController {
                 return
             }
             self.lastControl = control
-            let left = control.getLeft() * GameController.shared.selectedSpeedMode.rawValue
-            let right = control.getRight() * GameController.shared.selectedSpeedMode.rawValue
-            self.bluetooth.sendData(payload: "c" + String(left) + "," + String(right) + "\n")
+            let scale = GameController.shared.selectedSpeedMode.rawValue
+            let left = Int((-control.getRight() * scale).rounded())
+            let right = Int((-control.getLeft() * scale).rounded())
+            self.bluetooth.sendData(payload: "c\(left),\(right)\n")
         }
     }
 

@@ -265,6 +265,12 @@ struct Strings {
     static var followLineHint: String { L10n.string("follow_line_hint") }
     static var followLineSeeing: String { L10n.string("follow_line_seeing") }
     static var followLineLost: String { L10n.string("follow_line_lost") }
+    static var followLineColor: String { L10n.string("follow_line_color") }
+    static var colorBlack: String { L10n.string("color_black") }
+    static var colorRed: String { L10n.string("color_red") }
+    static var colorGreen: String { L10n.string("color_green") }
+    static var colorBlue: String { L10n.string("color_blue") }
+    static var colorYellow: String { L10n.string("color_yellow") }
 
     static var avoidPickHint: String { L10n.string("avoid_pick_hint") }
     static var avoidStatusClear: String { L10n.string("avoid_status_clear") }
