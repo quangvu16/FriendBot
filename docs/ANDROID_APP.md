@@ -113,6 +113,10 @@ Sign in again, choose the **voice language** (default Tiếng Việt), or set yo
 | Robot stops after ~0.75 s over USB | the app froze or the cable is loose (heartbeat failsafe) |
 | Camera corner hidden | allow the camera permission in Android Settings → Apps → FriendBot |
 
+## Other screens
+
+Home dashboard, Bluetooth, Car setup, Drive, GPS Mission, Remote Mic and Settings are explained in **[Other app screens](APP_SCREENS.md)**.
+
 ## Questions to go deeper
 
 1. Why does the app re-send the same drive command every 250 ms instead of sending it once?

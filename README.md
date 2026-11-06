@@ -24,6 +24,7 @@ You speak in English, Tiếng Việt or 中文 → the phone sends your voice to
 | [3. Android app](docs/ANDROID_APP.md) | Install the APK, connect by USB or Bluetooth, pair Xiaozhi, talk | [android-app.svg](docs/images/android-app.svg) |
 | [4. iOS app](docs/IOS_APP.md) | Build in Xcode, connect by Bluetooth, pair Xiaozhi, talk | [ios-app.svg](docs/images/ios-app.svg) |
 | [5. Connect to xiaozhi.me](docs/XIAOZHI_PAIRING.md) | Create the account and agent, get the 6-digit code, bind the phone | [xiaozhi-connect.svg](docs/images/xiaozhi-connect.svg) |
+| [6. Other app screens](docs/APP_SCREENS.md) | Home dashboard, Bluetooth, Car setup, Drive, GPS Mission, Remote Mic, Settings | [android-screens.svg](docs/images/android-screens.svg) · [ios-screens.svg](docs/images/ios-screens.svg) |
 
 ## Quick start (about 1 hour)
 

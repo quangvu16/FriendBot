@@ -86,6 +86,10 @@ An iPhone and an Android phone can work together on the same Wi-Fi: whichever ph
 | App will not open after a week | free-account build expired — Run again from Xcode |
 | Helper phone cannot find the robot | allow Local Network in iPhone Settings → FriendBot |
 
+## Other screens
+
+Home dashboard, Bluetooth, Car setup, Drive, GPS Mission, Remote Mic and Settings are explained in **[Other app screens](APP_SCREENS.md)**.
+
 ## Questions to go deeper
 
 1. Apple blocks USB serial for normal apps. What would it take to use a cable anyway (hint: MFi accessories / External Accessory framework), and is it worth it?
