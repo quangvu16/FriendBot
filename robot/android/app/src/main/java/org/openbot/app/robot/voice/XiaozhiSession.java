@@ -453,6 +453,16 @@ public final class XiaozhiSession {
       return; // notification
     }
     String method = text(rpc, "method");
+    try {
+      dispatchMcpMethod(id, method, rpc);
+    } catch (RuntimeException e) {
+      // A malformed request must never escape onMessage: OkHttp would drop the WebSocket.
+      Timber.w(e, "Xiaozhi MCP %s rejected", method);
+      sendRpcError(id, -32602, "Invalid params for " + method);
+    }
+  }
+
+  private void dispatchMcpMethod(JsonElement id, String method, JsonObject rpc) {
     switch (method) {
       case "initialize":
         parseVisionCapability(rpc);
@@ -478,7 +488,7 @@ public final class XiaozhiSession {
           }
           VoiceCommand command = toolCommand(name, args);
           if (command == null) {
-            sendRpcError(id, -32601, "Unknown tool: " + name);
+            sendRpcError(id, -32602, "Unknown tool or argument: " + name);
           } else {
             JsonElement rpcId = id;
             post(
@@ -797,14 +807,8 @@ public final class XiaozhiSession {
    */
   @Nullable
   private static VoiceCommand toolCommand(String name, JsonObject args) {
-    float speed =
-        args.has("speed") && args.get("speed").isJsonPrimitive()
-            ? args.get("speed").getAsFloat()
-            : VoiceCommand.DEFAULT_SPEED;
-    int duration =
-        args.has("duration_ms") && args.get("duration_ms").isJsonPrimitive()
-            ? args.get("duration_ms").getAsInt()
-            : VoiceCommand.DEFAULT_DURATION_MS;
+    float speed = (float) number(args, "speed", VoiceCommand.DEFAULT_SPEED);
+    int duration = (int) number(args, "duration_ms", VoiceCommand.DEFAULT_DURATION_MS);
     switch (name) {
       case "self.robot.move":
         {
@@ -834,10 +838,14 @@ public final class XiaozhiSession {
       case "self.robot.led":
         {
           String state = text(args, "state");
-          VoiceCommand.Action action =
-              "off".equalsIgnoreCase(state)
-                  ? VoiceCommand.Action.LIGHTS_OFF
-                  : VoiceCommand.Action.LIGHTS_ON;
+          VoiceCommand.Action action;
+          if ("on".equalsIgnoreCase(state)) {
+            action = VoiceCommand.Action.LIGHTS_ON;
+          } else if ("off".equalsIgnoreCase(state)) {
+            action = VoiceCommand.Action.LIGHTS_OFF;
+          } else {
+            return null; // unknown state: reject rather than guess
+          }
           return VoiceCommand.of(action, name, "mcp");
         }
       case "self.robot.sonar":
@@ -856,9 +864,11 @@ public final class XiaozhiSession {
             case "both":
               action = VoiceCommand.Action.INDICATOR_HAZARD;
               break;
-            default:
+            case "off":
               action = VoiceCommand.Action.INDICATOR_OFF;
               break;
+            default:
+              return null; // unknown state: reject rather than guess
           }
           return VoiceCommand.of(action, name, "mcp");
         }
@@ -882,9 +892,11 @@ public final class XiaozhiSession {
             case "wiggle":
               action = VoiceCommand.Action.WIGGLE;
               break;
-            default:
+            case "sing":
               action = VoiceCommand.Action.SING;
               break;
+            default:
+              return null; // unknown trick: reject, never spin the robot by default
           }
           return VoiceCommand.of(action, name, "mcp");
         }
@@ -930,6 +942,20 @@ public final class XiaozhiSession {
   }
 
   // ---------------------------------------------------------------- helpers
+
+  /**
+   * A numeric argument, or {@code fallback} when it is missing, not a number ("slow"), NaN or
+   * infinite. Never throws.
+   */
+  private static double number(JsonObject object, String key, double fallback) {
+    if (!object.has(key) || !object.get(key).isJsonPrimitive()) return fallback;
+    try {
+      double value = object.get(key).getAsDouble();
+      return Double.isNaN(value) || Double.isInfinite(value) ? fallback : value;
+    } catch (RuntimeException e) {
+      return fallback;
+    }
+  }
 
   private static String text(JsonObject object, String key) {
     return object.has(key) && object.get(key).isJsonPrimitive() ? object.get(key).getAsString() : "";

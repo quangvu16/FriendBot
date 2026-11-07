@@ -7,7 +7,7 @@
 //  (mic to Xiaozhi) and forward only drive commands here as newline-delimited JSON, so
 //  anyone nearby can drive the robot by voice without pairing Bluetooth:
 //
-//    {"t":"hello","name":"iPhone"}        remote greeting (optional)
+//    {"t":"hello","name":"iPhone","pin":"1234"}  remote greeting + the host's PIN (required)
 //    {"t":"move","l":0.75,"r":0.75,"ms":1200}
 //    {"t":"stop"}
 //    {"t":"ping"}
@@ -15,8 +15,8 @@
 //    {"t":"mic","b":"<base64 opus>","r":0.4}  one 60 ms mic frame + its level
 //    {"t":"mic","on":false}               remote microphone closes
 //
-//  Answered by {"t":"hello","name":"<host>","proto":1} on connect, {"t":"pong"} to
-//  pings and {"t":"micack","live":<bool>} to "mic" "on" (live = the host voice control
+//  Answered by {"t":"hello","name":"<host>","proto":2} on connect,
+//  {"t":"auth","ok":true|false} to the remote's hello, {"t":"pong"} to pings and {"t":"micack","live":<bool>} to "mic" "on" (live = the host voice control
 //  page is open and hearing the microphone). Advertised as _friendbot-ctrl._tcp. over
 //  Bonjour (VoiceRelayClient finds it).
 //
@@ -27,9 +27,13 @@
 //    - while a host-side (voice page) move runs, it owns the wire — remote ticks wait;
 //    - all output goes through the normal bluetooth link, so the STOP latch applies.
 //
-//  Start it from the voice control page once the robot link is up (start()); it then keeps
-//  serving for the life of the process, whatever screen the host user is on. LAN trust
-//  model — same as the classic OpenBot server protocol.
+//  PIN: the host shows a 4-digit PIN on its voice control page. A remote must send it in
+//  its hello before any move, stop or microphone message is accepted; a wrong PIN closes
+//  the connection, and after 5 wrong PINs every attempt is refused for 5 minutes. So a
+//  stranger on the same WiFi cannot drive the robot or speak into the host's Xiaozhi session.
+//
+//  Start it from the voice control page once the robot link is up (start()) and stop it when
+//  the page goes away (stop()): the robot is shared only while that page is open.
 //
 
 import Foundation
@@ -51,6 +55,23 @@ final class VoiceRelayServer {
     /// The Bonjour name other phones see (and the client filters out as "us").
     static let advertisedName = UIDevice.current.name
     private static let driveTickSeconds = 0.25
+    private static let pinKey = "voice_relay_host_pin"
+    private static let maxPinFailures = 5
+    private static let pinLockoutSeconds: TimeInterval = 5 * 60
+
+    /// The 4-digit PIN remotes must send; one per phone, kept across launches.
+    let pin: String = {
+        if let saved = UserDefaults.standard.string(forKey: VoiceRelayServer.pinKey),
+           saved.count == 4, saved.allSatisfy({ $0.isASCII && $0.isNumber }) {
+            return saved
+        }
+        let fresh = String(format: "%04d", Int.random(in: 0..<10000))
+        UserDefaults.standard.set(fresh, forKey: VoiceRelayServer.pinKey)
+        return fresh
+    }()
+    // PIN check; touched on the main thread only.
+    private var pinFailures = 0
+    private var pinLockedUntil: TimeInterval = 0
 
     private let queue = DispatchQueue(label: "friendbot.relay.server")
     private var listener: NWListener?
@@ -91,6 +112,28 @@ final class VoiceRelayServer {
         listener.start(queue: queue)
         self.listener = listener
         NSLog("Voice relay serving as '%@'", Self.advertisedName)
+    }
+
+    /// Stops sharing (idempotent): un-advertises, closes every remote and stops any remote
+    /// move. Called when the host voice control page goes away. Main thread only.
+    func stop() {
+        guard let listener = listener else { return }
+        listener.cancel()
+        self.listener = nil
+        let wasDriving = remoteOwner != nil
+        remoteOwner = nil
+        remoteEndsAt = 0
+        micOwner = nil
+        stopTick()
+        if wasDriving {
+            sendDrive(left: 0, right: 0)
+        }
+        queue.async {
+            let all = self.connections
+            self.connections.removeAll()
+            all.forEach { $0.close() }
+        }
+        NSLog("Voice relay stopped")
     }
 
     /// The host voice page started a duration-bounded move: it owns the wire until it ends.
@@ -135,7 +178,7 @@ final class VoiceRelayServer {
         relay.start()
         // JSONSerialization, not string interpolation: the device name may contain quotes.
         if let data = try? JSONSerialization.data(
-                withJSONObject: ["t": "hello", "name": Self.advertisedName, "proto": 1]),
+                withJSONObject: ["t": "hello", "name": Self.advertisedName, "proto": 2]),
            let hello = String(data: data, encoding: .utf8) {
             relay.send(hello)
         }
@@ -146,7 +189,10 @@ final class VoiceRelayServer {
             guard let data = line.data(using: .utf8),
                   let root = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
             else { return }
-            switch root["t"] as? String ?? "" {
+            let type = root["t"] as? String ?? ""
+            // Nothing but hello/ping until the remote has sent the right PIN.
+            guard client.authorized || type == "hello" || type == "ping" else { return }
+            switch type {
             case "move":
                 let l = (root["l"] as? NSNumber)?.floatValue ?? 0
                 let r = (root["r"] as? NSNumber)?.floatValue ?? 0
@@ -159,12 +205,37 @@ final class VoiceRelayServer {
                 client.send("{\"t\":\"pong\"}")
             case "hello":
                 client.name = root["name"] as? String ?? ""
+                self.checkPin(client, given: root["pin"] as? String ?? "")
             case "mic":
                 self.handleMic(client, root: root)
             default:
                 break
             }
         }
+    }
+
+    /// Main thread: accept or refuse a remote's PIN, with a lockout against guessing.
+    private func checkPin(_ client: RelayConnection, given: String) {
+        guard !client.authorized else { return }
+        let now = ProcessInfo.processInfo.systemUptime
+        let locked = now < pinLockedUntil
+        if !locked && given == pin {
+            client.authorized = true
+            pinFailures = 0
+            client.send("{\"t\":\"auth\",\"ok\":true}")
+            NSLog("Voice relay: '%@' joined with the PIN", client.name)
+            return
+        }
+        if !locked {
+            pinFailures += 1
+            if pinFailures >= Self.maxPinFailures {
+                pinFailures = 0
+                pinLockedUntil = now + Self.pinLockoutSeconds
+                NSLog("Voice relay: too many wrong PINs, refusing remotes for 5 minutes")
+            }
+        }
+        client.send("{\"t\":\"auth\",\"ok\":false}")
+        client.close()
     }
 
     /// A remote phone's microphone (Remote Mic page): "on":true/false opens and closes the
@@ -281,6 +352,8 @@ private final class RelayConnection {
     private var closed = false
     /// The remote phone's name (its hello); empty until it greets.
     var name = ""
+    /// Sent the right PIN in its hello (main thread only).
+    var authorized = false
 
     init(connection: NWConnection, queue: DispatchQueue,
          onLine: @escaping (RelayConnection, String) -> Void,
@@ -334,5 +407,13 @@ private final class RelayConnection {
     func send(_ text: String) {
         connection.send(content: (text + "\n").data(using: .utf8),
                         completion: .contentProcessed { _ in })
+    }
+
+    /// Closes the socket after any queued send; the state handler then reports the drop.
+    func close() {
+        connection.send(content: nil, contentContext: .finalMessage, isComplete: true,
+                        completion: .contentProcessed { [weak self] _ in
+                            self?.connection.cancel()
+                        })
     }
 }

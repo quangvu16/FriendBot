@@ -40,6 +40,8 @@ import org.jetbrains.annotations.NotNull;
 import org.openbot.app.robot.R;
 import org.openbot.app.robot.common.ControlsFragment;
 import org.openbot.app.robot.databinding.FragmentVoiceControlBinding;
+import org.openbot.app.robot.vehicle.Vehicle;
+import org.openbot.app.robot.voice.relay.RelayPinPrompt;
 import org.openbot.app.robot.voice.relay.VoiceRelayClient;
 import org.openbot.app.robot.voice.relay.VoiceRelayServer;
 import timber.log.Timber;
@@ -182,6 +184,13 @@ public class VoiceControlFragment extends ControlsFragment {
         @Override
         public void onHostsChanged() {
           updateConnectionText();
+        }
+
+        @Override
+        public void onPinRequired(String hostName, boolean wrong) {
+          if (isAdded() && getView() != null) {
+            RelayPinPrompt.show(requireContext(), hostName, wrong);
+          }
         }
       };
 
@@ -1121,7 +1130,8 @@ public class VoiceControlFragment extends ControlsFragment {
         return;
       case LIGHTS_ON:
         if (localLinkUp()) {
-          vehicle.sendLight(255, 255);
+          vehicle.sendLight(255, 255); // stock OpenBot boards
+          vehicle.sendIndicator(Vehicle.LED_ON, Vehicle.LED_ON); // FriendBot firmware LEDs
           lightsOn = true;
           if (spoken) sayToUser(say.isEmpty() ? summary : say);
         } else {
@@ -1131,6 +1141,7 @@ public class VoiceControlFragment extends ControlsFragment {
       case LIGHTS_OFF:
         if (localLinkUp()) {
           vehicle.sendLight(0, 0);
+          vehicle.sendIndicator(Vehicle.LED_OFF, Vehicle.LED_OFF);
           lightsOn = false;
           if (spoken) sayToUser(say.isEmpty() ? summary : say);
         } else {
@@ -1144,16 +1155,17 @@ public class VoiceControlFragment extends ControlsFragment {
         if (localLinkUp()) {
           switch (command.getAction()) {
             case INDICATOR_LEFT:
-              vehicle.sendIndicator(1, 0);
+              vehicle.sendIndicator(Vehicle.LED_BLINK, Vehicle.LED_OFF);
               break;
             case INDICATOR_RIGHT:
-              vehicle.sendIndicator(0, 1);
+              vehicle.sendIndicator(Vehicle.LED_OFF, Vehicle.LED_BLINK);
               break;
             case INDICATOR_HAZARD:
-              vehicle.sendIndicator(1, 1);
+              vehicle.sendIndicator(Vehicle.LED_BLINK, Vehicle.LED_BLINK);
               break;
             default:
-              vehicle.sendIndicator(0, 0);
+              // Signals off: hand the LEDs back to the firmware's automatic driving signals.
+              vehicle.sendIndicator(Vehicle.LED_AUTO, Vehicle.LED_AUTO);
               break;
           }
           if (spoken) sayToUser(say.isEmpty() ? summary : say);
@@ -1656,9 +1668,12 @@ public class VoiceControlFragment extends ControlsFragment {
       binding.connectionText.setText(
           getString(R.string.voice_relay_connected, relayClient.hostName()) + " · " + ws);
     } else if (vehicle != null && vehicle.isConnected()) {
+      // While sharing, show the PIN other phones must type to drive this robot.
       String link =
           VoiceRelayServer.get().isRunning()
               ? getString(R.string.voice_sharing_wifi, vehicle.getConnectionType())
+                  + " · "
+                  + getString(R.string.voice_sharing_pin, VoiceRelayServer.get().pin())
               : getString(R.string.voice_connected, vehicle.getConnectionType());
       binding.connectionText.setText(link + " · " + ws);
     } else if (relayClient != null && relayClient.isSearching()) {
@@ -2108,6 +2123,8 @@ public class VoiceControlFragment extends ControlsFragment {
     photoExplainer.markStopped();
     binding = null;
     VoiceRelayServer.get().setMicSink(null);
+    // Share the robot only while this page is open.
+    VoiceRelayServer.get().stop();
     if (relayClient != null) {
       relayClient.stop();
       relayClient = null;

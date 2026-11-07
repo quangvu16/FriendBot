@@ -229,6 +229,13 @@ final class VoiceControlController: UIViewController {
         super.viewWillAppear(animated)
         // A Remote Mic page on another phone feeds this page's session while it is on screen.
         relayServer.setMicSink(self)
+        // Another phone's shared robot asks for its PIN before this phone may drive it.
+        relayClient.onPinRequired = { [weak self] host, wrong in
+            guard let self = self, self.viewIfLoaded?.window != nil,
+                  self.presentedViewController == nil else { return }
+            VoiceRelayClient.promptForPin(from: self, host: host, wrong: wrong)
+        }
+
         maybeStartCamera()
     }
 
@@ -247,6 +254,8 @@ final class VoiceControlController: UIViewController {
         cameraStillWork?.cancel()
         // Only a real departure ends the session (alerts present over us as well).
         if isMovingFromParent || isBeingDismissed {
+            // Share the robot only while this page is open.
+            relayServer.stop()
             session.disconnect()
             activator?.cancel()
             activator = nil
@@ -1692,7 +1701,8 @@ final class VoiceControlController: UIViewController {
                 alert(L10n.string("voice_not_connected"))
                 return
             }
-            bluetooth.sendData(payload: "l255,255\n")
+            bluetooth.sendData(payload: "l255,255\n")  // stock OpenBot boards
+            sendIndicator(left: Self.ledOn, right: Self.ledOn)  // FriendBot firmware LEDs
             lightsOn = true
         case .lightsOff:
             guard isBluetoothConnected else {
@@ -1700,6 +1710,7 @@ final class VoiceControlController: UIViewController {
                 return
             }
             bluetooth.sendData(payload: "l0,0\n")
+            sendIndicator(left: Self.ledOff, right: Self.ledOff)
             lightsOn = false
         case .sonar:
             guard isBluetoothConnected else {
@@ -1716,25 +1727,26 @@ final class VoiceControlController: UIViewController {
                 alert(L10n.string("voice_not_connected"))
                 return
             }
-            sendIndicator(left: 1, right: 0)
+            sendIndicator(left: Self.ledBlink, right: Self.ledOff)
         case .indicatorRight:
             guard isBluetoothConnected else {
                 alert(L10n.string("voice_not_connected"))
                 return
             }
-            sendIndicator(left: 0, right: 1)
+            sendIndicator(left: Self.ledOff, right: Self.ledBlink)
         case .indicatorHazard:
             guard isBluetoothConnected else {
                 alert(L10n.string("voice_not_connected"))
                 return
             }
-            sendIndicator(left: 1, right: 1)
+            sendIndicator(left: Self.ledBlink, right: Self.ledBlink)
         case .indicatorOff:
             guard isBluetoothConnected else {
                 alert(L10n.string("voice_not_connected"))
                 return
             }
-            sendIndicator(left: 0, right: 0)
+            // Signals off: hand the LEDs back to the firmware's automatic driving signals.
+            sendIndicator(left: Self.ledAuto, right: Self.ledAuto)
         case .sing, .triangle, .circle, .spin360, .turnAround, .wiggle:
             startScript(command)
         default:
@@ -1863,8 +1875,15 @@ final class VoiceControlController: UIViewController {
         bluetooth.sendData(payload: "c\(l),\(r)\n")
     }
 
-    /// Turn-signal indicator LEDs, firmware "i<left>,<right>" (ints 0/1, nonzero = blinking).
-    /// Not a motion command, so the drive gate and auto-stop do not apply.
+    /// FriendBot firmware LED modes for "i<left>,<right>" (see openbot-esp32-mtv.ino).
+    private static let ledOff = 0
+    private static let ledOn = 1
+    private static let ledBlink = 2
+    /// The firmware shows the driving state itself (turning side blinks, both blink when stopped).
+    private static let ledAuto = 3
+
+    /// Left/right LEDs, firmware "i<left>,<right>", each one of ledOff / ledOn / ledBlink /
+    /// ledAuto. Not a motion command, so the drive gate and auto-stop do not apply.
     private func sendIndicator(left: Int, right: Int) {
         bluetooth.sendData(payload: "i\(left),\(right)\n")
     }
@@ -2022,8 +2041,12 @@ final class VoiceControlController: UIViewController {
             command = VoiceCommand(action: .stop, rawText: name, source: "xiaozhi")
         case "self.robot.led":
             // Front/back lights: {"state": "on" | "off"} (Android parity).
-            let action: VoiceAction = (args["state"] as? String ?? "").lowercased() == "off"
-                ? .lightsOff : .lightsOn
+            let action: VoiceAction
+            switch (args["state"] as? String ?? "").lowercased() {
+            case "on": action = .lightsOn
+            case "off": action = .lightsOff
+            default: return false  // unknown state: reject rather than guess
+            }
             command = VoiceCommand(action: action, rawText: name, source: "xiaozhi")
         case "self.robot.indicator":
             // Turn signals: {"state": "left" | "right" | "both" | "off"}.
@@ -2032,7 +2055,8 @@ final class VoiceControlController: UIViewController {
             case "left": action = .indicatorLeft
             case "right": action = .indicatorRight
             case "both": action = .indicatorHazard
-            default: action = .indicatorOff
+            case "off": action = .indicatorOff
+            default: return false  // unknown state: reject rather than guess
             }
             command = VoiceCommand(action: action, rawText: name, source: "xiaozhi")
         case "self.robot.sonar":
@@ -2045,7 +2069,8 @@ final class VoiceControlController: UIViewController {
             case "spin": action = .spin360
             case "turn_around": action = .turnAround
             case "wiggle": action = .wiggle
-            default: action = .sing
+            case "sing": action = .sing
+            default: return false  // unknown trick: reject, never spin the robot by default
             }
             command = VoiceCommand(action: action, rawText: name, source: "xiaozhi")
         default:
@@ -2207,8 +2232,10 @@ final class VoiceControlController: UIViewController {
             // The picked target is a robot another phone shares over WiFi.
             base = String(format: L10n.string("voice_relay_connected"), relayClient.hostName)
         } else if isBluetoothConnected {
+            // While sharing, show the PIN other phones must type to drive this robot.
             base = relayServer.isRunning
-                ? String(format: L10n.string("voice_sharing_wifi"), "BLE")
+                ? String(format: L10n.string("voice_sharing_wifi"), "BLE") + " · "
+                    + String(format: L10n.string("voice_sharing_pin"), relayServer.pin)
                 : String(format: L10n.string("voice_connected"), "BLE")
         } else if relayClient.isSearching {
             base = L10n.string("voice_relay_searching")

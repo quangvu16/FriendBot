@@ -416,6 +416,11 @@
     <string name="voice_not_connected">Robot not connected</string>
     <string name="voice_connected">Connected (%1$s)</string>
     <string name="voice_sharing_wifi">Connected (%1$s) · Sharing over WiFi</string>
+    <string name="voice_sharing_pin">PIN %1$s</string>
+    <string name="voice_relay_pin_title">Enter the PIN</string>
+    <string name="voice_relay_pin_message">Type the 4-digit PIN shown on the voice control page of %1$s.</string>
+    <string name="voice_relay_pin_wrong">Wrong PIN. Type the 4-digit PIN shown on the voice control page of %1$s.</string>
+    <string name="voice_relay_pin_connect">Connect</string>
     <string name="voice_relay_connected">Controlling via %1$s (WiFi)</string>
     <string name="voice_relay_searching">Searching for a robot on WiFi…</string>
     <string name="voice_robot_picker_title">Choose robot</string>

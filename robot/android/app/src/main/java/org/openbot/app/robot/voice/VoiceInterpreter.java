@@ -1,5 +1,6 @@
 package org.openbot.app.robot.voice;
 
+import java.text.Normalizer;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,10 +24,10 @@ import java.util.regex.Pattern;
 public final class VoiceInterpreter {
 
   private static final String[] STOP_WORDS = {
-    "stop", "halt", "dừng", "dừng lại", "dung lai", "đứng lại", "dung", "停", "停止", "别动"
+    "stop", "stopping", "halt", "dừng", "dừng lại", "dung lai", "đứng lại", "dung", "停", "停止", "别动"
   };
   private static final String[] SING_WORDS = {
-    "sing", "song", "hát", "hat", "唱歌", "唱"
+    "sing", "singing", "song", "hát", "hat", "唱歌", "唱"
   };
   private static final String[] SONAR_WORDS = {
     "sonar", "distance", "how far", "khoảng cách", "khoang cach", "cảm biến", "距离", "多远", "超声波"
@@ -62,7 +63,7 @@ public final class VoiceInterpreter {
     "circle", "vòng tròn", "vong tron", "vòng", "圆形", "圆圈", "画圆"
   };
   private static final String[] SPIN_WORDS = {
-    "360", "spin", "xoay", "một vòng", "mot vong", "旋转", "转一圈", "转圈"
+    "360", "spin", "spinning", "xoay", "một vòng", "mot vong", "旋转", "转一圈", "转圈"
   };
   private static final String[] TURN_AROUND_WORDS = {
     "turn around", "turnaround", "quay lại", "quay lai", "quay đầu", "quay dau", "掉头", "转身"
@@ -72,7 +73,7 @@ public final class VoiceInterpreter {
     "左右", "左右转", "两边"
   };
   private static final String[] BACK_WORDS = {
-    "back", "reverse", "retreat", "go back", "lùi", "lùi lại", "lui", "倒", "后退", "向后"
+    "back", "backward", "backwards", "reverse", "reversing", "retreat", "go back", "lùi", "lùi lại", "lui", "倒", "后退", "向后"
   };
   private static final String[] LEFT_WORDS = {
     "left", "turn left", "trái", "rẽ trái", "re trai", "左", "左转"
@@ -87,7 +88,7 @@ public final class VoiceInterpreter {
     "slower", "slow down", "slowdown", "chậm", "chậm lại", "cham", "giảm tốc", "慢", "慢点", "减速"
   };
   private static final String[] FWD_WORDS = {
-    "forward", "ahead", "straight", "go", "move", "tiến", "tien", "đi", "前进", "向前", "走"
+    "forward", "forwards", "ahead", "straight", "go", "going", "move", "moving", "tiến", "tien", "đi", "前进", "向前", "走"
   };
   /** "go forward for a long time" — stretches a plain move to 5 s. */
   private static final String[] LONG_WORDS = {
@@ -106,7 +107,8 @@ public final class VoiceInterpreter {
   /** Matches a transcript; never returns null. Unknown words become {@code UNKNOWN}. */
   public static VoiceCommand interpret(String text) {
     if (text == null) return VoiceCommand.of(VoiceCommand.Action.UNKNOWN, "", "local");
-    String t = text.toLowerCase(Locale.ROOT).trim();
+    // NFC: keyboards may send Vietnamese as base letter + combining mark.
+    String t = Normalizer.normalize(text, Normalizer.Form.NFC).toLowerCase(Locale.ROOT).trim();
     if (t.isEmpty()) return VoiceCommand.of(VoiceCommand.Action.UNKNOWN, text, "local");
 
     VoiceCommand.Action action;
@@ -168,8 +170,30 @@ public final class VoiceInterpreter {
 
   private static boolean containsAny(String text, String[] needles) {
     for (String n : needles) {
-      if (text.contains(n)) return true;
+      if (containsWord(text, n)) return true;
     }
     return false;
+  }
+
+  /**
+   * True when {@code needle} appears in {@code text} as a whole word, so "hat" does not match
+   * "what" and "đi" does not match "điện". Chinese keywords are matched as plain substrings,
+   * because Chinese writes words without spaces.
+   */
+  static boolean containsWord(String text, String needle) {
+    if (needle.isEmpty()) return false;
+    if (Character.UnicodeScript.of(needle.codePointAt(0)) == Character.UnicodeScript.HAN) {
+      return text.contains(needle);
+    }
+    int from = 0;
+    while (true) {
+      int i = text.indexOf(needle, from);
+      if (i < 0) return false;
+      int end = i + needle.length();
+      boolean startOk = i == 0 || !Character.isLetterOrDigit(text.codePointBefore(i));
+      boolean endOk = end >= text.length() || !Character.isLetterOrDigit(text.codePointAt(end));
+      if (startOk && endOk) return true;
+      from = i + 1;
+    }
   }
 }

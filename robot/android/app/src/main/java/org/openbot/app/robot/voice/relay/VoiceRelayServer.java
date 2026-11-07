@@ -1,6 +1,7 @@
 package org.openbot.app.robot.voice.relay;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.nsd.NsdManager;
 import android.net.nsd.NsdServiceInfo;
 import android.os.Build;
@@ -18,8 +19,10 @@ import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import org.openbot.app.robot.vehicle.Vehicle;
 import timber.log.Timber;
 
@@ -30,7 +33,7 @@ import timber.log.Timber;
  * drive the robot by voice without pairing Bluetooth:
  *
  * <pre>
- *   {"t":"hello","name":"Pixel 8"}        remote greeting (optional)
+ *   {"t":"hello","name":"Pixel 8","pin":"1234"}  remote greeting + the host's PIN (required)
  *   {"t":"move","l":0.75,"r":0.75,"ms":1200}
  *   {"t":"stop"}
  *   {"t":"ping"}
@@ -39,8 +42,14 @@ import timber.log.Timber;
  *   {"t":"mic","on":false}                remote microphone closes
  * </pre>
  *
- * <p>Answered by {@code {"t":"hello","name":"<host>","proto":1}} on connect and {@code
- * {"t":"pong"}} to pings. Discovered as {@code _friendbot-ctrl._tcp.} over NSD/Bonjour on a
+ * <p>Answered by {@code {"t":"hello","name":"<host>","proto":2}} on connect, {@code
+ * {"t":"auth","ok":true|false}} to the remote's hello and {@code {"t":"pong"}} to pings.
+ *
+ * <p>PIN: the host shows a 4-digit PIN on its voice control page. A remote must send it in its
+ * hello before any move, stop or microphone message is accepted; a wrong PIN closes the
+ * connection, and after {@link #MAX_PIN_FAILURES} wrong PINs every attempt is refused for
+ * {@link #PIN_LOCKOUT_MS}. So a stranger on the same WiFi cannot drive the robot or speak into
+ * the host's Xiaozhi session. Discovered as {@code _friendbot-ctrl._tcp.} over NSD/Bonjour on a
  * dynamic port ({@link VoiceRelayClient} finds it).
  *
  * <p>Safety rules — the robot always fails safe:
@@ -53,9 +62,8 @@ import timber.log.Timber;
  *   <li>all output goes through {@link Vehicle#setControl}, so the big STOP latch applies.
  * </ul>
  *
- * <p>Start it from the voice control page once a vehicle link exists ({@link #start}); it then
- * keeps serving for the life of the process, whatever screen the host user is on. LAN trust
- * model — same as the classic OpenBot server protocol.
+ * <p>Start it from the voice control page once a vehicle link exists ({@link #start}) and stop it
+ * when the page goes away ({@link #stop}): the robot is shared only while that page is open.
  */
 public final class VoiceRelayServer {
 
@@ -73,6 +81,11 @@ public final class VoiceRelayServer {
   private static final long DRIVE_TICK_MS = 250;
   private static final long MAX_LINE_CHARS = 4096;
 
+  private static final String PREFS_NAME = "voice_relay_host";
+  private static final String PREF_PIN = "pin";
+  static final int MAX_PIN_FAILURES = 5;
+  static final long PIN_LOCKOUT_MS = 5 * 60 * 1000;
+
   private static final VoiceRelayServer INSTANCE = new VoiceRelayServer();
 
   public static VoiceRelayServer get() {
@@ -85,8 +98,13 @@ public final class VoiceRelayServer {
 
   private ServerSocket serverSocket;
   private NsdManager nsdManager;
-  private NsdServiceInfo registeredService;
+  private NsdManager.RegistrationListener registrationListener;
   private volatile Vehicle vehicle;
+
+  // PIN check; touched on the main thread only.
+  private String pin = "";
+  private int pinFailures;
+  private long pinLockedUntilMs;
 
   // Remote move state; touched on the main thread only.
   private float remoteLeft;
@@ -106,6 +124,7 @@ public final class VoiceRelayServer {
   public synchronized void start(Context appContext, Vehicle vehicle) {
     this.vehicle = vehicle;
     if (serverSocket != null) return;
+    pin = loadOrCreatePin(appContext);
     try {
       serverSocket = new ServerSocket(0);
     } catch (IOException e) {
@@ -123,14 +142,68 @@ public final class VoiceRelayServer {
     nsdManager = (NsdManager) appContext.getSystemService(Context.NSD_SERVICE);
     if (nsdManager != null) {
       try {
-        registeredService = info;
+        // A fresh listener each time: NSD refuses to reuse one that is still unregistering.
+        registrationListener = newRegistrationListener();
         nsdManager.registerService(info, NsdManager.PROTOCOL_DNS_SD, registrationListener);
       } catch (IllegalArgumentException e) {
         Timber.e(e, "Voice relay NSD registration failed");
-        registeredService = null;
+        registrationListener = null;
       }
     }
     Timber.i("Voice relay serving on port %d", serverSocket.getLocalPort());
+  }
+
+  /**
+   * Stops sharing (idempotent): un-advertises, closes every remote and stops any remote move.
+   * Called when the host voice control page goes away.
+   */
+  public synchronized void stop() {
+    if (serverSocket == null) return;
+    if (nsdManager != null && registrationListener != null) {
+      try {
+        nsdManager.unregisterService(registrationListener);
+      } catch (IllegalArgumentException ignored) {
+        // Never registered / already gone.
+      }
+    }
+    registrationListener = null;
+    try {
+      serverSocket.close();
+    } catch (IOException ignored) {
+      // Already closed.
+    }
+    serverSocket = null;
+    main.post(
+        () -> {
+          main.removeCallbacks(driveTick);
+          boolean remoteWasDriving = remoteOwner != null;
+          remoteOwner = null;
+          remoteEndsAtMs = 0;
+          micOwner = null;
+          for (Client client : new ArrayList<>(clients)) {
+            client.close(); // its reader thread then reports clientDropped
+          }
+          Vehicle v = vehicle;
+          if (remoteWasDriving && v != null) {
+            v.setControl(0f, 0f);
+          }
+        });
+    Timber.i("Voice relay stopped");
+  }
+
+  /** The 4-digit PIN remotes must send; shown on the host voice control page. */
+  public String pin() {
+    return pin;
+  }
+
+  /** One PIN per phone, kept across launches so remotes do not have to retype it. */
+  private static String loadOrCreatePin(Context context) {
+    SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+    String saved = prefs.getString(PREF_PIN, "");
+    if (saved != null && saved.matches("\\d{4}")) return saved;
+    String fresh = String.format(Locale.US, "%04d", new SecureRandom().nextInt(10000));
+    prefs.edit().putString(PREF_PIN, fresh).apply();
+    return fresh;
   }
 
   public boolean isRunning() {
@@ -173,8 +246,8 @@ public final class VoiceRelayServer {
 
   // ------------------------------------------------------------------ accept
 
-  private final NsdManager.RegistrationListener registrationListener =
-      new NsdManager.RegistrationListener() {
+  private static NsdManager.RegistrationListener newRegistrationListener() {
+    return new NsdManager.RegistrationListener() {
         @Override
         public void onServiceRegistered(NsdServiceInfo serviceInfo) {
           Timber.i("Voice relay advertised as '%s'", serviceInfo.getServiceName());
@@ -191,17 +264,19 @@ public final class VoiceRelayServer {
         @Override
         public void onUnregistrationFailed(NsdServiceInfo serviceInfo, int errorCode) {}
       };
+  }
 
   private void acceptLoop() {
-    while (serverSocket != null && !serverSocket.isClosed()) {
+    ServerSocket listening = serverSocket;
+    while (listening != null && !listening.isClosed()) {
       try {
-        Socket socket = serverSocket.accept();
+        Socket socket = listening.accept();
         socket.setTcpNoDelay(true);
         Thread reader = new Thread(() -> handleClient(socket), "voice-relay-client");
         reader.setDaemon(true);
         reader.start();
       } catch (IOException e) {
-        if (serverSocket != null && !serverSocket.isClosed()) {
+        if (!listening.isClosed()) {
           Timber.w("Voice relay accept failed: %s", e.getMessage());
         }
         return;
@@ -219,7 +294,7 @@ public final class VoiceRelayServer {
       JsonObject hello = new JsonObject();
       hello.addProperty("t", "hello");
       hello.addProperty("name", Build.MODEL);
-      hello.addProperty("proto", 1);
+      hello.addProperty("proto", 2);
       client.send(hello.toString());
       String line;
       while ((line = in.readLine()) != null && line.length() <= MAX_LINE_CHARS) {
@@ -237,6 +312,9 @@ public final class VoiceRelayServer {
     try {
       JsonObject root = JsonParser.parseString(json).getAsJsonObject();
       String type = root.has("t") ? root.get("t").getAsString() : "";
+      if (!client.authorized && !"hello".equals(type) && !"ping".equals(type)) {
+        return; // nothing but hello/ping until the remote has sent the right PIN
+      }
       switch (type) {
         case "move":
           float l = (float) root.get("l").getAsDouble();
@@ -252,6 +330,7 @@ public final class VoiceRelayServer {
           break;
         case "hello":
           client.name = root.has("name") ? root.get("name").getAsString() : "";
+          checkPin(client, root.has("pin") ? root.get("pin").getAsString() : "");
           break;
         case "mic":
           handleMic(client, root);
@@ -262,6 +341,27 @@ public final class VoiceRelayServer {
     } catch (Exception e) {
       Timber.w("Voice relay dropped a bad message: %s", e.getMessage());
     }
+  }
+
+  /** Main thread: accept or refuse a remote's PIN, with a lockout against guessing. */
+  private void checkPin(Client client, String given) {
+    if (client.authorized) return;
+    long now = SystemClock.uptimeMillis();
+    boolean locked = now < pinLockedUntilMs;
+    if (!locked && !pin.isEmpty() && pin.equals(given)) {
+      client.authorized = true;
+      pinFailures = 0;
+      client.send("{\"t\":\"auth\",\"ok\":true}");
+      Timber.i("Voice relay: '%s' joined with the PIN", client.name);
+      return;
+    }
+    if (!locked && ++pinFailures >= MAX_PIN_FAILURES) {
+      pinFailures = 0;
+      pinLockedUntilMs = now + PIN_LOCKOUT_MS;
+      Timber.w("Voice relay: too many wrong PINs, refusing remotes for 5 minutes");
+    }
+    client.send("{\"t\":\"auth\",\"ok\":false}");
+    client.close();
   }
 
   /**
@@ -350,7 +450,8 @@ public final class VoiceRelayServer {
     if (remoteOwner == null || SystemClock.uptimeMillis() >= remoteEndsAtMs) {
       remoteOwner = null;
       Vehicle v = vehicle;
-      if (v != null) {
+      // Stop the remote's move, but never cut into a move the host page is running.
+      if (v != null && SystemClock.uptimeMillis() >= localEndsAtMs) {
         v.setControl(0f, 0f);
       }
       return;
@@ -362,7 +463,9 @@ public final class VoiceRelayServer {
         v.setControl(remoteLeft, remoteRight);
       }
     }
-    main.postDelayed(this::tick, DRIVE_TICK_MS);
+    // Re-post the same Runnable: handleMove/handleStop cancel it by identity, so a fresh
+    // method reference here would leave extra tick loops running.
+    main.postDelayed(driveTick, DRIVE_TICK_MS);
   }
 
   private static float clampUnit(float v) {
@@ -379,6 +482,8 @@ public final class VoiceRelayServer {
     private BufferedWriter out;
     /** The remote phone's name (its hello); empty until it greets. */
     volatile String name = "";
+    /** Sent the right PIN in its hello (main thread only). */
+    boolean authorized;
 
     Client(Socket socket) {
       this.socket = socket;

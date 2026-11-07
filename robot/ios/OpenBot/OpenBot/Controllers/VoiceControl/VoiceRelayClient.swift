@@ -19,9 +19,14 @@
 //  host answers each open with a "micack" saying whether its page is actually listening
 //  (onMicAck). Received lines are parsed on the connection queue.
 //
+//  Each host asks for the 4-digit PIN shown on its voice control page. The PIN is remembered
+//  per host; when none is saved (or the host says it is wrong) onPinRequired asks the page to
+//  prompt the user (promptForPin), and setPin(_:for:) connects.
+//
 
 import Foundation
 import Network
+import UIKit
 
 final class VoiceRelayClient {
 
@@ -34,6 +39,10 @@ final class VoiceRelayClient {
     /// open and hearing the microphone. Fired on the main queue.
     var onMicAck: ((Bool) -> Void)?
 
+    /// A host needs its PIN before this phone may drive through it (the Bool: the saved/typed
+    /// PIN was refused). Show promptForPin(from:host:wrong:). Fired on the main queue.
+    var onPinRequired: ((String, Bool) -> Void)?
+
     private(set) var isSearching = false
     private(set) var isHostConnected = false
     private(set) var hostName = ""
@@ -42,6 +51,9 @@ final class VoiceRelayClient {
     private(set) var choice = ""
 
     private let choiceKey = "voice_relay_choice"
+    private static let pinKeyPrefix = "voice_relay_pin_"
+    /// Hosts the user was already asked about; not asked again until they pick the host.
+    private var pinAsked: Set<String> = []
     private static let choiceLocal = "local"
 
     private let queue = DispatchQueue(label: "friendbot.relay.client")
@@ -116,6 +128,7 @@ final class VoiceRelayClient {
 
     /// Drive the robot shared by `name` (from hostNames()).
     func chooseHost(_ name: String) {
+        pinAsked.remove(name)  // an explicit pick may ask for the PIN again
         setChoice(name)
         if isHostConnected, name != hostName {
             connectionEnded()
@@ -134,6 +147,43 @@ final class VoiceRelayClient {
         if choice.isEmpty {
             chooseLocal()
         }
+    }
+
+    /// The user typed `pin` for `host`: remember it and connect.
+    func setPin(_ pin: String, for host: String) {
+        UserDefaults.standard.set(pin.trimmingCharacters(in: .whitespaces),
+                                  forKey: Self.pinKeyPrefix + host)
+        pinAsked.remove(host)
+        reconnectAttempts = 0
+        maybeConnect()
+    }
+
+    private func savedPin(_ host: String) -> String {
+        UserDefaults.standard.string(forKey: Self.pinKeyPrefix + host) ?? ""
+    }
+
+    /// Asks for the 4-digit PIN that `host` shows on its voice control page, then calls
+    /// setPin(_:for:). Used by the voice control and Remote Mic pages.
+    static func promptForPin(from presenter: UIViewController, host: String, wrong: Bool) {
+        let format = L10n.string(wrong ? "voice_relay_pin_wrong" : "voice_relay_pin_message")
+        let alert = UIAlertController(title: L10n.string("voice_relay_pin_title"),
+                                      message: String(format: format, host),
+                                      preferredStyle: .alert)
+        alert.addTextField { field in
+            field.keyboardType = .numberPad
+            field.isSecureTextEntry = true
+            field.placeholder = "0000"
+        }
+        alert.addAction(UIAlertAction(title: L10n.string("voice_cancel"), style: .cancel))
+        alert.addAction(UIAlertAction(title: L10n.string("voice_relay_pin_connect"),
+                                      style: .default) { [weak alert] _ in
+            let pin = alert?.textFields?.first?.text?
+                .trimmingCharacters(in: .whitespaces) ?? ""
+            if pin.count == 4 {
+                VoiceRelayClient.shared.setPin(pin, for: host)
+            }
+        })
+        presenter.present(alert, animated: true)
     }
 
     private func setChoice(_ newChoice: String) {
@@ -193,6 +243,13 @@ final class VoiceRelayClient {
             ? candidates.first
             : candidates.first(where: { $0.name == choice })
         guard let target = target else { return }
+        if savedPin(target.name).isEmpty {
+            // No PIN for this host yet: ask the user once instead of connecting.
+            if pinAsked.insert(target.name).inserted {
+                onPinRequired?(target.name, false)
+            }
+            return
+        }
         connect(to: target.endpoint)
     }
 
@@ -214,12 +271,14 @@ final class VoiceRelayClient {
                       self.connection === connection else { return }
                 switch state {
                 case .ready:
-                    self.isHostConnected = true
-                    self.hostName = name
-                    self.reconnectAttempts = 0
-                    self.updateSearching()
-                    self.notify()
-                    NSLog("Voice relay connected to '%@'", name)
+                    // Not connected yet: send the PIN, the host answers {"t":"auth","ok":...}.
+                    if let data = try? JSONSerialization.data(withJSONObject: [
+                        "t": "hello", "name": VoiceRelayServer.advertisedName,
+                        "pin": self.savedPin(name),
+                    ]), let line = String(data: data, encoding: .utf8) {
+                        connection.send(content: (line + "\n").data(using: .utf8),
+                                        completion: .contentProcessed { _ in })
+                    }
                 case .failed, .cancelled:
                     self.connectionEnded()
                 default:
@@ -247,7 +306,7 @@ final class VoiceRelayClient {
                     let line = self.receiveBuffer.subdata(in: 0..<newline)
                     self.receiveBuffer.removeSubrange(0...newline)
                     if let text = String(data: line, encoding: .utf8), text.count <= 4096 {
-                        self.handleServerLine(text)
+                        self.handleServerLine(text, from: connection)
                     }
                 }
             }
@@ -262,11 +321,32 @@ final class VoiceRelayClient {
         }
     }
 
-    private func handleServerLine(_ line: String) {
+    private func handleServerLine(_ line: String, from connection: NWConnection) {
         guard let data = line.data(using: .utf8),
-              let root = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],
-              (root["t"] as? String) == "micack"
+              let root = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
         else { return }
+        if (root["t"] as? String) == "auth" {
+            let ok = (root["ok"] as? Bool) ?? false
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self, self.connection === connection,
+                      case .service(let name, _, _, _) = connection.endpoint else { return }
+                if ok {
+                    self.isHostConnected = true
+                    self.hostName = name
+                    self.reconnectAttempts = 0
+                    self.updateSearching()
+                    self.notify()
+                    NSLog("Voice relay connected to '%@'", name)
+                } else {
+                    // Wrong PIN: forget it and ask; the host closes the socket.
+                    UserDefaults.standard.removeObject(forKey: Self.pinKeyPrefix + name)
+                    self.pinAsked.insert(name)
+                    self.onPinRequired?(name, true)
+                }
+            }
+            return
+        }
+        guard (root["t"] as? String) == "micack" else { return }
         let live = (root["live"] as? Bool) ?? false
         DispatchQueue.main.async { [weak self] in
             self?.onMicAck?(live)

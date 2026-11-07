@@ -56,6 +56,11 @@ final class RemoteMicController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        relayClient.onPinRequired = { [weak self] host, wrong in
+            guard let self = self, self.viewIfLoaded?.window != nil,
+                  self.presentedViewController == nil else { return }
+            VoiceRelayClient.promptForPin(from: self, host: host, wrong: wrong)
+        }
         relayClient.start()
         updateStatus()
     }
@@ -66,6 +71,7 @@ final class RemoteMicController: UIViewController {
         stopStreaming()
         relayClient.onMicAck = nil
         relayClient.onStateChange = nil
+        relayClient.onPinRequired = nil
     }
 
     // MARK: Layout

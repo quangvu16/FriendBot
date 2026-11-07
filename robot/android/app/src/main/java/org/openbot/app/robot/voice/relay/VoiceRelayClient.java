@@ -21,8 +21,11 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import timber.log.Timber;
 
 /**
@@ -37,6 +40,10 @@ import timber.log.Timber;
  * #chooseHost(String)} picks one shared robot, {@link #chooseAuto()} restores the default
  * (auto-connect to the first shared robot). The choice is remembered across launches.
  *
+ * <p>Each host asks for the 4-digit PIN shown on its voice control page. The PIN is remembered
+ * per host; when none is saved (or the host says it is wrong) {@link Listener#onPinRequired}
+ * asks the page to prompt the user ({@link RelayPinPrompt}), and {@link #setPin} connects.
+ *
  * <p>Reconnects with 1 s / 2 s / 5 s backoff when the chosen host disappears. All callbacks
  * arrive on the main thread.
  */
@@ -48,6 +55,8 @@ public final class VoiceRelayClient {
   private static final String CHOICE_LOCAL = "local";
   /** No pick yet: auto-connect to the first shared robot (only used without a local link). */
   private static final String CHOICE_AUTO = "";
+  /** Saved PIN per host: {@code pin_<host name>}. */
+  private static final String PREF_PIN_PREFIX = "pin_";
 
   private static final long MAX_LINE_CHARS = 4096;
   private static final long[] RECONNECT_DELAY_MS = {1000, 2000, 5000};
@@ -72,6 +81,12 @@ public final class VoiceRelayClient {
      * control page is open and hearing the microphone.
      */
     default void onMicAck(boolean live) {}
+
+    /**
+     * {@code hostName} needs its PIN before this phone may drive through it ({@code wrong}: the
+     * saved/typed one was refused). Show {@link RelayPinPrompt}; it calls {@link #setPin}.
+     */
+    default void onPinRequired(String hostName, boolean wrong) {}
   }
 
   private final Handler main = new Handler(Looper.getMainLooper());
@@ -89,6 +104,8 @@ public final class VoiceRelayClient {
   private String hostName = "";
   private String choice = CHOICE_AUTO;
   private int reconnectAttempts;
+  /** Hosts the user was already asked about; not asked again until they pick the host. */
+  private final Set<String> pinAsked = Collections.synchronizedSet(new HashSet<>());
 
   private VoiceRelayClient() {}
 
@@ -169,6 +186,7 @@ public final class VoiceRelayClient {
 
   /** Drive the robot shared by {@code name} (from {@link #hostNames()}). */
   public void chooseHost(String name) {
+    pinAsked.remove(name); // an explicit pick may ask for the PIN again
     setChoice(name);
     if (hostConnected && !name.equals(hostName)) {
       disconnect();
@@ -187,6 +205,20 @@ public final class VoiceRelayClient {
     if (CHOICE_AUTO.equals(choice)) {
       chooseLocal();
     }
+  }
+
+  /** The user typed {@code pin} for {@code hostName}: remember it and connect. */
+  public void setPin(String hostName, String pin) {
+    if (prefs != null) {
+      prefs.edit().putString(PREF_PIN_PREFIX + hostName, pin.trim()).apply();
+    }
+    pinAsked.remove(hostName);
+    reconnectAttempts = 0;
+    maybeConnect();
+  }
+
+  private String savedPin(String hostName) {
+    return prefs == null ? "" : prefs.getString(PREF_PIN_PREFIX + hostName, "");
   }
 
   private void setChoice(String newChoice) {
@@ -233,8 +265,14 @@ public final class VoiceRelayClient {
   }
 
   private void send(JsonObject message) {
+    if (!hostConnected) return;
+    write(message);
+  }
+
+  /** Writes one line on the open socket, connected (PIN accepted) or not. */
+  private void write(JsonObject message) {
     BufferedWriter writer = out;
-    if (writer == null || !hostConnected) return;
+    if (writer == null) return;
     synchronized (this) {
       try {
         writer.write(message.toString());
@@ -308,6 +346,19 @@ public final class VoiceRelayClient {
       }
     }
     if (target == null) return;
+    String targetName = target.getServiceName();
+    if (savedPin(targetName).isEmpty()) {
+      // No PIN for this host yet: ask the user once instead of connecting.
+      if (pinAsked.add(targetName)) {
+        main.post(
+            () -> {
+              if (listener != null) {
+                listener.onPinRequired(targetName, false);
+              }
+            });
+      }
+      return;
+    }
     connecting = true;
     nsdManager.resolveService(
         target,
@@ -364,12 +415,12 @@ public final class VoiceRelayClient {
                 JsonObject hello = new JsonObject();
                 hello.addProperty("t", "hello");
                 hello.addProperty("name", Build.MODEL);
-                send(hello);
-                reconnectAttempts = 0;
-                setHostState(true, name);
+                hello.addProperty("pin", savedPin(name));
+                // Not connected yet: the host answers {"t":"auth","ok":...} (handleServerLine).
+                write(hello);
                 String line;
                 while ((line = in.readLine()) != null && line.length() <= MAX_LINE_CHARS) {
-                  handleServerLine(line);
+                  handleServerLine(line, name);
                 }
               } catch (IOException e) {
                 // Host went away; fall through to the retry path.
@@ -391,12 +442,30 @@ public final class VoiceRelayClient {
     main.postDelayed(connectAttempt, delay);
   }
 
-  /** Host → remote line: only the microphone ack matters here. */
-  private void handleServerLine(String line) {
+  /** Host → remote line: the PIN answer and the microphone ack matter here. */
+  private void handleServerLine(String line, String name) {
     try {
       JsonObject root = JsonParser.parseString(line).getAsJsonObject();
       String type = root.has("t") ? root.get("t").getAsString() : "";
-      if ("micack".equals(type)) {
+      if ("auth".equals(type)) {
+        boolean ok = root.has("ok") && root.get("ok").getAsBoolean();
+        if (ok) {
+          reconnectAttempts = 0;
+          setHostState(true, name);
+        } else {
+          main.post(
+              () -> {
+                // Wrong PIN: forget it and ask; the host closes the socket.
+                if (prefs != null) {
+                  prefs.edit().remove(PREF_PIN_PREFIX + name).apply();
+                }
+                pinAsked.add(name);
+                if (listener != null) {
+                  listener.onPinRequired(name, true);
+                }
+              });
+        }
+      } else if ("micack".equals(type)) {
         boolean live = root.has("live") && root.get("live").getAsBoolean();
         main.post(
             () -> {

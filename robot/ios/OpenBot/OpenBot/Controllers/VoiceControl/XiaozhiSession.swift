@@ -386,7 +386,7 @@ final class XiaozhiSession {
                 sendMcp([
                     "jsonrpc": "2.0",
                     "id": id,
-                    "error": ["code": -32601, "message": "Unknown tool: \(name)"],
+                    "error": ["code": -32602, "message": "Unknown tool or argument: \(name)"],
                 ])
             }
         default:

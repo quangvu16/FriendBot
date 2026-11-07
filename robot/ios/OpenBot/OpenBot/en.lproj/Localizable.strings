@@ -383,6 +383,11 @@
 "voice_language_system" = "System default";
 
 "voice_sharing_wifi" = "Connected (%1$@) · Sharing over WiFi";
+"voice_sharing_pin" = "PIN %1$@";
+"voice_relay_pin_title" = "Enter the PIN";
+"voice_relay_pin_message" = "Type the 4-digit PIN shown on the voice control page of %1$@.";
+"voice_relay_pin_wrong" = "Wrong PIN. Type the 4-digit PIN shown on the voice control page of %1$@.";
+"voice_relay_pin_connect" = "Connect";
 "voice_relay_connected" = "Controlling via %1$@ (WiFi)";
 "voice_relay_searching" = "Searching for a robot on WiFi…";
 "voice_robot_picker_title" = "Choose robot";

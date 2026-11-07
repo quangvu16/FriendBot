@@ -86,10 +86,13 @@
 #define SONAR_FAULT_MS 2000     // no echo edges this long = sensor fault
 
 // ---- Escape reflex ------------------------------------------------------
-// When any sonar sees less than ESCAPE_CM, the robot reverses away and turns
-// toward the more open side - no matter what the app commands. Overrides the
-// drive command until the front is clear again.
+// While the app is DRIVING the robot and a working sonar sees less than
+// ESCAPE_CM, the robot reverses away and turns toward the more open side.
+// It never starts on a parked robot, a STOP (c0,0) or a lost link cancels it
+// at once, and after ESCAPE_MAX_TRIES attempts it gives up until the
+// obstacle is gone (the forward safety above still blocks driving into it).
 #define ESCAPE_CM 5          // trigger distance (cm)
+#define ESCAPE_MAX_TRIES 2   // back+turn attempts before giving up
 #define ESCAPE_BACK_MS 400   // phase 1: back away from the obstacle
 #define ESCAPE_TURN_MS 400   // phase 2: turn toward the open side
 #define ESCAPE_BACK_DUTY 160 // reverse speed (of 255)
@@ -449,24 +452,46 @@ static void apply_safety() {
 }
 
 #if HAS_SONAR
-// ESCAPE REFLEX - any sonar closer than ESCAPE_CM: back away, then turn
-// toward the more open side. Overrides the app drive command until clear.
+// ESCAPE REFLEX - while driving, any working sonar closer than ESCAPE_CM:
+// back away, then turn toward the more open side.
+//   - only starts while the app is commanding motion (never on a parked robot)
+//   - STOP (c0,0), heartbeat loss or BLE disconnect cancels it immediately
+//   - gives up after ESCAPE_MAX_TRIES and re-arms only once the obstacle is gone
 enum EscapePhase : uint8_t { ESC_NONE, ESC_BACK, ESC_TURN };
 EscapePhase esc_phase = ESC_NONE;
 unsigned long esc_time = 0;
+uint8_t esc_tries = 0;
+bool esc_armed = true;
+
+static bool sonar_too_close(const Sonar &s) {
+  return !s.fault && s.cm < ESCAPE_CM;  // a faulty sensor never triggers a maneuver
+}
 
 static bool escape_triggered() {
-  return sonars[SONAR_MID].cm < ESCAPE_CM || sonars[SONAR_LEFT].cm < ESCAPE_CM ||
-         sonars[SONAR_RIGHT].cm < ESCAPE_CM;
+  return sonar_too_close(sonars[SONAR_MID]) || sonar_too_close(sonars[SONAR_LEFT]) ||
+         sonar_too_close(sonars[SONAR_RIGHT]);
+}
+
+// True while somebody is actually asking the robot to move.
+static bool drive_requested() {
+  return (cmd_left != 0 || cmd_right != 0) && !heartbeat_expired;
 }
 
 static void update_escape() {
   unsigned long now = millis();
+  bool too_close = escape_triggered();
+  if (!too_close) esc_armed = true;  // obstacle gone: the reflex may run again
+
+  if (esc_phase != ESC_NONE && !drive_requested()) {
+    esc_phase = ESC_NONE;  // STOP / lost link always wins over the reflex
+    return;
+  }
   switch (esc_phase) {
     case ESC_NONE:
-      if (escape_triggered()) {
+      if (too_close && esc_armed && drive_requested()) {
         esc_phase = ESC_BACK;
         esc_time = now;
+        esc_tries = 1;
       }
       break;
     case ESC_BACK:
@@ -477,7 +502,14 @@ static void update_escape() {
       break;
     case ESC_TURN:
       if (now - esc_time >= ESCAPE_TURN_MS) {
-        esc_phase = escape_triggered() ? ESC_BACK : ESC_NONE;  // still blocked: try again
+        if (too_close && esc_tries < ESCAPE_MAX_TRIES) {
+          esc_phase = ESC_BACK;  // still blocked: try again
+          esc_time = now;
+          esc_tries++;
+        } else {
+          esc_phase = ESC_NONE;
+          if (too_close) esc_armed = false;  // give up until the obstacle moves away
+        }
       }
       break;
   }

@@ -149,7 +149,7 @@ arduino-cli upload  --fqbn esp32:esp32:esp32 --port /dev/tty.usbserial-0001 firm
 | `MOTOR_RAMP_STEP` | `20` | Soft start: max power increase per 10 ms |
 | `FRONT_SLOW_CM` / `FRONT_STOP_CM` | `50` / `15` | Middle sonar: start slowing at 50 cm, stop forward at 15 cm |
 | `SIDE_SLOW_CM` / `SIDE_STOP_CM` | `25` / `10` | Same for the left and right sonars |
-| `ESCAPE_CM` | `5` | Closer than 5 cm → robot backs off and turns to the open side |
+| `ESCAPE_CM` / `ESCAPE_MAX_TRIES` | `5` / `2` | While driving, closer than 5 cm → backs off and turns to the open side, at most 2 times |
 | `HAS_LCD` / `HAS_SONAR` / `HAS_INDICATORS` | `1` | Set to `0` for parts you did not fit |
 
 ### What the robot shows
@@ -252,16 +252,19 @@ front and back camera.
 
 ### Several phones, one robot
 
-- The phone connected to the robot **shares it over Wi-Fi** while Voice Control is open
-  (status: *"Connected (BLE) · Sharing over WiFi"*).
-- Other phones on the same Wi-Fi see *"Controlling via <phone> (WiFi)"* and can drive too.
+- The phone connected to the robot **shares it over Wi-Fi** only while Voice Control is open,
+  and shows a **4-digit PIN** (status: *"Connected (BLE) · Sharing over WiFi · PIN 4821"*).
+- Another phone on the same Wi-Fi asks for that PIN once, then shows
+  *"Controlling via <phone> (WiFi)"* and can drive too. *Why a PIN? Without it, anyone on a
+  café or office Wi-Fi could drive your robot or talk into your Xiaozhi session.*
 - **Tap the status line** to choose which robot to control.
 - **Stop from any phone stops the robot for everyone.**
 
 ### Remote Mic
 
 Open **Remote Mic** on a second phone to use it as a wireless microphone for the phone that
-holds the robot. It needs no pairing; replies still play on the host phone.
+holds the robot. It needs no Xiaozhi pairing, only the host's PIN; replies still play on the
+host phone.
 
 > **Example:** the host phone sits on the robot; you walk around with your own phone in
 > Remote Mic and say *"turn around"*.
@@ -355,7 +358,7 @@ The robot has **several independent layers**, so one failure does not cause a cr
 | App — unknown words | If the command is not understood, the robot stops |
 | App — bad tool calls | Unknown or broken MCP calls are rejected |
 | Firmware — sonar | Slows forward at 50 cm, stops at 15 cm; reversing and turning still work |
-| Firmware — escape | Under 5 cm: backs away and turns to the open side |
+| Firmware — escape | While driving and under 5 cm: backs away and turns to the open side (max 2 tries; STOP cancels it; never moves a parked robot) |
 | Firmware — link loss | Bluetooth disconnect → stop. USB heartbeat missing 750 ms → stop |
 
 > **Why both app and firmware?** If the phone freezes or the Bluetooth drops, the app cannot
@@ -382,6 +385,7 @@ The robot has **several independent layers**, so one failure does not cause a cr
 | Xiaozhi chats but robot doesn't move | Say a clear command ("go forward") or use the buttons |
 | Photo / vision fails | Allow camera; reconnect so the server sends the vision URL and token |
 | Move stops early | STOP latch is on, or the link dropped |
+| Second phone keeps asking for a PIN | Type the PIN shown on the robot phone's Voice Control status line |
 
 ---
 

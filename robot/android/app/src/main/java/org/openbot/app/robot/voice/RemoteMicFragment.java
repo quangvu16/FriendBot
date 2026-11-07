@@ -18,6 +18,7 @@ import java.util.List;
 import org.openbot.app.robot.R;
 import org.openbot.app.robot.common.ControlsFragment;
 import org.openbot.app.robot.databinding.FragmentRemoteMicBinding;
+import org.openbot.app.robot.voice.relay.RelayPinPrompt;
 import org.openbot.app.robot.voice.relay.VoiceRelayClient;
 
 /**
@@ -62,6 +63,13 @@ public class RemoteMicFragment extends ControlsFragment {
         @Override
         public void onHostsChanged() {
           updateStatus();
+        }
+
+        @Override
+        public void onPinRequired(String hostName, boolean wrong) {
+          if (isAdded() && getView() != null) {
+            RelayPinPrompt.show(requireContext(), hostName, wrong);
+          }
         }
 
         @Override

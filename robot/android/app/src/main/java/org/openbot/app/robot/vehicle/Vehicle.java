@@ -471,14 +471,24 @@ public class Vehicle {
             Locale.US, "l%d,%d\n", clampToByte(front), clampToByte(back)));
   }
 
-  /** Turn signals, firmware {@code i<left>,<right>} (nonzero = blinking). */
+  /** FriendBot firmware LED modes for {@link #sendIndicator}. */
+  public static final int LED_OFF = 0;
+  public static final int LED_ON = 1;
+  public static final int LED_BLINK = 2;
+  /** The firmware shows the driving state itself (turning side blinks, both blink when stopped). */
+  public static final int LED_AUTO = 3;
+
+  /**
+   * Left/right LEDs, firmware {@code i<left>,<right>}: each one of {@link #LED_OFF}, {@link
+   * #LED_ON}, {@link #LED_BLINK} or {@link #LED_AUTO} (see openbot-esp32-mtv.ino).
+   */
   public void sendIndicator(int left, int right) {
     sendStringToDevice(
         String.format(
             Locale.US,
             "i%d,%d\n",
-            left != 0 ? 1 : 0,
-            right != 0 ? 1 : 0));
+            Math.max(LED_OFF, Math.min(LED_AUTO, left)),
+            Math.max(LED_OFF, Math.min(LED_AUTO, right))));
   }
 
   /**

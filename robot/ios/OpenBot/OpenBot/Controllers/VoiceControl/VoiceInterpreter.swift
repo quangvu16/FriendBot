@@ -21,14 +21,14 @@ import Foundation
 
 enum VoiceInterpreter {
 
-    private static let stopWords = ["stop", "halt", "dừng", "dừng lại", "dung lai", "đứng lại", "dung", "停", "停止", "别动"]
-    private static let singWords = ["sing", "song", "hát", "hat", "唱歌", "唱"]
+    private static let stopWords = ["stop", "stopping", "halt", "dừng", "dừng lại", "dung lai", "đứng lại", "dung", "停", "停止", "别动"]
+    private static let singWords = ["sing", "singing", "song", "hát", "hat", "唱歌", "唱"]
     private static let sonarWords = ["sonar", "distance", "how far", "khoảng cách", "khoang cach", "cảm biến", "距离", "多远", "超声波"]
     private static let lightsOnWords = ["lights on", "light on", "turn on the light", "turn on light", "turn on lights", "bật đèn", "bat den", "mở đèn", "mo den", "开灯", "打开灯"]
     private static let lightsOffWords = ["lights off", "light off", "turn off the light", "turn off light", "turn off lights", "tắt đèn", "tat den", "关灯", "关掉灯"]
     private static let triangleWords = ["triangle", "tam giác", "tam giac", "三角形", "三角"]
     private static let circleWords = ["circle", "vòng tròn", "vong tron", "vòng", "圆形", "圆圈", "画圆"]
-    private static let spinWords = ["360", "spin", "xoay", "một vòng", "mot vong", "旋转", "转一圈", "转圈"]
+    private static let spinWords = ["360", "spin", "spinning", "xoay", "một vòng", "mot vong", "旋转", "转一圈", "转圈"]
     private static let turnAroundWords = ["turn around", "turnaround", "quay lại", "quay lai", "quay đầu", "quay dau", "掉头", "转身"]
     private static let wiggleWords = ["left and right", "right and left", "trái phải", "trai phai", "phải trái", "phai trai", "左右", "左右转", "两边"]
     // Turn signals before BACK/LEFT/RIGHT: their phrases contain "left"/"right".
@@ -36,12 +36,12 @@ enum VoiceInterpreter {
     private static let indicatorRightWords = ["signal right", "right signal", "right indicator", "right blinker", "xi nhan phải", "xi nhan phai"]
     private static let indicatorHazardWords = ["hazard", "hazard lights", "both signals", "đèn hazard", "xi nhan cả hai"]
     private static let indicatorOffWords = ["signals off", "turn off the signal", "indicators off", "tắt xi nhan", "tat xi nhan"]
-    private static let backWords = ["back", "reverse", "retreat", "go back", "lùi", "lùi lại", "lui", "倒", "后退", "向后"]
+    private static let backWords = ["back", "backward", "backwards", "reverse", "reversing", "retreat", "go back", "lùi", "lùi lại", "lui", "倒", "后退", "向后"]
     private static let leftWords = ["left", "turn left", "trái", "rẽ trái", "re trai", "左", "左转"]
     private static let rightWords = ["right", "turn right", "phải", "rẽ phải", "re phai", "右", "右转"]
     private static let fasterWords = ["faster", "speed up", "speedup", "nhanh", "nhanh lên", "tăng tốc", "快", "快点", "加速"]
     private static let slowerWords = ["slower", "slow down", "slowdown", "chậm", "chậm lại", "cham", "giảm tốc", "慢", "慢点", "减速"]
-    private static let forwardWords = ["forward", "ahead", "straight", "go", "move", "tiến", "tien", "đi", "前进", "向前", "走"]
+    private static let forwardWords = ["forward", "forwards", "ahead", "straight", "go", "going", "move", "moving", "tiến", "tien", "đi", "前进", "向前", "走"]
     /// "go forward for a long time" — stretches a plain move to 5 s.
     private static let longWords = ["long", "for a while", "lâu", "lau", "xa", "far"]
 
@@ -53,7 +53,9 @@ enum VoiceInterpreter {
 
     /// Matches a transcript; never fails. Unknown words become `.unknown`.
     static func interpret(_ text: String) -> VoiceCommand {
-        let t = text.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        // NFC: keyboards may send Vietnamese as base letter + combining mark.
+        let t = text.precomposedStringWithCanonicalMapping.lowercased()
+            .trimmingCharacters(in: .whitespacesAndNewlines)
         guard !t.isEmpty else {
             return VoiceCommand(action: .unknown, rawText: text)
         }
@@ -114,6 +116,39 @@ enum VoiceInterpreter {
     }
 
     private static func containsAny(_ text: String, _ needles: [String]) -> Bool {
-        needles.contains { text.contains($0) }
+        needles.contains { containsWord(text, $0) }
+    }
+
+    /// True when `needle` appears in `text` as a whole word, so "hat" does not match "what"
+    /// and "đi" does not match "điện". Chinese keywords are matched as plain substrings,
+    /// because Chinese writes words without spaces. Mirrors VoiceInterpreter.containsWord
+    /// on Android.
+    static func containsWord(_ text: String, _ needle: String) -> Bool {
+        guard let first = needle.unicodeScalars.first else { return false }
+        if isHan(first) {
+            return text.contains(needle)
+        }
+        var searchStart = text.startIndex
+        while searchStart < text.endIndex,
+              let range = text.range(of: needle, range: searchStart..<text.endIndex) {
+            let startOk = range.lowerBound == text.startIndex
+                || !isWordCharacter(text[text.index(before: range.lowerBound)])
+            let endOk = range.upperBound == text.endIndex
+                || !isWordCharacter(text[range.upperBound])
+            if startOk && endOk {
+                return true
+            }
+            searchStart = text.index(after: range.lowerBound)
+        }
+        return false
+    }
+
+    private static func isWordCharacter(_ c: Character) -> Bool {
+        c.isLetter || c.isNumber
+    }
+
+    /// CJK Unified Ideographs (+ Extension A): the Chinese keywords.
+    private static func isHan(_ scalar: Unicode.Scalar) -> Bool {
+        (0x4E00...0x9FFF).contains(scalar.value) || (0x3400...0x4DBF).contains(scalar.value)
     }
 }
