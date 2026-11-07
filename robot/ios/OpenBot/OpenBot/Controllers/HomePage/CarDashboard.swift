@@ -148,9 +148,6 @@ final class StopButtonOverlay {
 /// The top of the home screen: is the car ready, and what do you want to do?
 final class CarDashboardView: UIView {
     var onConnect: (() -> Void)?
-    var onDrive: (() -> Void)?
-    var onMission: (() -> Void)?
-    var onSetup: (() -> Void)?
     var onToggleMore: (() -> Void)?
 
     private static let green = UIColor(red: 0x2E / 255, green: 0x7D / 255, blue: 0x32 / 255, alpha: 1)
@@ -255,21 +252,7 @@ final class CarDashboardView: UIView {
         cardStack.addArrangedSubview(chips)
         stack.addArrangedSubview(card)
 
-        // 3. What do you want to do?
-        let header = UILabel()
-        header.text = L10n.string("dash_tasks_header")
-        header.font = UIFont.systemFont(ofSize: 17, weight: .bold)
-        header.textColor = .label
-        stack.setCustomSpacing(16, after: card)
-        stack.addArrangedSubview(header)
-        stack.addArrangedSubview(makeTile(icon: Images.freeRoam, color: Colors.freeRoamColor,
-                                          title: "dash_drive_title", detail: "dash_drive_desc", action: #selector(driveTapped)))
-        stack.addArrangedSubview(makeTile(icon: Images.gpsMissionIcon, color: Colors.gpsMissionColor,
-                                          title: "dash_mission_title", detail: "dash_mission_desc", action: #selector(missionTapped)))
-        stack.addArrangedSubview(makeTile(icon: Images.robotInfoIcon, color: Self.blue,
-                                          title: "dash_setup_title", detail: "dash_setup_desc", action: #selector(setupTapped)))
-
-        // 4. Everything else, out of the way until asked for.
+        // Everything else, out of the way until asked for.
         var moreConfig = UIButton.Configuration.plain()
         moreConfig.baseForegroundColor = Self.blue
         moreButton.configuration = moreConfig
@@ -279,62 +262,6 @@ final class CarDashboardView: UIView {
         setMoreOpen(false)
     }
 
-    private func makeTile(icon: UIImage?, color: UIColor, title: String, detail: String, action: Selector) -> UIView {
-        let tile = UIControl()
-        tile.backgroundColor = .secondarySystemBackground
-        tile.layer.cornerRadius = 16
-        tile.heightAnchor.constraint(greaterThanOrEqualToConstant: 84).isActive = true
-        tile.addTarget(self, action: action, for: .touchUpInside)
-        tile.accessibilityLabel = L10n.string(title)
-        tile.accessibilityHint = L10n.string(detail)
-        tile.accessibilityTraits = .button
-        tile.isAccessibilityElement = true
-
-        let iconBox = UIView()
-        iconBox.backgroundColor = color
-        iconBox.layer.cornerRadius = 14
-        iconBox.isUserInteractionEnabled = false
-        let iconView = UIImageView(image: icon?.withRenderingMode(.alwaysTemplate))
-        iconView.tintColor = .white
-        iconView.contentMode = .scaleAspectFit
-        iconView.translatesAutoresizingMaskIntoConstraints = false
-        iconBox.addSubview(iconView)
-        iconBox.translatesAutoresizingMaskIntoConstraints = false
-
-        let titleText = UILabel()
-        titleText.text = L10n.string(title)
-        titleText.font = UIFont.systemFont(ofSize: 19, weight: .bold)
-        titleText.textColor = .label
-        let detailText = UILabel()
-        detailText.text = L10n.string(detail)
-        detailText.font = UIFont.systemFont(ofSize: 14)
-        detailText.textColor = .secondaryLabel
-        detailText.numberOfLines = 0
-        let texts = UIStackView(arrangedSubviews: [titleText, detailText])
-        texts.axis = .vertical
-        texts.spacing = 2
-        texts.isUserInteractionEnabled = false
-        texts.translatesAutoresizingMaskIntoConstraints = false
-
-        tile.addSubview(iconBox)
-        tile.addSubview(texts)
-        NSLayoutConstraint.activate([
-            iconBox.leadingAnchor.constraint(equalTo: tile.leadingAnchor, constant: 16),
-            iconBox.centerYAnchor.constraint(equalTo: tile.centerYAnchor),
-            iconBox.widthAnchor.constraint(equalToConstant: 52),
-            iconBox.heightAnchor.constraint(equalToConstant: 52),
-            iconView.centerXAnchor.constraint(equalTo: iconBox.centerXAnchor),
-            iconView.centerYAnchor.constraint(equalTo: iconBox.centerYAnchor),
-            iconView.widthAnchor.constraint(equalToConstant: 28),
-            iconView.heightAnchor.constraint(equalToConstant: 28),
-            texts.leadingAnchor.constraint(equalTo: iconBox.trailingAnchor, constant: 16),
-            texts.trailingAnchor.constraint(equalTo: tile.trailingAnchor, constant: -16),
-            texts.topAnchor.constraint(greaterThanOrEqualTo: tile.topAnchor, constant: 14),
-            texts.bottomAnchor.constraint(lessThanOrEqualTo: tile.bottomAnchor, constant: -14),
-            texts.centerYAnchor.constraint(equalTo: tile.centerYAnchor),
-        ])
-        return tile
-    }
 
     // MARK: state
 
@@ -372,9 +299,6 @@ final class CarDashboardView: UIView {
     // MARK: actions
 
     @objc private func connectTapped() { onConnect?() }
-    @objc private func driveTapped() { onDrive?() }
-    @objc private func missionTapped() { onMission?() }
-    @objc private func setupTapped() { onSetup?() }
     @objc private func moreTapped() { onToggleMore?() }
 
     @objc private func avoidTapped() {

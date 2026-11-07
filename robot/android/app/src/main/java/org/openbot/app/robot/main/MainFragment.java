@@ -73,28 +73,6 @@ public class MainFragment extends Fragment implements OnItemClickListener<SubCat
     binding.list.setLayoutManager(new LinearLayoutManager(requireContext()));
     binding.list.setAdapter(new CategoryAdapter(FeatureList.getCategories(), this));
 
-    setupTile(
-        binding.tileDrive,
-        R.drawable.ic_game,
-        "#FF6D00",
-        R.string.dash_drive_title,
-        R.string.dash_drive_desc,
-        R.id.action_mainFragment_to_freeRoamFragment);
-    setupTile(
-        binding.tileMission,
-        R.drawable.ic_location,
-        "#00ACC1",
-        R.string.dash_mission_title,
-        R.string.dash_mission_desc,
-        R.id.action_mainFragment_to_gpsNavigationFragment);
-    setupTile(
-        binding.tileSetup,
-        R.drawable.ic_settings,
-        "#4B7BFF",
-        R.string.dash_setup_title,
-        R.string.dash_setup_desc,
-        R.id.action_mainFragment_to_robotInfoFragment);
-
     // "More features": the full list, hidden until asked for; the choice is remembered.
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
     showMore(prefs.getBoolean(PREF_MORE_OPEN, false));
@@ -133,22 +111,6 @@ public class MainFragment extends Fragment implements OnItemClickListener<SubCat
   public void onPause() {
     super.onPause();
     refreshHandler.removeCallbacks(refresh);
-  }
-
-  private void setupTile(
-      ItemDashboardTileBinding tile,
-      int icon,
-      String color,
-      int title,
-      int description,
-      int navigationAction) {
-    tile.tileIcon.setImageResource(icon);
-    tile.tileIcon.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(color)));
-    tile.tileTitle.setText(title);
-    tile.tileDescription.setText(description);
-    tile.getRoot()
-        .setOnClickListener(
-            v -> Navigation.findNavController(requireView()).navigate(navigationAction));
   }
 
   private void showMore(boolean open) {

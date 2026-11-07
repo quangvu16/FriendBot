@@ -142,9 +142,6 @@ class HomePageViewController: CameraController, UICollectionViewDataSource, UICo
     /// The dashboard rides above the grid as a scrolling header (content inset).
     private func setupDashboard() {
         dashboard.onConnect = { [weak self] in self?.openScreen(Strings.bluetoothScreen) }
-        dashboard.onDrive = { [weak self] in self?.openScreen(Strings.ScreenFreeRoam) }
-        dashboard.onMission = { [weak self] in self?.openScreen(Strings.ScreenGpsMission) }
-        dashboard.onSetup = { [weak self] in self?.openScreen(Strings.ScreenRobotInfo) }
         dashboard.onToggleMore = { [weak self] in
             guard let self = self else { return }
             self.showMore.toggle()

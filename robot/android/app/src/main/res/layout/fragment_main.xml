@@ -134,30 +134,7 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- 3. What do you want to do? Three big tasks. -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="8dp"
-            android:text="@string/dash_tasks_header"
-            android:textColor="@color/black_text"
-            android:textSize="17sp"
-            android:textStyle="bold" />
-
-        <include
-            android:id="@+id/tile_drive"
-            layout="@layout/item_dashboard_tile" />
-
-        <include
-            android:id="@+id/tile_mission"
-            layout="@layout/item_dashboard_tile" />
-
-        <include
-            android:id="@+id/tile_setup"
-            layout="@layout/item_dashboard_tile" />
-
-        <!-- 4. Everything else, out of the way until asked for. -->
+        <!-- Everything else, out of the way until asked for. -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/more_button"
             style="@style/Widget.MaterialComponents.Button.TextButton"
