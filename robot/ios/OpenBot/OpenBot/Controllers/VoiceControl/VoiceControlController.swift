@@ -2232,18 +2232,21 @@ final class VoiceControlController: UIViewController {
             // The picked target is a robot another phone shares over WiFi.
             base = String(format: L10n.string("voice_relay_connected"), relayClient.hostName)
         } else if isBluetoothConnected {
-            // While sharing, show the PIN other phones must type to drive this robot.
             base = relayServer.isRunning
-                ? String(format: L10n.string("voice_sharing_wifi"), "BLE") + " · "
-                    + String(format: L10n.string("voice_sharing_pin"), relayServer.pin)
+                ? String(format: L10n.string("voice_sharing_wifi"), "BLE")
                 : String(format: L10n.string("voice_connected"), "BLE")
         } else if relayClient.isSearching {
             base = L10n.string("voice_relay_searching")
         } else {
             base = L10n.string("voice_not_connected")
         }
+        // While this page serves, always show the PIN other phones must type — the relay
+        // serves even before the robot link is up, and remotes need the PIN to join.
+        let sharing = relayServer.isRunning && !relayClient.isHostConnected
+            ? " · " + String(format: L10n.string("voice_sharing_pin"), relayServer.pin)
+            : ""
         let ws = session.isReady ? L10n.string("voice_ws_ready") : L10n.string("voice_ws_offline")
-        connectionLabel.text = base + " · " + ws
+        connectionLabel.text = base + sharing + " · " + ws
     }
 
     /// Capsule tap: choose which robot the voice commands drive — this phone's own

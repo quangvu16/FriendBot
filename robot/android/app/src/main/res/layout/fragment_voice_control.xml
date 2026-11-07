@@ -69,6 +69,41 @@
         android:textStyle="bold"
         tools:text="Connected (BLE) · Xiaozhi ready" />
 
+    <!-- WiFi sharing: the 4-digit PIN other phones type on their Remote Mic page. Always
+         shown while the relay serves — even before the robot link is up. -->
+    <LinearLayout
+        android:id="@+id/sharingPinCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/voice_card_bg"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="10dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/voice_sharing_pin_hint"
+            android:textColor="#1C1C1E"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/sharingPinDigits"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:textColor="#000000"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            tools:text="1234" />
+    </LinearLayout>
+
     <!-- First-time pairing panel: replaces the live UI until the device is bound -->
     <LinearLayout
         android:id="@+id/pairingPanel"

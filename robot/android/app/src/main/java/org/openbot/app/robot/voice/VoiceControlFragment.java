@@ -1662,24 +1662,33 @@ public class VoiceControlFragment extends ControlsFragment {
 
   private void updateConnectionText() {
     if (binding == null) return;
+    updateSharingPin();
     String ws = getString(wsReady ? R.string.voice_ws_ready : R.string.voice_ws_offline);
     if (relayClient != null && relayClient.isConnected()) {
       // The picked target is a robot another phone shares over WiFi.
       binding.connectionText.setText(
           getString(R.string.voice_relay_connected, relayClient.hostName()) + " · " + ws);
     } else if (vehicle != null && vehicle.isConnected()) {
-      // While sharing, show the PIN other phones must type to drive this robot.
+      // While sharing, the PIN lives in its own card below (the relay serves even before
+      // the robot link is up, and remotes need the PIN before anything is accepted).
       String link =
           VoiceRelayServer.get().isRunning()
               ? getString(R.string.voice_sharing_wifi, vehicle.getConnectionType())
-                  + " · "
-                  + getString(R.string.voice_sharing_pin, VoiceRelayServer.get().pin())
               : getString(R.string.voice_connected, vehicle.getConnectionType());
       binding.connectionText.setText(link + " · " + ws);
     } else if (relayClient != null && relayClient.isSearching()) {
       binding.connectionText.setText(getString(R.string.voice_relay_searching) + " · " + ws);
     } else {
       binding.connectionText.setText(getString(R.string.voice_not_connected) + " · " + ws);
+    }
+  }
+
+  /** The 4-digit PIN other phones type: its own big card whenever the relay serves. */
+  private void updateSharingPin() {
+    boolean serving = VoiceRelayServer.get().isRunning();
+    binding.sharingPinCard.setVisibility(serving ? View.VISIBLE : View.GONE);
+    if (serving) {
+      binding.sharingPinDigits.setText(VoiceRelayServer.get().pin());
     }
   }
 
