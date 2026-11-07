@@ -2,7 +2,7 @@
   <img src="FriendBot_logo.png" alt="FriendBot" width="160" />
 </p>
 
-# FriendBot — Voice Control Guide
+# FriendBot — User Guide
 
 **Talk to your robot. It listens, answers, and drives.**
 
@@ -13,6 +13,10 @@ back, and tells the robot what to do.
 
 > **Example:** you say *"Go forward for 3 seconds"* → Xiaozhi answers *"OK, going forward!"*
 > → the robot drives forward for 3 seconds and stops by itself.
+
+It can also drive itself with the camera: **Autopilot**, **Object Tracking**, and five
+**Vision Modes** — follow a coloured object, a face or a black line, avoid an obstacle, or track
+any object you draw a box round ([§10](#10-ai-and-camera-features)).
 
 Vietnamese quick guide: [HUONG_DAN_DIEU_KHIEN_GIONG_NOI.md](docs/HUONG_DAN_DIEU_KHIEN_GIONG_NOI.md)
 
@@ -29,9 +33,11 @@ Vietnamese quick guide: [HUONG_DAN_DIEU_KHIEN_GIONG_NOI.md](docs/HUONG_DAN_DIEU_
 7. [Using the Voice Control screen](#7-using-the-voice-control-screen)
 8. [Voice commands](#8-voice-commands)
 9. [Configuring Xiaozhi](#9-configuring-xiaozhi)
-10. [Safety](#10-safety)
-11. [Troubleshooting](#11-troubleshooting)
-12. [Questions to go deeper](#12-questions-to-go-deeper)
+10. [AI and camera features](#10-ai-and-camera-features) — Autopilot, Object Tracking, Follow a
+    Coloured Object, Follow a Face, Follow a Black Line, Object Avoidance, Target Tracking
+11. [Safety](#11-safety)
+12. [Troubleshooting](#12-troubleshooting)
+13. [Questions to go deeper](#13-questions-to-go-deeper)
 
 ---
 
@@ -346,7 +352,174 @@ The app asks the model for one JSON answer, for example:
 
 ---
 
-## 10. Safety
+## 10. AI and camera features
+
+Besides voice, FriendBot can drive itself with the phone's camera. Open them from **Home**:
+
+| Where on Home | Feature | In one line |
+|---|---|---|
+| **AI** | [Autopilot](#101-autopilot) | A neural network looks at the road and steers |
+| **AI** | [Object Tracking](#102-object-tracking-follow-me) | Finds a person, dog, ball… and drives to it |
+| **Vision Modes** | [Follow a Coloured Object](#103-follow-a-coloured-object) | Tap a colour, the robot follows it |
+| **Vision Modes** | [Follow a Face](#104-follow-a-face) | Keeps your face in view |
+| **Vision Modes** | [Follow a Black Line](#105-follow-a-black-line) | Drives along a tape circuit on the floor |
+| **Vision Modes** | [Object Avoidance](#106-object-avoidance) | Drives on and turns away from an obstacle |
+| **Vision Modes** | [Target Tracking](#107-target-tracking) | Draw a box round anything, the robot follows it |
+
+**Rules for all of them**
+- **Mount the phone upright** on the robot, back camera facing forward (down at the floor for Black Line).
+- Press **Auto** (or **Auto Mode**) to start, turn it off to stop. Leaving the page also stops the robot.
+- **»** sets the speed: Slow / Normal / Fast = 128 / 192 / 255 of 255.
+- **The firmware still protects the robot**: its sonars slow it from 50 cm and stop it at 15 cm, and the red **STOP** overrides everything. *Why this matters:* a camera or a neural network can be wrong; the sonar stop doesn't depend on them.
+- Vision Modes have a **How to use** button that opens step-by-step instructions.
+
+> The AI features come from [OpenBot](https://www.openbot.org). The Vision Modes are based on
+> [Kirstin813/L4-Individual-Project](https://github.com/Kirstin813/L4-Individual-Project) and
+> [longpth/Android-Object-Tracking-OpenCV](https://github.com/longpth/Android-Object-Tracking-OpenCV).
+>
+> *Source:* Android `robot/android/app/src/main/java/org/openbot/app/robot/` (`autopilot/`,
+> `objectNav/`, `tracking/MultiBoxTracker.java`, `vision/`), iOS
+> `robot/ios/OpenBot/OpenBot/Controllers/` (`Autopilot/`, `ObjectTracking/`, `Vision/`).
+
+### 10.1 Autopilot
+
+![Autopilot, Android and iOS](docs/images/autopilot.svg)
+
+**What it does.** A neural network looks at every camera frame and outputs the wheel commands
+directly (*end-to-end driving*). The built-in model is **CIL-Mobile-Cmd** (256 × 96 input).
+
+**How to use it**
+1. Choose the **Model**, the **Device** (CPU / GPU / NNAPI on Android, CPU / GPU / XNNPACK on
+   iOS) and the **Threads**. The **Speed** line shows frames per second — more fps, smoother driving.
+2. Turn on **Auto Mode**. Each frame the app sends the network's `c<left>,<right>` to the robot.
+3. Turn Auto Mode off, or press **STOP**, to take over.
+
+> **Example:** at 12 fps on the GPU the network sees the corridor bend right and outputs
+> `c150,118` — the left wheel turns faster, so FriendBot follows the bend.
+
+**Important:** the built-in model was trained on OpenBot's robots and rooms, not on your house.
+It drives, but not well. For good results, record your own driving with **Data Collection**,
+train with OpenBot's `policy` tools, and add the `.tflite` file in **Model Management**.
+*Why:* the network only knows places that look like its training pictures.
+
+### 10.2 Object Tracking ("follow me")
+
+![Object Tracking, Android and iOS](docs/images/object-tracking.svg)
+
+**What it does.** Finds one kind of object — a person, a dog, a sports ball (80 COCO classes) —
+and drives towards it. **MobileNetV1-300** is built in; YOLO and EfficientDet models download in
+Model Management.
+
+**How to use it**
+1. Pick the **Object** (e.g. `person`) and the **Model**.
+2. Set **Confidence** (default 50 %). Higher = fewer false boxes, but the robot loses you more often.
+3. Turn on **Auto Mode**, and **Dynamic Speed** so it slows down and stops before it reaches you.
+
+**How it steers** (`MultiBoxTracker.updateTarget`): the further the object is from the centre,
+the more the robot turns towards it. With Dynamic Speed, the bigger the box, the slower it goes:
+under 25 % of the picture = full speed, over 75 % = stop.
+
+> **Example:** "person 0.82" a little right of centre → about `c192,136` at Normal speed →
+> FriendBot curves right towards you, and stops when you fill most of the picture.
+
+*Tip:* it follows the most confident detection. If two people are in view, ask one to step aside.
+
+### 10.3 Follow a Coloured Object
+
+![Follow a Coloured Object, Android and iOS](docs/images/follow-colour.svg)
+
+**What it does.** The robot follows an object of a colour you pick.
+
+**How to use it**
+1. **Tap the object** in the camera view to sample its colour (the swatch shows it).
+2. Press **Auto**. Object in the middle third → drive forward; left / right third → turn that way.
+3. Colour lost → the robot stops.
+
+**Setting:** **Colour tolerance** 5–60 (default 15) — how close a pixel must be to the picked colour.
+
+> **Example:** red ball in the middle → `c192,192`. The robot ignores the ball → raise the
+> tolerance to 25. It follows the red sofa too → lower it to 10.
+
+*Tip:* use a bright, solid colour (red, blue, green, yellow) that stands out from the room, in even light.
+
+### 10.4 Follow a Face
+
+**What it does.** The camera finds your face (Google ML Kit on Android, Apple Vision on iOS) and
+the robot keeps you in view.
+
+| | Android | iOS |
+|---|---|---|
+| How it moves | **Drives towards you**, steering like Object Tracking; slows as your face gets bigger and **stops when it fills most of the view** | **Turns on the spot** to face you; centre third = stop, it **never drives at you** |
+
+**How to use it:** Follow a Face → **Auto** → a box appears round your face → move left or right
+and the robot follows.
+
+> **Example (iOS):** you step to the robot's left → `c-192,192` → it spins left until your face is
+> centred, then stops.
+
+*Tips:* works up to about 2 m; keep your face well lit (no window behind you); one face at a time.
+
+### 10.5 Follow a Black Line
+
+![Follow a Black Line, Android and iOS](docs/images/follow-line.svg)
+
+**What it does.** The camera looks down at the floor. **Three virtual sensors** along the bottom
+of the picture look for the line: middle → forward, left → turn left, right → turn right, none →
+stop ("No line").
+
+**How to use it**
+1. Make a circuit from **black tape** — thick lines, no sharp 90° corners.
+2. Point the camera **down** at the floor and put the robot on the line.
+3. Check that the sensor boxes light up on the line, then press **Auto**.
+
+**Settings:** **Black threshold** 30–150 (default 90): lower it in bright light. On Android you can
+also pick the **line colour** (black, red, green, blue, yellow) and the robot curves smoothly like
+Object Tracking; on iOS it turns on the spot.
+
+> **Example:** sensor brightness left 214 / middle 41 / right 208 → only the middle is under 90 →
+> forward.
+
+*Why 90:* it is the "black" value of the original project on a 0–255 grey scale.
+
+### 10.6 Object Avoidance
+
+![Object Avoidance, Android and iOS](docs/images/object-avoidance.svg)
+
+**What it does.** The robot drives forward and turns away from an obstacle you mark by colour.
+
+**How to use it:** **tap the obstacle** to pick its colour → **Auto** → while it is small in the
+picture (far away) the robot drives on; when it gets big (close) the robot turns to the side with
+more free space.
+
+**Setting:** **Stop distance** 2–40 % (default 10 %) — how much of the picture the obstacle must
+fill before the robot turns.
+
+> **Example:** an orange box fills the right part of the view → "◀ Obstacle — turning away" →
+> `c-192,192`.
+
+*Safety:* the sonars still stop the robot at 15 cm, even for an obstacle of **another colour**.
+
+### 10.7 Target Tracking
+
+![Target Tracking, Android and iOS](docs/images/target-tracking.svg)
+
+**What it does.** You draw a box round **any** object and the robot keeps it in the middle and
+drives to it — without a big library like OpenCV (Android: a small template tracker; iOS: Apple
+Vision's object tracker).
+
+**How to use it**
+1. **Drag a box** round the object, then tap **Lock target**.
+2. Press **Auto**: box in left / middle / right third → spin left / forward / spin right.
+3. **"Target lost — stop and re-lock"**: the robot stops; draw a new box and lock again.
+   *Why stop?* The original app kept driving after it lost the target — not safe.
+
+> **Example:** lock on a toy car and push it slowly away → "▲ Tracking target" → `c192,192`.
+
+*Tip:* pick an object with texture and contrast; plain white walls are hard to track.
+
+---
+
+## 11. Safety
 
 The robot has **several independent layers**, so one failure does not cause a crash:
 
@@ -368,7 +541,7 @@ The robot has **several independent layers**, so one failure does not cause a cr
 
 ---
 
-## 11. Troubleshooting
+## 12. Troubleshooting
 
 | Problem | Likely cause → fix |
 |---|---|
@@ -389,7 +562,7 @@ The robot has **several independent layers**, so one failure does not cause a cr
 
 ---
 
-## 12. Questions to go deeper
+## 13. Questions to go deeper
 
 Ask yourself **"why?"** for each — it makes the design clear.
 
@@ -403,6 +576,10 @@ Ask yourself **"why?"** for each — it makes the design clear.
    need its own 5 V supply?*
 6. *How could you add a new trick (for example "dance") — which file holds the keywords, and
    which holds the MCP tool list?*
+7. *Why does Autopilot drive well in OpenBot's test rooms but poorly in your house — and what
+   data would you collect to fix it?*
+8. *Follow a Face on iOS stops when your face is centred, but Object Tracking drives towards you.
+   Which is safer for a robot near people, and why?*
 
 ---
 
