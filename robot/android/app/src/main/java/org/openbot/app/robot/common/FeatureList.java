@@ -110,12 +110,6 @@ public class FeatureList {
     subCategories.add(
         new SubCategory(
             ROBOT_INFO, R.string.tile_robot_info, R.drawable.ic_openbot_space, "#4B7BFF"));
-    subCategories.add(
-        new SubCategory(
-            VOICE_CONTROL, R.string.tile_voice_control, R.drawable.ic_voice_over, "#0277BD"));
-    subCategories.add(
-        new SubCategory(
-            REMOTE_MIC, R.string.tile_remote_mic, R.drawable.ic_mic, "#26A69A"));
     categories.add(new Category(GENERAL, R.string.tile_general, subCategories));
 
     subCategories = new ArrayList<>();
@@ -136,6 +130,12 @@ public class FeatureList {
             R.string.tile_model_management,
             R.drawable.ic_list_bulleted_48,
             "#BC7680"));
+    subCategories.add(
+        new SubCategory(
+            VOICE_CONTROL, R.string.tile_voice_control, R.drawable.ic_voice_over, "#0277BD"));
+    subCategories.add(
+        new SubCategory(
+            REMOTE_MIC, R.string.tile_remote_mic, R.drawable.ic_mic, "#26A69A"));
     categories.add(new Category(AI, R.string.tile_ai, subCategories));
 
     subCategories = new ArrayList<>();
@@ -155,19 +155,6 @@ public class FeatureList {
         new SubCategory(
             TARGET_TRACKING, R.string.tile_target_tracking, R.drawable.ic_btn_track_changes, "#FFB300"));
     categories.add(new Category(VISION_MODES, R.string.tile_vision_modes, subCategories));
-
-    subCategories = new ArrayList<>();
-    subCategories.add(
-        new SubCategory(
-            GUIDE_COLOUR, R.string.tile_guide_colour, R.drawable.ic_btn_center_focus_strong, "#FF8A65"));
-    subCategories.add(
-        new SubCategory(GUIDE_FACE, R.string.tile_guide_face, R.drawable.ic_person_search, "#9575CD"));
-    subCategories.add(
-        new SubCategory(GUIDE_LINE, R.string.tile_guide_line, R.drawable.ic_btn_straight, "#607D8B"));
-    subCategories.add(
-        new SubCategory(
-            GUIDE_AVOIDANCE, R.string.tile_guide_avoidance, R.drawable.ic_btn_sensors, "#4DB6AC"));
-    categories.add(new Category(GUIDES, R.string.tile_guides, subCategories));
 
     subCategories = new ArrayList<>();
     subCategories.add(

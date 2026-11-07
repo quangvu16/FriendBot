@@ -16,17 +16,17 @@
                         <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="openBotLogo" translatesAutoresizingMaskIntoConstraints="NO" id="n0d-y1-6VU">
-                                <rect key="frame" x="87" y="354.66666666666669" width="216" height="135"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SplashLogo" translatesAutoresizingMaskIntoConstraints="NO" id="n0d-y1-6VU">
+                                <rect key="frame" x="85" y="312" width="220" height="220"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="135" id="KFj-hA-ff0"/>
+                                    <constraint firstAttribute="height" constant="220" id="KFj-hA-ff0"/>
                                 </constraints>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="n0d-y1-6VU" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" constant="87" id="rfU-qQ-wPk"/>
+                            <constraint firstItem="n0d-y1-6VU" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" constant="85" id="rfU-qQ-wPk"/>
                             <constraint firstItem="n0d-y1-6VU" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="ujJ-GH-6ro"/>
                             <constraint firstItem="n0d-y1-6VU" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="vFO-gd-Thm"/>
                         </constraints>
@@ -38,6 +38,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="openBotLogo" width="159.66667175292969" height="148"/>
+        <image name="SplashLogo" width="320" height="320"/>
     </resources>
 </document>

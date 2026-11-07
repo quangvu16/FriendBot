@@ -112,6 +112,13 @@ struct Constants {
                 ModeItem(label: Strings.controllerMapping, icon: Images.controllerMapping!, identifier: Strings.ScreenControllerMapping, color: Colors.controllerMappingColor),
                 ModeItem(label: Strings.robotInfo, icon: Images.robotInfoIcon!, identifier: Strings.ScreenRobotInfo, color: Colors.robotInfoColor),
                 ModeItem(label: Strings.gpsMission, icon: Images.gpsMissionIcon, identifier: Strings.ScreenGpsMission, color: Colors.gpsMissionColor),
+            ],
+            // AI
+            [
+                ModeItem(label: Strings.Autopilot, icon: Images.autopilotIcon!, identifier: Strings.AutopilotFragment, color: Colors.autopilotColor),
+                ModeItem(label: Strings.ObjectTracking, icon: Images.objectTrackingIcon!, identifier: Strings.ObjectTrackingFragment, color: Colors.objectTrackingColor),
+                ModeItem(label: Strings.navigation, icon: Images.pointGoalIcon!, identifier: Strings.ScreenNavigation, color: Colors.pointGoalColor),
+                ModeItem(label: Strings.modelManagement, icon: Images.modelManagementIcon!, identifier: Strings.ScreenModelManagement, color: Colors.modelColor),
                 ModeItem(label: L10n.string("tile_voice_control"),
                          icon: UIImage(systemName: "mic.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal) ?? UIImage(),
                          identifier: Strings.ScreenVoiceControl,
@@ -121,13 +128,6 @@ struct Constants {
                          identifier: Strings.ScreenRemoteMic,
                          color: UIColor(red: 0.15, green: 0.65, blue: 0.60, alpha: 1)),
             ],
-            // AI
-            [
-                ModeItem(label: Strings.Autopilot, icon: Images.autopilotIcon!, identifier: Strings.AutopilotFragment, color: Colors.autopilotColor),
-                ModeItem(label: Strings.ObjectTracking, icon: Images.objectTrackingIcon!, identifier: Strings.ObjectTrackingFragment, color: Colors.objectTrackingColor),
-                ModeItem(label: Strings.navigation, icon: Images.pointGoalIcon!, identifier: Strings.ScreenNavigation, color: Colors.pointGoalColor),
-                ModeItem(label: Strings.modelManagement, icon: Images.modelManagementIcon!, identifier: Strings.ScreenModelManagement, color: Colors.modelColor)
-            ],
             // Vision Modes
             [
                 ModeItem(label: Strings.tileFollowColour, icon: Images.followColourIcon, identifier: Strings.ScreenFollowColour, color: Colors.followColourColor),
@@ -136,15 +136,6 @@ struct Constants {
                 ModeItem(label: Strings.tileObjectAvoidance, icon: Images.avoidObjectIcon, identifier: Strings.ScreenAvoidObject, color: Colors.avoidObjectColor),
                 ModeItem(label: Strings.tileTargetTracking, icon: Images.targetTrackingIcon, identifier: Strings.ScreenTargetTracking, color: Colors.targetTrackingColor)
             ],
-            // Guides
-            [
-                ModeItem(label: Strings.tileGuideColour, icon: Images.guideIcon, identifier: Strings.ScreenGuideColour, color: Colors.guideColourColor),
-                ModeItem(label: Strings.tileGuideFace, icon: Images.guideIcon, identifier: Strings.ScreenGuideFace, color: Colors.guideFaceColor),
-                ModeItem(label: Strings.tileGuideLine, icon: Images.guideIcon, identifier: Strings.ScreenGuideLine, color: Colors.guideLineColor),
-                ModeItem(label: Strings.tileGuideAvoidance, icon: Images.guideIcon, identifier: Strings.ScreenGuideAvoidance, color: Colors.guideAvoidanceColor)
-            ],
-            // Legacy
-            []
         ]
     }
     static let frameColors: [UIColor] = [UIColor.red, UIColor.orange, UIColor.blue, UIColor.green, UIColor.brown]

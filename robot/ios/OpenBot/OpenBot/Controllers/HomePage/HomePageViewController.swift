@@ -40,7 +40,7 @@ class HomePageViewController: CameraController, UICollectionViewDataSource, UICo
     @IBOutlet weak var settings: UIButton!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet var modesCollectionView: UICollectionView!;
-    let sectionHeaders = ["  General", "  AI", "  Vision Modes", "  Guides"]
+    let sectionHeaders = ["  General", "  AI", "  Vision Modes"]
 
     // Car dashboard above the grid; the grid itself is "More features", hidden by default.
     private let dashboard = CarDashboardView()

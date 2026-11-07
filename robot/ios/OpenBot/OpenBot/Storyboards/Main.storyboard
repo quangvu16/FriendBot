@@ -276,7 +276,6 @@
                     </tabBar>
                     <connections>
                         <segue destination="drE-y0-l4o" kind="relationship" relationship="viewControllers" id="NlB-Et-vzI"/>
-                        <segue destination="qC7-sJ-DWp" kind="relationship" relationship="viewControllers" id="ZEk-fy-YBI"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fNS-60-kC5" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -478,24 +477,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SIy-qX-S1o" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1149" y="755"/>
-        </scene>
-        <!--Profile-->
-        <scene sceneID="iEJ-Sb-pm7">
-            <objects>
-                <viewController storyboardIdentifier="profileController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="qC7-sJ-DWp" customClass="profileFragment" customModule="OpenBot" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="3Lb-6N-8Dc">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="C0y-VW-qtd"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                    <tabBarItem key="tabBarItem" title="Profile" image="user" id="Gyr-zk-9qK"/>
-                    <navigationItem key="navigationItem" id="tae-bV-FTh"/>
-                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="eyf-mM-Ifq" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-2746" y="-552"/>
         </scene>
     </scenes>
     <resources>

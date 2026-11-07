@@ -17,6 +17,39 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     if let rootViewController = window.windows.first?.rootViewController {
         LocalizationManager.refreshTabBarTitles(in: rootViewController)
     }
+    if let appWindow = window.windows.first {
+        showSplash(in: appWindow)
+    }
+    }
+
+    /// Shows the FriendBot logo on the start screen for one second, matching the launch
+    /// storyboard so the badge appears to hold from the very first frame, then fades away.
+    private func showSplash(in window: UIWindow) {
+        let splash = UIView(frame: window.bounds)
+        splash.backgroundColor = .white
+        splash.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+
+        let logo = UIImageView(image: UIImage(named: "SplashLogo"))
+        logo.contentMode = .scaleAspectFit
+        let side = min(window.bounds.width, window.bounds.height) * 0.55
+        logo.frame = CGRect(
+            x: (window.bounds.width - side) / 2,
+            y: (window.bounds.height - side) / 2,
+            width: side,
+            height: side)
+        logo.autoresizingMask = [
+            .flexibleLeftMargin, .flexibleRightMargin,
+            .flexibleTopMargin, .flexibleBottomMargin,
+        ]
+        splash.addSubview(logo)
+        window.addSubview(splash)
+
+        UIView.animate(
+            withDuration: 0.25,
+            delay: 1.0,
+            options: .curveEaseIn,
+            animations: { splash.alpha = 0 },
+            completion: { _ in splash.removeFromSuperview() })
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
