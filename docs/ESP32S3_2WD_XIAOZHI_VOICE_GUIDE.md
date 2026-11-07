@@ -1,361 +1,406 @@
-# OpenBot 2WD (ESP32 + MX1508) with Xiaozhi Voice Control
+<p align="center">
+  <img src="../FriendBot_logo.png" alt="FriendBot" width="160" />
+</p>
 
-This guide covers the two-wheel OpenBot built in this repository: an **ESP32 WROOM-32U
-DevKitC V4 (38 pin)** running the rewritten `firmware/openbot-esp32s3` firmware, driven by
-DC motors through an **MX1508** dual H-bridge, and controlled **by voice** from the OpenBot
-phone apps (**Android** and **iOS**) with the **Xiaozhi** language model as the brain.
-The same firmware also builds for the ESP32-S3-DevKitC-1 (N16R8) — set `OPENBOT_BOARD`.
+# FriendBot — Voice Control Guide
 
-The **Xiaozhi agent** does the listening and the talking: the phone streams your voice to the
-Xiaozhi server, which transcribes it, thinks, answers in its own synthesized voice, and — when
-the robot should act — calls a robot tool. The phone plays that voice back and keeps the whole
-exchange visible in a conversation list. The robot itself only drives — no microphone, no
-speaker, no sonar, no LEDs, no LiDAR on board.
+**Talk to your robot. It listens, answers, and drives.**
+
+FriendBot is a small 2-wheel robot car built on [OpenBot](https://www.openbot.org/). An
+**ESP32** board drives the motors and reads three distance sensors. Your **phone** (Android or
+iOS) is the brain. **Xiaozhi** (xiaozhi.me) is the voice assistant: it hears you, thinks, talks
+back, and tells the robot what to do.
+
+> **Example:** you say *"Go forward for 3 seconds"* → Xiaozhi answers *"OK, going forward!"*
+> → the robot drives forward for 3 seconds and stops by itself.
+
+Vietnamese quick guide: [HUONG_DAN_DIEU_KHIEN_GIONG_NOI.md](HUONG_DAN_DIEU_KHIEN_GIONG_NOI.md)
 
 ---
 
-## 1. How voice control works
+## Contents
+
+1. [What you need](#1-what-you-need)
+2. [How it works](#2-how-it-works)
+3. [Wiring](#3-wiring)
+4. [Flash the firmware](#4-flash-the-firmware)
+5. [Install the app and connect](#5-install-the-app-and-connect)
+6. [Pair with xiaozhi.me (first time only)](#6-pair-with-xiaozhime-first-time-only)
+7. [Using the Voice Control screen](#7-using-the-voice-control-screen)
+8. [Voice commands](#8-voice-commands)
+9. [Configuring Xiaozhi](#9-configuring-xiaozhi)
+10. [Safety](#10-safety)
+11. [Troubleshooting](#11-troubleshooting)
+12. [Questions to go deeper](#12-questions-to-go-deeper)
+
+---
+
+## 1. What you need
+
+| Part | Why it is needed |
+|---|---|
+| ESP32 WROOM-32 DevKitC (38 pin) | The robot's small controller: runs the motors, sensors, LEDs and LCD |
+| L298N dual H-bridge (or MX1508) | Turns the ESP32's weak signals into motor power |
+| 2 × DC gear motors + wheels | Differential drive: two wheels, steering by speed difference |
+| 3 × HC-SR04 ultrasonic sensors | Measure distance left / middle / right, so the robot does not crash |
+| 2 × LEDs + 220 Ω resistors | Lights and turn signals |
+| 16×2 LCD with I2C backpack | Shows speed, link and distances on the robot |
+| 2S Li-ion battery (7.4 V) | Power for the motors (and 5 V for the board through the driver) |
+| Android or iOS phone | The brain: runs the FriendBot app, microphone, speaker and camera |
+| Wi-Fi or mobile data | Voice goes to the Xiaozhi server on the internet |
+
+> **Why a phone?** A phone already has a fast processor, a microphone, a speaker, a camera and
+> internet. The ESP32 only has to drive. This is the OpenBot idea: *"turn smartphones into
+> robots"*.
+>
+> *Source: [OpenBot paper](paper/OpenBot.pdf), `firmware/openbot-esp32-mtv/README.md`*
+
+---
+
+## 2. How it works
 
 ![Voice pipeline](images/voice-flow.svg)
 
-1. **First launch pairs the phone with xiaozhi.me** — the app registers as a Xiaozhi device,
-   shows a verification code, and receives its API credentials back once you enter the code on
-   the website. They are saved locally; later launches skip pairing and connect on their own.
-2. **You speak** in your own language ("go forward", "tiến", "前进", "turn left"…) — tap the
-   microphone and your voice streams to Xiaozhi as Opus audio; the server transcribes it
-   (no Google or Apple speech is used).
-3. **The Xiaozhi session answers.** The app holds a real XiaoZhi WebSocket session
-   (hello v1, binary Opus audio both ways, `stt` / `tts` / `llm` / `mcp` messages). The
-   assistant replies in speech and — when the robot should act — sends an **MCP tool call**
-   (`self.robot.move`, `self.robot.stop`).
-   * For typed input when the session is offline, a REST LLM call (chat-completions JSON)
-     takes over, and as a last resort a built-in keyword interpreter
-     (English / Vietnamese / Chinese) — the robot is always drivable.
-4. **The app drives the robot** over the normal OpenBot link (BLE or USB serial) using the
-   standard `c<left>,<right>` protocol, re-sent every 250 ms while a move runs.
-5. **The assistant's reply is spoken in Xiaozhi's own voice** — the server's synthesized
-   speech streams back and the phone plays it — and the whole exchange appears in the
-   on-screen conversation transcript.
+1. **You speak** — in English, Vietnamese or Chinese. The app streams your voice to Xiaozhi.
+   *Example: "rẽ trái" (turn left).*
+2. **Xiaozhi understands** — the server turns speech into text and decides what to do.
+3. **Xiaozhi answers in two ways:**
+   - it **talks back** in its own voice (the phone plays it), and
+   - it **calls a robot tool** when the robot should act, e.g. `self.robot.move`
+     with *direction = left*.
+4. **The app drives the robot** over Bluetooth (BLE) or USB with the simple OpenBot message
+   `c<left>,<right>` (each wheel −255…255). *Example: `c-150,150` = spin left.*
+5. **The robot stops by itself** when the move's time is over.
 
-Safety is layered: each move auto-stops after its duration (300–8000 ms), the firmware stops
-after 1 s of link silence (`CONTROL_TIMEOUT_MS`), the app's red STOP latch overrides every
-command, and an object-avoidance gate filters all drive values before they reach the wire.
+Everything is also written in the on-screen chat, so you can see what was said and done.
+
+> **What if there is no internet?** Typed commands and the quick buttons still work. A
+> built-in keyword list (§8) understands simple words like "forward" or "dừng" without any
+> server.
+>
+> *Source: `robot/android/.../robot/voice/` (`XiaozhiSession`, `VoiceInterpreter`,
+> `VoiceCommand`), `robot/ios/OpenBot/OpenBot/Controllers/VoiceControl/`*
 
 ---
 
-## 2. Hardware
+## 3. Wiring
 
-### Parts
+![FriendBot wiring: ESP32 WROOM-32 DevKitC + L298N + 3 sonars + LEDs + LCD](images/wiring.svg)
 
-| Part | Notes |
-|---|---|
-| ESP32 **WROOM-32U DevKitC V4**, 38 pin | classic ESP32; the ESP32-S3-DevKitC-1 (N16R8) works too |
-| MX1508 dual H-bridge module | one PWM input per direction, no enable pins |
-| 2× DC gear motors + wheels | differential drive |
-| 2S Li-ion battery (7.4 V) | motor supply → MX1508 `VCC` terminal |
-| USB cable | flashing, and optional wired control link |
-
-### Wiring
-
-![Wiring: ESP32 DevKitC V4 to MX1508 and two DC motors](images/voice-wiring.svg)
-
-| Signal | ESP32 GPIO | MX1508 pin |
+| Part | Signal | ESP32 GPIO |
 |---|---|---|
-| Left motor forward (PWM, 5 kHz) | **16** | AIN1 |
-| Left motor backward (PWM, 5 kHz) | **17** | AIN2 |
-| Right motor forward (PWM, 5 kHz) | **18** | BIN1 |
-| Right motor backward (PWM, 5 kHz) | **19** | BIN2 |
+| Right motor | IN1 forward (PWM) / IN2 backward (PWM) / EN | **19 / 4 / 18** |
+| Left motor | IN1 forward (PWM) / IN2 backward (PWM) / EN | **15 / 2 / 5** |
+| Sonar middle | TRIG / ECHO | **13 / 12** |
+| Sonar left | TRIG / ECHO | **26 / 25** |
+| Sonar right | TRIG / ECHO | **32 / 33** |
+| LEDs | left / right | **14 / 27** |
+| LCD (I2C, 0x27 or 0x3F) | SDA / SCL | **21 / 22** |
 
-Notes:
+**Four rules that save hours:**
 
-* **Common ground**: battery −, MX1508 GND and ESP32 GND must be connected together.
-* **Motor power**: the battery feeds the MX1508 `VCC` terminal — never take motor power
-  from the ESP32's 3V3/5V pin.
-* **No enable pins**: every MX1508 input is a PWM speed pin (one per direction); forward is
-  `AIN1`-high duty + `AIN2` low, backward the other way round.
-* **Do not wire anything to GPIO 6–11** — they are the SPI flash bus on the WROOM-32U and
-  using one crashes the board (the MX1508 test sketch's `ForwardPin 6` lives there). Also
-  avoid GPIO 1/3 (UART0) and 34–39 (input-only). On the ESP32-S3 build the reserved pins
-  are 26–37, 0, 3, 45, 46, 19, 20, 43, 44 instead. The firmware keeps them all free.
-* **Motor direction**: if a side runs backwards for "forward", flip that side's two motor
-  wires — or set `MOTOR_L_REVERSED` / `MOTOR_R_REVERSED` in the firmware (see below).
+1. **One common ground.** Battery −, driver GND, ESP32 GND, sonar GND and LCD GND must all be
+   joined. *Why? Without it, signals have no shared "zero", so motors twitch and sonars read
+   nonsense.*
+2. **Divide the sonar ECHO voltage.** HC-SR04 echo is 5 V, the ESP32 is 3.3 V. Put 1 kΩ in
+   series and 2 kΩ to GND on every ECHO wire. *Why? 5 V slowly damages the ESP32 pin.*
+3. **Never power motors from the ESP32.** Battery → driver `+12V`/`VCC`. *Why? Motors pull
+   far more current than the board's 5 V pin can give.*
+4. **Strapping pins (2, 5, 12, 15).** If the board will not boot or flash, unplug the middle
+   sonar (GPIO 12) and the driver, flash, then plug back.
+
+**Using an MX1508 instead of L298N?** Same IN1–IN4 wires, leave GPIO 5/18 unconnected (no EN
+pins), and power the ESP32 from a separate 5 V buck converter.
+
+*Source: `firmware/openbot-esp32-mtv/openbot-esp32-mtv.ino` (PINS section) and its README*
 
 ---
 
-## 3. Firmware (`firmware/openbot-esp32s3`)
+## 4. Flash the firmware
 
-The firmware is a rewrite for the 2WD MX1508 robot, based on the MTV `openbot.ino` base
-code: its motor model (one PWM input per direction, 8-bit speed at 5 kHz, brake or coast on
-stop) and its ESP32 BLE/serial protocol. It keeps the standard OpenBot line protocol (so
-both phone apps work unmodified) and adds a text-command channel. It drives the motors and
-nothing else.
+Use **`firmware/openbot-esp32-mtv/openbot-esp32-mtv.ino`**. It is a clean rewrite of the
+OpenBot MTV sketch: real speed control in both directions, no `delay()` in the loop, sonar
+safety, LED control and an LCD. (The older `firmware/openbot-esp32s3/` sketch is kept only
+for reference.)
 
-### Settings to check before flashing
+### Steps (Arduino IDE)
 
-| Define | Default | Meaning |
-|---|---|---|
-| `OPENBOT_BOARD` | `OPENBOT_BOARD_ESP32` | the DevKitC V4; `OPENBOT_BOARD_ESP32S3` for the ESP32-S3 |
-| `MOTOR_L_REVERSED` | `0` | `1` flips the left motor |
-| `MOTOR_R_REVERSED` | `1` | `1` flips the right motor (your chassis may differ) |
-| `MOTOR_PWM_FREQ` / `MOTOR_PWM_RES` | `5000` / `8` | 5 kHz, 8-bit duty (0–255) |
-| `MOTOR_MAX_SPEED` | `110` | of 255 — full app speed maps to this duty (the MX1508 test sketch's `MaxSpeed`) |
-| `MOTOR_MIN_DUTY` | `30` | of 255 — lifts the motors out of the dead band |
-| `MOTOR_BRAKE_ON_STOP` | `1` | brake (both inputs high) instead of coast on stop |
-| `CONTROL_TIMEOUT_MS` | `1000` | failsafe: stop after 1 s without commands |
-| `VOICE_SPEED_DEFAULT` | `192` | full-scale drive value for text commands |
-| `HAS_RC` | `0` | optional RC receiver (iBUS on GPIO 13, or GPIO 42 on the S3) |
+1. Install the **ESP32 board package** (Espressif, core 2.x or 3.x).
+2. Board: **ESP32 Dev Module**.
+3. Library Manager → install **LiquidCrystal I2C** (Frank de Brabander).
+   NewPing is **not** needed.
+4. Open `openbot-esp32-mtv.ino` → check the settings below → **Upload**.
 
-### Build and flash
+Command-line alternative:
 
 ```bash
-arduino-cli compile --fqbn esp32:esp32:esp32 firmware/openbot-esp32s3
-
-arduino-cli upload --fqbn esp32:esp32:esp32 \
-  --port /dev/tty.usbserial-0001 firmware/openbot-esp32s3
+arduino-cli compile --fqbn esp32:esp32:esp32 firmware/openbot-esp32-mtv
+arduino-cli upload  --fqbn esp32:esp32:esp32 --port /dev/tty.usbserial-0001 firmware/openbot-esp32-mtv
 ```
 
-For the ESP32-S3 use `--fqbn esp32:esp32:esp32s3 --board-options
-PSRAM=opi,FlashSize=16M,PartitionScheme=default` instead.
+### Settings worth checking
 
-The board shows up in the apps as **"OpenBot"** over BLE (services
-`61653dc3-…` / `06386c14-…` / `9bf1103b-…`) or as a USB serial device.
+| Setting | Default | What it means — example |
+|---|---|---|
+| `MOTOR_DRIVER` | `DRIVER_DUAL_INPUT` | L298N / MX1508. Use `DRIVER_PWM_DIR` for a Cytron-style PWM + DIR driver |
+| `MOTOR_L_REVERSED` / `MOTOR_R_REVERSED` | `0` / `0` | Set to `1` if that wheel spins backwards on "forward" |
+| `MOTOR_MIN_DUTY` | `60` | Smallest power that really turns the wheels. Wheels hum but don't move? Try `80` |
+| `MOTOR_MAX_DUTY` | `255` | Full app speed maps to this. Robot too fast? Try `180` |
+| `MOTOR_RAMP_STEP` | `20` | Soft start: max power increase per 10 ms |
+| `FRONT_SLOW_CM` / `FRONT_STOP_CM` | `50` / `15` | Middle sonar: start slowing at 50 cm, stop forward at 15 cm |
+| `SIDE_SLOW_CM` / `SIDE_STOP_CM` | `25` / `10` | Same for the left and right sonars |
+| `ESCAPE_CM` | `5` | Closer than 5 cm → robot backs off and turns to the open side |
+| `HAS_LCD` / `HAS_SONAR` / `HAS_INDICATORS` | `1` | Set to `0` for parts you did not fit |
 
-### Protocol (phone → robot)
+### What the robot shows
 
-| Message | Meaning |
-|---|---|
-| `c<left>,<right>` | drive, each −255…255 |
-| `t<text>` | **voice/text command**: "go back", "stop", "转左", "tiến"… |
-| `h<ms>` | heartbeat timeout (apps send 1000) |
-| `f` | feature query → robot replies `f2WD_ESP32:` (or `f2WD_S3:` on the ESP32-S3 build) |
+- **Bluetooth name:** `OpenBot: MTV`
+- **LCD:**
+  ```
+  L 200 R 200  BLE     <- motor outputs, link: BLE / USB / WAIT / LOST / STOP
+  L 40 M120 Rmax       <- left / middle / right distance in cm (--- = sensor fault)
+  ```
 
-Robot → phone: `v` battery divider, `w` wheel RPM, `m` RC mode.
+### Messages between phone and robot
 
-The `t` text channel understands the same vocabulary as the apps' offline interpreter:
-**stop / back / left / right / faster / slower / forward** in English, Vietnamese and Chinese
-("stop" wins over everything; "go back" reverses).
+| Direction | Message | Meaning — example |
+|---|---|---|
+| phone → robot | `c<left>,<right>` | Drive, −255…255 each. `c200,200` = forward |
+| phone → robot | `h<ms>` | Heartbeat timeout. `h750` = stop if nothing for 750 ms |
+| phone → robot | `f` | "What are you?" → robot replies with its features |
+| phone → robot | `s<ms>` | Send sonar readings every *ms*. `s100` |
+| phone → robot | `i<left>,<right>` | LEDs: 0 off, 1 on, 2 blink, 3 auto. `i2,0` = left signal |
+| robot → phone | `s<cm>` | Free distance in front, e.g. `s42` |
+
+*Source: `firmware/openbot-esp32-mtv/openbot-esp32-mtv.ino` (SETTINGS, `handle_message`)*
 
 ---
 
-## 4. The Voice Control screen (Android & iOS)
+## 5. Install the app and connect
 
-The screen lives in the "General" section of the app grid as the **Voice Control** tile
-(microphone icon). Native on both platforms:
+1. **Install FriendBot** on your phone — build it from `robot/android` (Android Studio) or
+   `robot/ios` (Xcode).
+2. **Turn on the robot.** The LCD shows `WAIT`.
+3. In the app, open the **Bluetooth** screen and pick **`OpenBot: MTV`**
+   (Android can also use a **USB cable**). The LCD changes to `BLE` or `USB`.
+4. On the **Home** screen, open the **AI** section → **Voice Control**
+   (the **Remote Mic** tile is right next to it).
 
-* Android: `robot/android/.../robot/voice/` (`VoiceControlFragment` and friends),
-  added to `nav_graph.xml` and the `FeatureList` registry.
-* iOS: `robot/ios/OpenBot/OpenBot/Controllers/VoiceControl/` (`VoiceControlController`),
-  pushed from the home grid like the other code-built screens.
+> **Example:** Home → AI → Voice Control → the status line reads **"Connected (BLE)"**.
+> You can talk to Xiaozhi before the robot is connected — it just won't move.
 
-### First launch: pair with xiaozhi.me
+*Source: `robot/android/.../common/FeatureList.java` (AI category), iOS `Constants.swift`*
+
+---
+
+## 6. Pair with xiaozhi.me (first time only)
 
 ![First-time pairing screen](images/voice-pairing.svg)
 
-The first time you open Voice Control it walks you through device pairing — the same flow the
-whisplay-xiaozhi and py-xiaozhi clients use:
+The first time you open Voice Control, the app registers itself as a Xiaozhi device:
 
-1. The app registers itself with the Xiaozhi platform and shows a **verification code**.
-2. Open **xiaozhi.me**, sign in, add a new device and enter the code.
-3. Once bound, the device connects automatically. **Credentials are saved locally — next time
-   you open the screen, pairing is skipped** and it connects on its own.
+1. The app shows a **verification code**.
+2. On a computer or phone browser, go to **xiaozhi.me** → sign in → **Console → Agents** →
+   **Add device** → type the code.
+3. The app notices the binding and connects. You hear Xiaozhi's greeting.
 
-**Use offline** skips pairing and drives with the built-in keywords (or a manually configured
-key, §5). The gear button can restart pairing later.
+The keys are **saved on the phone**, so next time it connects by itself.
+**Use offline** skips pairing — you can still drive with buttons and simple keywords.
 
-### The conversation screen
+> **Why a code, not a password?** The code proves that *you* own this phone, without
+> typing your xiaozhi.me password into the app. This is the same flow used by the
+> [py-xiaozhi](https://github.com/huangjunsen0406/py-xiaozhi) and
+> [whisplay-xiaozhi](https://github.com/PiSugar/whisplay-xiaozhi) clients.
+>
+> *Source: `XiaozhiActivator.java` (OTA endpoint `https://api.tenclass.net/xiaozhi/ota/`)*
+
+---
+
+## 7. Using the Voice Control screen
 
 | Android | iOS |
 |---|---|
 | ![Android Voice Control screen](images/voice-android.svg) | ![iOS Voice Control screen](images/voice-ios.svg) |
 
-The screen opens with a friendly **face** with the current state under it (**Ready** →
-**Listening…** → **Thinking…** → **Speaking…**); sound arcs and a blue ring appear around the
-face while the mic is live. Under it a live **waveform** follows your voice while listening and
-the reply while speaking.
+### Talking
 
-**Hands-free is the default** — just talk, like with the Lily voice agent: the robot keeps
-listening (the Xiaozhi server detects when you finish a sentence), shows **Thinking…** while
-it works, and answers in Xiaozhi's own voice, played by the phone. The **Push to speak**
-toggle switches to tap-to-talk. Tapping the microphone while the assistant is speaking
-**interrupts the reply** (barge-in) and starts listening again.
+- **Hands-free (default):** just talk. The face shows **Ready → Listening… → Thinking… →
+  Speaking…**. The server notices when you finish a sentence.
+- **Push to speak:** tap the mic, speak, tap again.
+- **Interrupt:** tap the mic while Xiaozhi is speaking — it stops and listens again.
+- **Type:** write a command and tap **Send**. *Example: `go forward slowly`.*
 
-The transcript below is a chat: your turns bubble on the right, Xiaozhi's answers on the left, and
-every robot action the assistant runs appears as a `» …` chip (for example `» Move forward`) —
-so each request — for information or for an action — is answered by voice **and** kept visible
-in the list.
+The chat shows **your words** on the right, **Xiaozhi's answers** on the left, and every robot
+action as a chip, e.g. `» Move forward`.
 
-Several phones can drive the same robot. The phone with the Bluetooth (or USB) link to the
-robot shares it over WiFi as soon as you open the voice control page there — its connection
-line reads "Connected (BLE) · Sharing over WiFi". Other phones on the same network find it
-automatically: their line reads "Controlling via <phone> (WiFi)", and every voice command,
-typed command and quick button on them drives the robot through that phone. A **Stop** from
-any phone stops the robot for everyone.
+### Quick buttons (no talking needed)
 
-**Tap the connection line** to choose which robot to drive: this phone's own Bluetooth (or
-USB) link, or the robot a specific other phone shares — listed by phone name whenever more
-than one is shared on the network. The choice is remembered the next time you open the page.
-
-### Remote Mic: speak from a second phone
-
-The **Remote Mic** page turns any other phone on the network into a wireless microphone for
-the voice control page that holds the robot. Open the voice control page on the phone with
-the robot link (the host), then open **Remote Mic** on the second phone, tap the microphone
-and speak: your voice feeds the host's Xiaozhi session directly, so the second phone needs
-no Xiaozhi pairing at all. The conversation and Xiaozhi's spoken replies stay on the host
-phone — only the microphone travels over the network. The status line shows "Live on
-<phone>" once the host's voice page is hearing you; if it says to open the voice control
-page first, the host page is closed. Tap the status line to pick which shared robot (which
-host phone) to speak to. The microphone stops whenever you leave the page.
-
-### Seeing the environment: the phone camera
-
-The assistant has eyes too — modeled on the Keyestudio KS5028 S3CAM camera firmware. Ask
-it to see something ("what's in front of me?", "take a photo and tell me what you see",
- "có gì quanh đây?") and it calls the **photo tool**: the phone's camera takes one picture
-of the environment, the picture and your question are uploaded to the **Xiaozhi vision
-explain service** — the same service and wire format the KS5028 S3CAM firmware uses; the
-server tells the app its URL and token when the assistant connects — and the answer is
-spoken in Xiaozhi's own voice and kept in the conversation list (a `» Take a photo` chip
-marks the look-around). The first capture asks for camera permission.
-
-A live **camera preview** sits in the top-right corner of the page — the assistant's "eye".
-The round button on it flips between the phone's **back and front cameras** (the choice is
-remembered), and **tapping the preview** takes a photo right away and shows the vision
-model's answer in the conversation. Every capture — yours or the tool's — flashes the
-shutter still in the corner for a moment, so the taken picture is always visible. If camera
-permission is declined the corner stays hidden and the photo tool asks again on demand.
-
-| Input | What it does |
+| Row | Buttons |
 |---|---|
-| **Microphone** | hands-free: just speak — or tap to talk / tap to end (Push to speak) |
-| **Typed command** | same pipeline, e.g. type `go forward for a bit` |
-| **Quick buttons** | Forward / Backward / Turn left / Turn right / Stop |
-| **Speed slider** | rescales every move (25–100 %, default 75 %); "faster"/"slower" adjust it too |
-| **Settings gear** | pairing / Xiaozhi API configuration (see §5) |
+| 1 | **Forward · Backward · Left · Right · Stop** |
+| 2 | **Lights** (toggle) · **Sonar** (shows *Distance: … cm*) · **Sing** · **Spin 360** |
+| 3 | **Triangle · Circle · Left+Right · Turn 180** |
 
-### How one utterance is handled
+The **Speed** slider (25–100 %, default 75 %) scales every move.
 
-1. Your voice streams into the live **Xiaozhi WebSocket session** as Opus audio (typed text is
-   sent as a text message instead).
-2. The server transcribes it (a `You:` bubble appears), the assistant answers — its synthesized
-   speech streams back and plays on the phone, each sentence shown as a `Xiaozhi:` bubble — and
-   any **MCP tool call** it issues moves the robot (listed as a `»` chip). If it only chats and
-   your typed words clearly matched a drive command, the built-in interpreter still drives as
-   a safety net.
-3. Without a session, typed input falls back to the REST LLM brain and then to the built-in
-   keywords (shown in the list, not spoken); the microphone reports that Xiaozhi is offline.
-   The quick buttons always drive the robot.
+### The camera — "what do you see?"
 
-Turns **spin in place** (left motor reverse, right motor forward for "turn left"). A move runs
-for its duration and then stops by itself; the drive values are re-sent every 250 ms so the
-firmware's heartbeat failsafe never cuts a move short. Leaving the screen stops the robot.
+A small camera preview sits in the top-right corner. Ask *"What's in front of you?"* or
+*"Có gì phía trước?"*: the phone takes a photo, Xiaozhi's vision service describes it, and the
+answer is spoken. **Tap the preview** to take a photo yourself; the round button flips between
+front and back camera.
 
-### Command vocabulary (spoken through Xiaozhi, typed, and offline)
+### Several phones, one robot
 
-| English | Tiếng Việt | 中文 | Action |
-|---|---|---|---|
-| forward, go, ahead, straight | tiến, đi | 前进, 向前, 走 | Forward |
-| back, reverse, go back | lùi, lùi lại | 后退, 倒, 向后 | Backward |
-| left, turn left | trái, rẽ trái | 左, 左转 | Turn left |
-| right, turn right | phải, rẽ phải | 右, 右转 | Turn right |
-| stop, halt | dừng, dừng lại | 停, 停止 | Stop |
-| faster, speed up | nhanh, tăng tốc | 快, 加速 | Speed +15 % |
-| slower, slow down | chậm, giảm tốc | 慢, 减速 | Speed −15 % |
-| lights on, turn on the light | bật đèn, mở đèn | 开灯 | Lights on |
-| lights off, turn off the light | tắt đèn | 关灯 | Lights off |
-| signal left, left indicator | xi nhan trái | 左转向灯 | Left signal blinking |
-| signal right, right indicator | xi nhan phải | 右转向灯 | Right signal blinking |
-| hazard, hazard lights | đèn hazard | 危险灯 | Both signals blinking |
-| signals off, indicators off | tắt xi nhan | 关转向灯 | Signals off |
-| sonar, distance, how far | khoảng cách | 距离, 超声波 | Read sonar distance |
-| sing, song | hát | 唱歌 | Sing and turn around |
-| triangle | tam giác | 三角形 | Drive a triangle |
-| circle | vòng tròn, hình tròn | 圆形, 圆圈 | Drive a circle |
-| spin, 360 | xoay, một vòng | 旋转, 转一圈 | Spin 360° in place |
-| turn around | quay lại, quay đầu | 掉头, 转身 | Turn 180° in place |
-| left and right | trái phải | 左右 | Turn left and right |
-| go forward 5 seconds / 3000 ms | tiến 5 giây | 走5秒 | Move for the spoken duration (up to 15 s) |
+- The phone connected to the robot **shares it over Wi-Fi** while Voice Control is open
+  (status: *"Connected (BLE) · Sharing over WiFi"*).
+- Other phones on the same Wi-Fi see *"Controlling via <phone> (WiFi)"* and can drive too.
+- **Tap the status line** to choose which robot to control.
+- **Stop from any phone stops the robot for everyone.**
 
-With the Xiaozhi LLM configured, anything else works too ("drive backwards slowly for three
-seconds", "quay phải") — the model picks the action, speed and duration.
+### Remote Mic
+
+Open **Remote Mic** on a second phone to use it as a wireless microphone for the phone that
+holds the robot. It needs no pairing; replies still play on the host phone.
+
+> **Example:** the host phone sits on the robot; you walk around with your own phone in
+> Remote Mic and say *"turn around"*.
+>
+> *Source: `VoiceControlFragment.java`, `RemoteMicFragment.java`, `voice/relay/`,
+> `PhotoExplainer.java`*
 
 ---
 
-## 5. Configuring Xiaozhi
+## 8. Voice commands
 
-Tap the gear on the Voice Control screen:
+Say them, type them, or use them offline. With Xiaozhi online, natural sentences work too —
+*"drive backwards slowly for three seconds"*, *"quay phải rồi hát"*.
+
+| English | Tiếng Việt | 中文 | What happens |
+|---|---|---|---|
+| forward, go, straight | tiến, đi | 前进, 向前, 走 | Drive forward |
+| back, reverse | lùi, lùi lại | 后退, 向后 | Drive backward |
+| left, turn left | trái, rẽ trái | 左, 左转 | Spin left |
+| right, turn right | phải, rẽ phải | 右, 右转 | Spin right |
+| **stop**, halt | **dừng**, dừng lại | **停**, 停止 | Stop now (always wins) |
+| faster / slower | nhanh / chậm | 快 / 慢 | Speed ±15 % |
+| lights on / off | bật đèn / tắt đèn | 开灯 / 关灯 | Both LEDs on / off |
+| signal left / right | xi nhan trái / phải | 左 / 右转向灯 | That LED blinks |
+| hazard | đèn hazard | 危险灯 | Both LEDs blink |
+| signals off | tắt xi nhan | 关转向灯 | Signals off |
+| distance, how far | khoảng cách | 距离 | Reads the sonar: *Distance: 42 cm* |
+| sing | hát | 唱歌 | Sings and spins around |
+| triangle / circle | tam giác / vòng tròn | 三角形 / 圆形 | Drives that shape |
+| spin, 360 | xoay, một vòng | 旋转 | Spins 360° in place |
+| turn around | quay đầu | 掉头 | Turns 180° |
+| left and right | trái phải | 左右 | Wiggles left–right |
+| go forward 5 seconds | tiến 5 giây | 走5秒 | Moves for that time (max 15 s) |
+
+**Two matching rules:** "stop" beats every other word (*"dừng lại"* never drives), and
+"left and right" is checked before plain "left".
+
+### Robot tools Xiaozhi can call (MCP)
+
+| Tool | Parameters | Does |
+|---|---|---|
+| `self.robot.move` | direction, speed, duration_ms (≤ 15000) | Drive |
+| `self.robot.stop` | — | Stop |
+| `self.robot.led` | state: on / off | Lights |
+| `self.robot.indicator` | state: left / right / both / off | Turn signals |
+| `self.robot.sonar` | — | Read distance |
+| `self.robot.trick` | name: sing / triangle / circle / spin / turn_around / wiggle | Tricks |
+| `self.camera.take_photo` | question | Look and describe |
+
+*Source: `VoiceInterpreter.java`, `VoiceCommand.java`, `XiaozhiSession.java`*
+
+---
+
+## 9. Configuring Xiaozhi
+
+Tap the **gear** on the Voice Control screen.
 
 ![Xiaozhi settings dialog](images/voice-settings.svg)
 
-### Sign in with xiaozhi.me (gets the API key for you)
+- **Sign in with xiaozhi.me** — re-runs the pairing of §6 and fills in the key for you.
+- **Manual setup** (for typed commands when the live session is offline):
 
-Pairing normally happens on first launch (§4). The gear's **Sign in with xiaozhi.me** button
-re-runs the same device-pairing flow of the
-[whisplay-xiaozhi](https://github.com/PiSugar/whisplay-xiaozhi) project any time you need it —
-the app registers as a Xiaozhi device and the platform issues the key back automatically.
+| Field | Default | Note |
+|---|---|---|
+| Server URL | `https://api.tenclass.net/v1/chat/completions` | Any OpenAI-compatible endpoint works (OpenAI, DeepSeek, your own server) |
+| Access token | filled by sign-in | Leave empty to use keywords only |
+| Model name | `xz-lite` | e.g. `qwen`, `deepseek` — whatever your server offers |
+| Voice language | phone language | Affects typed / offline replies; spoken replies follow Xiaozhi |
 
-1. Tap **Sign in with xiaozhi.me**. The app contacts the Xiaozhi OTA endpoint
-   (`https://api.tenclass.net/xiaozhi/ota/`) and shows a **verification code**.
-2. Open **xiaozhi.me** in a browser, sign in, add a device and enter the code.
-3. The app polls the same endpoint, detects the binding, and saves the issued **API key** and
-   WebSocket credentials — the token field is filled in and ready to use.
-
-The phone keeps its device identity (device id, client id, HMAC fingerprint) after the first
-login, so a later sign-in jumps straight to the verification-code step. Manual configuration
-below remains available as an override.
-
-### Manual configuration
-
-| Field | Value |
-|---|---|
-| **Server URL** | any OpenAI-compatible *chat completions* endpoint. Default: `https://api.tenclass.net/v1/chat/completions` (the Xiaozhi gateway behind xiaozhi.me). Your own OpenAI/DeepSeek/… URL works as well, or a proxy in front of a self-hosted `xiaozhi-esp32-server`. |
-| **Access token** | the `Authorization: Bearer …` key for that endpoint (filled in automatically by **Sign in with xiaozhi.me**). Leave empty to use only the built-in keywords. |
-| **Model name** | default `xz-lite`; the gateway also offers `qwen`, `deepseek`, `gpt-5`, `doubao`, … Use whatever your endpoint serves. |
-
-The app sends one system prompt (robot description + JSON-only answer rule) plus the recent
-conversation turns, and expects exactly:
+The app asks the model for one JSON answer, for example:
 
 ```json
-{"action": "forward | backward | left | right | stop | none | lights_on | lights_off | indicator_left | indicator_right | indicator_hazard | indicator_off | sonar | sing | triangle | circle | spin | turn_around | wiggle",
- "speed": 0.15-1.0,
- "duration_ms": 300-15000,
- "say": "short spoken reply in the user's language"}
+{"action": "forward", "speed": 0.6, "duration_ms": 3000, "say": "Going forward for 3 seconds!"}
 ```
 
-`"none"` means pure conversation — the assistant just talks, no movement. The parser tolerates
-code fences and stray prose around the object. If the server errors or the reply is not
-understood, the screen logs it and falls back to the built-in keywords.
+`"action": "none"` means just chatting — no movement.
+
+*Source: `XiaozhiClient.java`, `VoiceControlFragment.java` (settings dialog)*
 
 ---
 
-## 6. Safety behavior
+## 10. Safety
 
-* Every move **auto-stops** at its duration (default 1.2 s, max 15 s).
-* The **Tilt** drive mode has a 4° dead zone and stops the moment the phone is level.
-* The firmware **failsafes** to stop after 1 s without commands.
-* The app-wide red **STOP latch** (car dashboard) overrides every command until resumed.
-* The **object-avoidance gate** filters all drive commands when proximity data is available.
-* **Unknown words stop** the robot (both offline and when the LLM is unsure).
-* Tapping the microphone while the assistant speaks **interrupts the reply** (barge-in: the
-  phone stops playback and sends `abort` to the server).
-* Unknown or malformed **MCP tool calls are rejected**, never executed.
-* Closing/navigating away from the screen **stops the motors** immediately.
+The robot has **several independent layers**, so one failure does not cause a crash:
 
----
-
-## 7. Troubleshooting
-
-| Symptom | Fix |
+| Layer | What it does |
 |---|---|
-| Robot doesn't spin, just hums | raise `MOTOR_MIN_DUTY`, or check the motor battery under load |
-| Robot drives the wrong way | set `MOTOR_R_REVERSED`/`MOTOR_L_REVERSED` to `1`/`0`, or swap that side's two wires |
-| "Robot not connected" on the screen | connect BLE ("OpenBot") from the app's Bluetooth screen first |
-| Nothing heard / no answer to voice | grant the microphone permission; voice goes through Xiaozhi, so the phone needs Wi-Fi or mobile data |
-| Assistant cannot see / photo tool fails | grant the camera permission; the explain URL + token arrive from the server at connect (reconnect the assistant if the tool answers "Image explain URL or token is not set"); "Failed to upload photo" means the vision service refused the picture |
-| Hands-free never listens | toggle **Push to speak** off/on or reopen the screen; the face ring turns blue when the mic is live |
-| The robot answers in the wrong language | pick the language in the gear's **Voice language** (affects typed/REST fallbacks); spoken replies follow the Xiaozhi server |
-| Pairing code never accepted | enter it at xiaozhi.me while the code is on screen (tap **Retry** if it expired) |
-| "Xiaozhi ready" never appears | credentials may be stale — run **Sign in with xiaozhi.me** again from the gear |
-| Assistant chats but the robot stays still | phrase a clear drive command ("go forward"), or use the quick buttons |
-| Xiaozhi errors in the log | check the endpoint URL and token; leave the token empty to fall back to keywords |
-| Move stops early | something is re-sending `c0,0` (STOP latch) or the link dropped for >1 s |
+| App — move timer | Every move stops after its time (default 1.2 s, max 15 s) |
+| App — red STOP | The dashboard STOP latch blocks all commands until you release it |
+| App — leave screen | Leaving Voice Control stops the motors |
+| App — unknown words | If the command is not understood, the robot stops |
+| App — bad tool calls | Unknown or broken MCP calls are rejected |
+| Firmware — sonar | Slows forward at 50 cm, stops at 15 cm; reversing and turning still work |
+| Firmware — escape | Under 5 cm: backs away and turns to the open side |
+| Firmware — link loss | Bluetooth disconnect → stop. USB heartbeat missing 750 ms → stop |
+
+> **Why both app and firmware?** If the phone freezes or the Bluetooth drops, the app cannot
+> help any more — the firmware still can.
+>
+> **Test tip:** do your first runs with the **wheels off the ground**.
+
+---
+
+## 11. Troubleshooting
+
+| Problem | Likely cause → fix |
+|---|---|
+| Wheels hum but don't turn | Not enough power → raise `MOTOR_MIN_DUTY` (60 → 80), check the battery |
+| One wheel turns backwards | Set `MOTOR_L_REVERSED` or `MOTOR_R_REVERSED` to `1` |
+| Robot won't go forward, but reverses fine | Something is close to a sonar → check the LCD distances |
+| LCD left/right distances swapped | Swap the two sonar pin lines in the firmware |
+| LCD blank | Turn the blue contrast screw on the back of the LCD |
+| Board won't boot or flash | Unplug the sonar on GPIO 12 and the driver while flashing |
+| "Robot not connected" | Connect `OpenBot: MTV` on the Bluetooth screen first |
+| No answer to voice | Allow microphone; the phone needs Wi-Fi or data |
+| Code not accepted at xiaozhi.me | It expired → tap **Retry** and enter the new code |
+| "Xiaozhi ready" never shows | Saved keys are stale → gear → **Sign in with xiaozhi.me** |
+| Xiaozhi chats but robot doesn't move | Say a clear command ("go forward") or use the buttons |
+| Photo / vision fails | Allow camera; reconnect so the server sends the vision URL and token |
+| Move stops early | STOP latch is on, or the link dropped |
+
+---
+
+## 12. Questions to go deeper
+
+Ask yourself **"why?"** for each — it makes the design clear.
+
+1. *Why does the phone, not the ESP32, run the voice assistant?*
+   (Hint: microphone, speaker, internet and CPU power are already in the phone.)
+2. *Why does each move have a time limit instead of "go forward until I say stop"?*
+   (Hint: what happens if the internet drops in the middle of a move?)
+3. *Why does the sonar safety block forward but still allow reverse and turning?*
+4. *Why does "stop" win over every other word in the same sentence?*
+5. *What would change if you used an MX1508 instead of an L298N — and why does the ESP32 then
+   need its own 5 V supply?*
+6. *How could you add a new trick (for example "dance") — which file holds the keywords, and
+   which holds the MCP tool list?*
+
+---
+
+*FriendBot is based on [OpenBot](https://www.openbot.org/) (MIT License). Voice by
+[Xiaozhi](https://xiaozhi.me).*

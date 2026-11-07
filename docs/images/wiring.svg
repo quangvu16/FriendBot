@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1010" viewBox="0 0 1400 1010" font-family="Inter, Helvetica, Arial, sans-serif">
 <rect width="100%" height="100%" fill="#f8fafc"/>
 <text x="40" y="52" font-size="28" font-weight="700" fill="#0f172a">FriendBot wiring · ESP32 WROOM-32 DevKitC (38 pin) + MTV firmware</text>
-<text x="40" y="80" font-size="14" fill="#475569">Source: firmware/friendbot-esp32-mtv/friendbot-esp32-mtv.ino (PINS section) and README.md there. Motor driver shown: L298N (MOTOR_DRIVER = DRIVER_DUAL_INPUT).</text>
+<text x="40" y="80" font-size="14" fill="#475569">Source: firmware/openbot-esp32-mtv/openbot-esp32-mtv.ino (PINS section) and README.md there. Motor driver shown: L298N (MOTOR_DRIVER = DRIVER_DUAL_INPUT).</text>
 <rect x="560" y="120" width="230" height="670" rx="14" fill="#1e293b"/>
 <text x="675.0" y="108" text-anchor="middle" font-size="15" font-weight="700" fill="#0f172a">ESP32-WROOM-32 DevKitC · 3.3 V logic</text>
 <rect x="641.0" y="420" width="68" height="110" rx="6" fill="#334155" stroke="#64748b"/>

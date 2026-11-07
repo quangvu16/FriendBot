@@ -10,8 +10,8 @@ hình tròn, quay 360 độ và quay trái phải.
 
 ## 1. Mở trang Voice Control
 
-1. Mở ứng dụng FriendBot, chọn tab **Voice Control**.
-2. Kết nối robot: mở màn hình Bluetooth/USB và chọn robot **OpenBot** (BLE) hoặc cắm cáp USB.
+1. Mở ứng dụng FriendBot, ở màn hình **Home** chọn mục **AI** → **Voice Control**.
+2. Kết nối robot: mở màn hình Bluetooth/USB và chọn robot **OpenBot: MTV** (BLE) hoặc cắm cáp USB.
    Dòng trạng thái trên trang Voice Control báo **Connected** là xong.
 3. Chưa kết nối robot vẫn nói chuyện được, nhưng robot không di chuyển.
 
@@ -131,8 +131,8 @@ Nếu đã cấu hình trợ lý Xiaozhi, lời tự nhiên cũng được hiể
 
 ## 5. Trợ lý Xiaozhi và lệnh MCP
 
-Với máy chủ Xiaozhi đã cấu hình (mục 5 của
-[hướng dẫn tiếng Anh](ESP32S3_2WD_XIAOZHI_VOICE_GUIDE.md#5-configuring-xiaozhi)), robot còn có
+Với máy chủ Xiaozhi đã cấu hình (mục 9 của
+[hướng dẫn tiếng Anh](ESP32S3_2WD_XIAOZHI_VOICE_GUIDE.md#9-configuring-xiaozhi)), robot còn có
 thể gọi các công cụ MCP của chính nó:
 
 | Công cụ | Tham số | Tác dụng |
@@ -151,7 +151,7 @@ thể gọi các công cụ MCP của chính nó:
 
 * Mỗi lệnh di chuyển **tự dừng** sau thời gian đã hẹn (mặc định 1,2 giây, tối đa 15 giây).
 * Nói **stop / dừng lại / 停** là thắng mọi lệnh khác.
-* Firmware tự dừng động cơ nếu mất liên lạc quá 1 giây.
+* Firmware tự dừng động cơ khi mất Bluetooth, hoặc khi mất tín hiệu USB quá 0,75 giây; cảm biến siêu âm tự giảm tốc ở 50 cm và dừng ở 15 cm.
 * Nút **STOP** đỏ trên trang điều khiển xe (dashboard) khóa mọi lệnh cho đến khi mở lại.
 * Không hiểu lệnh → robot dừng và báo *Sorry, I did not understand that*.
 
