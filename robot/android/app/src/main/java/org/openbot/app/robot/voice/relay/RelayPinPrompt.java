@@ -40,6 +40,9 @@ public final class RelayPinPrompt {
               String pin = input.getText().toString().trim();
               if (pin.length() == 4) {
                 VoiceRelayClient.get().setPin(hostName, pin);
+              } else {
+                // Not a PIN: ask again instead of silently giving up.
+                input.postDelayed(() -> show(context, hostName, false), 350);
               }
             })
         .setNegativeButton(R.string.voice_cancel, null)

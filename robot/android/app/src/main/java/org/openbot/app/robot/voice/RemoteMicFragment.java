@@ -106,6 +106,12 @@ public class RemoteMicFragment extends ControlsFragment {
 
     relayClient = VoiceRelayClient.get();
     relayClient.start(requireContext().getApplicationContext(), relayListener);
+    // This page always speaks over the relay: a remembered "this phone's own robot" pick
+    // from the voice page would block the connection forever — undo it here.
+    if (relayClient.isLocalChoice()) {
+      relayClient.chooseAuto();
+    }
+    relayClient.retryPending();
 
     binding.connectionText.setOnClickListener(v -> showRobotPicker());
     binding.micButton.setOnClickListener(v -> toggleStreaming());

@@ -70,31 +70,49 @@ final class VoiceRelayClient {
     }
 
     /// Starts browsing for shared robots (idempotent); the saved pick is applied on discovery.
+    /// Main thread.
     func start() {
-        guard browser == nil else { return }
-        updateSearching()
-        let browser = NWBrowser(for: .bonjour(type: VoiceRelayServer.serviceType, domain: nil),
-                                using: .tcp)
-        browser.stateUpdateHandler = { [weak self] state in
-            if case .failed(let error) = state {
-                NSLog("Voice relay browse failed: %@", String(describing: error))
-                DispatchQueue.main.async { self?.stop() }
+        if browser == nil {
+            updateSearching()
+            let browser = NWBrowser(for: .bonjour(type: VoiceRelayServer.serviceType, domain: nil),
+                                    using: .tcp)
+            browser.stateUpdateHandler = { [weak self] state in
+                if case .failed(let error) = state {
+                    NSLog("Voice relay browse failed: %@", String(describing: error))
+                    DispatchQueue.main.async { self?.stop() }
+                }
             }
-        }
-        browser.browseResultsChangedHandler = { [weak self] results, _ in
-            DispatchQueue.main.async {
-                guard let self = self else { return }
-                self.results = results
-                self.updateSearching()
-                self.maybeConnect()
-                self.notify()
+            browser.browseResultsChangedHandler = { [weak self] results, _ in
+                DispatchQueue.main.async {
+                    guard let self = self else { return }
+                    self.results = results
+                    self.updateSearching()
+                    self.maybeConnect()
+                    self.notify()
+                }
             }
+            browser.start(queue: queue)
+            self.browser = browser
+            notify()
+            NSLog("Voice relay: searching for shared robots")
         }
-        browser.start(queue: queue)
-        self.browser = browser
-        notify()
-        NSLog("Voice relay: searching for shared robots")
+        // Browsing may already know hosts (the client outlives the pages): re-evaluate
+        // now instead of waiting for the next browse change, or a page re-entry would
+        // never reconnect or ask for the PIN.
+        DispatchQueue.main.async { [weak self] in self?.maybeConnect() }
     }
+
+    /// Page entry: give the PIN prompt another chance and re-evaluate the connection.
+    /// Automatic asks fire once per host per session; an explicit entry may ask again.
+    /// Main thread.
+    func retryPending() {
+        pinAsked.removeAll()
+        DispatchQueue.main.async { [weak self] in self?.maybeConnect() }
+    }
+
+    /// True when the saved pick is this phone's own robot link (the voice page's mode).
+    /// The Remote Mic page always speaks over the relay and resets this on entry.
+    var isLocalChoice: Bool { choice == VoiceRelayClient.choiceLocal }
 
     func stop() {
         reconnectWork?.cancel()
@@ -163,8 +181,23 @@ final class VoiceRelayClient {
     }
 
     /// Asks for the 4-digit PIN that `host` shows on its voice control page, then calls
-    /// setPin(_:for:). Used by the voice control and Remote Mic pages.
+    /// setPin(_:for:). Used by the voice control and Remote Mic pages. Retries briefly
+    /// while the page is mid-transition or another alert is up — the caller's
+    /// onPinRequired is a one-shot and must not be dropped.
     static func promptForPin(from presenter: UIViewController, host: String, wrong: Bool) {
+        presentPinPrompt(on: presenter, host: host, wrong: wrong, attempt: 0)
+    }
+
+    private static func presentPinPrompt(on presenter: UIViewController, host: String,
+                                         wrong: Bool, attempt: Int) {
+        guard presenter.viewIfLoaded?.window != nil, presenter.presentedViewController == nil else {
+            if attempt < 8 {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                    presentPinPrompt(on: presenter, host: host, wrong: wrong, attempt: attempt + 1)
+                }
+            }
+            return
+        }
         let format = L10n.string(wrong ? "voice_relay_pin_wrong" : "voice_relay_pin_message")
         let alert = UIAlertController(title: L10n.string("voice_relay_pin_title"),
                                       message: String(format: format, host),
@@ -181,6 +214,11 @@ final class VoiceRelayClient {
                 .trimmingCharacters(in: .whitespaces) ?? ""
             if pin.count == 4 {
                 VoiceRelayClient.shared.setPin(pin, for: host)
+            } else {
+                // Not a PIN: ask again instead of silently giving up.
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                    presentPinPrompt(on: presenter, host: host, wrong: false, attempt: 0)
+                }
             }
         })
         presenter.present(alert, animated: true)

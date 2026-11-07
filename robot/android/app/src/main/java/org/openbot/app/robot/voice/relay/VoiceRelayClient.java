@@ -116,18 +116,38 @@ public final class VoiceRelayClient {
       prefs = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
       choice = prefs.getString(PREF_CHOICE, CHOICE_AUTO);
     }
-    if (discoveryListener != null) return;
-    nsdManager = (NsdManager) appContext.getSystemService(Context.NSD_SERVICE);
-    if (nsdManager == null) return;
-    discoveryListener = newDiscoveryListener();
-    try {
-      nsdManager.discoverServices(
-          VoiceRelayServer.SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, discoveryListener);
-    } catch (IllegalArgumentException e) {
-      Timber.e(e, "Voice relay discovery failed to start");
-      discoveryListener = null;
+    if (discoveryListener == null) {
+      nsdManager = (NsdManager) appContext.getSystemService(Context.NSD_SERVICE);
+      if (nsdManager == null) return;
+      discoveryListener = newDiscoveryListener();
+      try {
+        nsdManager.discoverServices(
+            VoiceRelayServer.SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, discoveryListener);
+      } catch (IllegalArgumentException e) {
+        Timber.e(e, "Voice relay discovery failed to start");
+        discoveryListener = null;
+        return;
+      }
+      Timber.i("Voice relay: searching for shared robots");
     }
-    Timber.i("Voice relay: searching for shared robots");
+    // Discovery is a singleton kept across pages: re-evaluate now instead of waiting for
+    // the next onServiceFound, or a page re-entry would never reconnect or ask for the PIN.
+    main.post(this::maybeConnect);
+  }
+
+  /**
+   * Page entry: give the PIN prompt another chance and re-evaluate the connection. Automatic
+   * asks fire once per host per session; an explicit entry may ask again. Main thread.
+   */
+  public void retryPending() {
+    pinAsked.clear();
+    main.post(this::maybeConnect);
+  }
+
+  /** True when the pick is this phone's own robot link (the voice page's mode). The Remote Mic
+   * page always speaks over the relay and resets this on entry. */
+  public boolean isLocalChoice() {
+    return CHOICE_LOCAL.equals(choice);
   }
 
   public synchronized void stop() {

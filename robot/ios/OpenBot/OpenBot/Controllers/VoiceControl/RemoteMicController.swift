@@ -56,12 +56,17 @@ final class RemoteMicController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        // This page always speaks over the relay: a remembered "this phone's own robot"
+        // pick from the voice page would block the connection forever — undo it here.
+        if relayClient.isLocalChoice {
+            relayClient.chooseAuto()
+        }
         relayClient.onPinRequired = { [weak self] host, wrong in
-            guard let self = self, self.viewIfLoaded?.window != nil,
-                  self.presentedViewController == nil else { return }
+            guard let self = self else { return }
             VoiceRelayClient.promptForPin(from: self, host: host, wrong: wrong)
         }
         relayClient.start()
+        relayClient.retryPending()
         updateStatus()
     }
 

@@ -230,9 +230,9 @@ final class VoiceControlController: UIViewController {
         // A Remote Mic page on another phone feeds this page's session while it is on screen.
         relayServer.setMicSink(self)
         // Another phone's shared robot asks for its PIN before this phone may drive it.
+        // (promptForPin retries while this page is mid-transition — do not drop it here.)
         relayClient.onPinRequired = { [weak self] host, wrong in
-            guard let self = self, self.viewIfLoaded?.window != nil,
-                  self.presentedViewController == nil else { return }
+            guard let self = self else { return }
             VoiceRelayClient.promptForPin(from: self, host: host, wrong: wrong)
         }
 
