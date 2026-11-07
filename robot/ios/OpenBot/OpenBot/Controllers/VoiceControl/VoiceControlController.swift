@@ -2258,8 +2258,12 @@ final class VoiceControlController: UIViewController {
             alert(L10n.string("voice_robot_none_found"))
             return
         }
+        // Show the share PIN here too: the picker is where users look when connecting.
+        let message = relayServer.isRunning
+            ? String(format: L10n.string("voice_picker_pin_message"), relayServer.pin)
+            : nil
         let sheet = UIAlertController(title: L10n.string("voice_robot_picker_title"),
-                                     message: nil, preferredStyle: .actionSheet)
+                                     message: message, preferredStyle: .actionSheet)
         if isBluetoothConnected {
             sheet.addAction(UIAlertAction(
                 title: String(format: L10n.string("voice_robot_this_phone"), "BLE"),

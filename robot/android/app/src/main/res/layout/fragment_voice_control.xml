@@ -85,23 +85,26 @@
         android:paddingBottom="10dp"
         android:visibility="gone">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/voice_sharing_pin_hint"
-            android:textColor="#1C1C1E"
-            android:textSize="13sp" />
-
+        <!-- Digits first: the floating camera preview covers the card's right end. -->
         <TextView
             android:id="@+id/sharingPinDigits"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
             android:fontFamily="monospace"
             android:textColor="#000000"
             android:textSize="32sp"
             android:textStyle="bold"
             tools:text="1234" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="2"
+            android:text="@string/voice_sharing_pin_hint"
+            android:textColor="#1C1C1E"
+            android:textSize="13sp" />
     </LinearLayout>
 
     <!-- First-time pairing panel: replaces the live UI until the device is bound -->

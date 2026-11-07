@@ -196,6 +196,14 @@ public final class VoiceRelayServer {
     return pin;
   }
 
+  /**
+   * The same PIN, readable before the server has ever started (the connection screens show
+   * it so the user always knows what remotes must type).
+   */
+  public static String pinFor(Context appContext) {
+    return loadOrCreatePin(appContext);
+  }
+
   /** One PIN per phone, kept across launches so remotes do not have to retype it. */
   private static String loadOrCreatePin(Context context) {
     SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);

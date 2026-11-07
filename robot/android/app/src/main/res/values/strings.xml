@@ -417,7 +417,8 @@
     <string name="voice_connected">Connected (%1$s)</string>
     <string name="voice_sharing_wifi">Connected (%1$s) · Sharing over WiFi</string>
     <string name="voice_sharing_pin">PIN %1$s</string>
-    <string name="voice_sharing_pin_hint">WiFi share PIN — type on the other phone</string>
+    <string name="voice_sharing_pin_hint">Type on the other phone</string>
+    <string name="voice_picker_pin_message">Others join with PIN %1$s — type it on the other phone</string>
     <string name="voice_relay_pin_title">Enter the PIN</string>
     <string name="voice_relay_pin_message">Type the 4-digit PIN shown on the voice control page of %1$s.</string>
     <string name="voice_relay_pin_wrong">Wrong PIN. Type the 4-digit PIN shown on the voice control page of %1$s.</string>

@@ -15,6 +15,7 @@ class BluetoothTable: UITableViewController {
         super.viewDidLoad()
         clearsSelectionOnViewWillAppear = false
         setupNavigationBarItem();
+        installPinHeader()
         NotificationCenter.default.addObserver(self, selector: #selector(updateConnect), name: .bluetoothConnected, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateConnect), name: .bluetoothDisconnected, object: nil)
     }
@@ -23,6 +24,45 @@ class BluetoothTable: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         bluetooth.startScan()
+    }
+
+    /// The WiFi share PIN lives with the connection screens too: this is where users look
+    /// for everything about connecting, and remotes need the PIN before they can join.
+    private func installPinHeader() {
+        let digits = UILabel()
+        digits.font = .monospacedDigitSystemFont(ofSize: 28, weight: .bold)
+        digits.text = VoiceRelayServer.shared.pin
+        digits.textColor = .label
+
+        let hint = UILabel()
+        hint.font = .systemFont(ofSize: 13)
+        hint.textColor = .secondaryLabel
+        hint.numberOfLines = 2
+        hint.text = L10n.string("voice_sharing_pin_hint")
+
+        // Digits first, matching the Android connection screens.
+        let row = UIStackView(arrangedSubviews: [digits, hint])
+        row.axis = .horizontal
+        row.spacing = 12
+        row.alignment = .center
+        row.translatesAutoresizingMaskIntoConstraints = false
+
+        let card = UIView()
+        card.addSubview(row)
+        NSLayoutConstraint.activate([
+            row.leadingAnchor.constraint(equalTo: card.leadingAnchor, constant: 16),
+            row.trailingAnchor.constraint(equalTo: card.trailingAnchor, constant: -16),
+            row.topAnchor.constraint(equalTo: card.topAnchor, constant: 10),
+            row.bottomAnchor.constraint(equalTo: card.bottomAnchor, constant: -10),
+        ])
+
+        let width = tableView.bounds.width
+        let height = card.systemLayoutSizeFitting(
+            CGSize(width: width, height: UIView.layoutFittingCompressedSize.height),
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel).height
+        card.frame = CGRect(x: 0, y: 0, width: width, height: height)
+        tableView.tableHeaderView = card
     }
 
     override func viewWillDisappear(_ animated: Bool) {

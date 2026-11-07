@@ -2061,8 +2061,17 @@ public class VoiceControlFragment extends ControlsFragment {
     } else if (hasLocal) {
       checked = 0;
     }
-    new androidx.appcompat.app.AlertDialog.Builder(requireContext())
-        .setTitle(R.string.voice_robot_picker_title)
+    androidx.appcompat.app.AlertDialog.Builder picker =
+        new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle(R.string.voice_robot_picker_title);
+    if (VoiceRelayServer.get().isRunning()) {
+      // This phone is sharing: show the PIN remotes must type on the chooser itself.
+      picker.setMessage(
+          getString(
+              R.string.voice_picker_pin_message,
+              VoiceRelayServer.pinFor(requireContext().getApplicationContext())));
+    }
+    picker
         .setSingleChoiceItems(
             labels.toArray(new String[0]),
             checked,

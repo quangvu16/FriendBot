@@ -46,6 +46,11 @@ public class BluetoothFragment extends Fragment {
     // Inflate the layout for this fragment
     vehicle = OpenBotApplication.vehicle;
     binding = FragmentBluetoothBinding.inflate(inflater, container, false);
+    // The WiFi share PIN lives with the connection screens too: this is where users look
+    // for everything about connecting, and remotes need the PIN before they can join.
+    binding.sharingPinDigits.setText(
+        org.openbot.app.robot.voice.relay.VoiceRelayServer.pinFor(
+            requireContext().getApplicationContext()));
     rv = binding.rv;
     showDevicesByRv();
     return binding.getRoot();

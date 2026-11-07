@@ -8,6 +8,43 @@
     android:orientation="vertical"
     tools:context="main.BluetoothFragment">
 
+    <!-- WiFi sharing: the 4-digit PIN other phones type on their Remote Mic page. -->
+    <LinearLayout
+        android:id="@+id/sharingPinCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/voice_card_bg"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="10dp">
+
+        <TextView
+            android:id="@+id/sharingPinDigits"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:fontFamily="monospace"
+            android:textColor="#000000"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            tools:text="1234" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="2"
+            android:text="@string/voice_sharing_pin_hint"
+            android:textColor="#1C1C1E"
+            android:textSize="13sp" />
+    </LinearLayout>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -42,6 +79,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_marginHorizontal="10dp" />
 </LinearLayout>
