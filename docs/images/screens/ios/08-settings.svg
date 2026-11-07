@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="330" height="640" viewBox="-20 -20 330 640" font-family="Inter, Helvetica, Arial, sans-serif">
+<title>FriendBot iOS · Settings</title>
+<rect x="-20" y="-20" width="330" height="640" fill="#f8fafc"/>
+<rect x="-10" y="-10" width="310" height="620" rx="48" fill="#0f172a"/>
+<clipPath id="cs"><rect x="0" y="0" width="290" height="600" rx="40"/></clipPath>
+<g clip-path="url(#cs)"><rect width="290" height="600" fill="#f2f2f7"/>
+<text x="22" y="24" font-size="11.5" font-weight="700" fill="#111827" text-anchor="start">9:41</text>
+<rect x="99.0" y="9" width="92" height="22" rx="11" fill="#0f172a"/>
+<text x="12" y="64" font-size="13" font-weight="400" fill="#0A66D6" text-anchor="start">‹ Back</text>
+<text x="145.0" y="64" font-size="13.5" font-weight="700" fill="#111827" text-anchor="middle">Settings</text>
+<text x="16" y="94" font-size="10" font-weight="700" fill="#6b7280" text-anchor="start">GENERAL</text>
+<rect x="12" y="102" width="266" height="44" rx="14" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<text x="24" y="122" font-size="12" font-weight="600" fill="#111827" text-anchor="start">Language</text>
+<text x="24" y="137" font-size="9" font-weight="400" fill="#6b7280" text-anchor="start">Choose the app display language</text>
+<text x="264" y="128" font-size="10.5" font-weight="400" fill="#6b7280" text-anchor="end">Tiếng Việt ›</text>
+<text x="16" y="168" font-size="10" font-weight="700" fill="#6b7280" text-anchor="start">PERMISSIONS</text>
+<rect x="12" y="176" width="266" height="36" rx="10" fill="#ffffff"/>
+<text x="24" y="199" font-size="11.5" font-weight="400" fill="#111827" text-anchor="start">Bluetooth</text>
+<rect x="230" y="184" width="34" height="20" rx="10" fill="#16a34a"/>
+<circle cx="254" cy="194" r="8" fill="#fff"/>
+<rect x="12" y="214" width="266" height="36" rx="0" fill="#ffffff"/>
+<text x="24" y="237" font-size="11.5" font-weight="400" fill="#111827" text-anchor="start">Camera</text>
+<rect x="230" y="222" width="34" height="20" rx="10" fill="#16a34a"/>
+<circle cx="254" cy="232" r="8" fill="#fff"/>
+<rect x="12" y="252" width="266" height="36" rx="0" fill="#ffffff"/>
+<text x="24" y="275" font-size="11.5" font-weight="400" fill="#111827" text-anchor="start">Location</text>
+<rect x="230" y="260" width="34" height="20" rx="10" fill="#16a34a"/>
+<circle cx="254" cy="270" r="8" fill="#fff"/>
+<rect x="12" y="290" width="266" height="36" rx="10" fill="#ffffff"/>
+<text x="24" y="313" font-size="11.5" font-weight="400" fill="#111827" text-anchor="start">Microphone</text>
+<rect x="230" y="298" width="34" height="20" rx="10" fill="#16a34a"/>
+<circle cx="254" cy="308" r="8" fill="#fff"/>
+<text x="16" y="350" font-size="10" font-weight="700" fill="#6b7280" text-anchor="start">WEB CONTROLLER</text>
+<rect x="12" y="358" width="266" height="40" rx="14" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<text x="24" y="383" font-size="11.5" font-weight="400" fill="#111827" text-anchor="start">Web Signaling Server</text>
+<text x="264" y="383" font-size="10.5" font-weight="400" fill="#6b7280" text-anchor="end">ws://… ›</text>
+<rect x="85.0" y="588" width="120" height="4" rx="2" fill="#0f172a"/>
+</g>
+</svg>

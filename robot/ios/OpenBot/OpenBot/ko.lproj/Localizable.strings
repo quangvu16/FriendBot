@@ -1,0 +1,372 @@
+/* Screens */
+"OpenBot" = "FriendBot";
+"freeRoam" = "자유 주행";
+"dataCollection" = "데이터 수집";
+"controllerMapping" = "컨트롤러 매핑";
+"autoPilot" = "자율 주행";
+"objectTracking" = "물체 추적";
+"modelManagement" = "모델 관리";
+"robotInfo" = "로봇 정보";
+"navigation" = "목표 지점 내비게이션";
+
+/* GPS Mission Navigation */
+"gpsMission" = "GPS 임무 내비게이션";
+"gps_nav_start" = "시작";
+"gps_nav_stop" = "정지";
+"gps_nav_rtl" = "복귀";
+"gps_nav_add_wp" = "경유지 추가";
+"gps_nav_clear" = "지우기";
+"gps_nav_export" = "내보내기";
+"gps_nav_add_here" = "경유지로 추가";
+"gps_nav_go_here" = "여기로 이동";
+"gps_nav_cancel" = "취소";
+"gps_nav_ok" = "확인";
+"gps_nav_no_fix" = "아직 유효한 GPS 신호가 없습니다. 야외에서 잠시 기다려 주세요.";
+"gps_nav_no_waypoints" = "먼저 경유지를 추가한 뒤 시작하세요.";
+"gps_nav_no_home" = "아직 출발 위치가 기록되지 않았습니다.";
+"gps_nav_paused" = "일시 정지";
+"gps_nav_exported" = "저장됨: %@";
+
+
+/* Misc */
+"controller" = "컨트롤러";
+"speed" = "속도";
+"driveMode" = "주행 모드";
+"gamepad" = "게임패드";
+"phone" = "휴대폰";
+"web" = "웹";
+"joystick" = "조이스틱";
+"game" = "게임";
+"dual" = "듀얼";
+"slow" = "느림";
+"medium" = "보통";
+"fast" = "빠름";
+"logData" = "데이터 기록";
+"previewResolutionMedium" = "미리보기 해상도 (1280 x 720)";
+"previewResolutionLow" = "미리보기 해상도 (960 x 540)";
+"previewResolutionHigh" = "미리보기 해상도 (1920 x 1080)";
+"low" = "낮음";
+"high" = "높음";
+"modelResolution" = "모델 해상도 ";
+"server" = "서버";
+"preview" = "미리보기";
+"training" = "학습";
+"sensorData" = "센서 데이터";
+"vehicle" = "차량";
+"gps" = "GPS";
+"accelerometer" = "가속도계";
+"magnetic" = "지자기 센서";
+"gyroscope" = "자이로스코프";
+"delay" = "지연 시간 (ms)";
+"Autopilot" = "자율 주행";
+"ObjectTracking" = "물체 추적";
+"autoMode" = "자동 모드";
+"model" = "모델";
+"input" = "입력";
+"device" = "디바이스";
+"threads" = "스레드";
+"object" = "물체";
+"confidence" = "신뢰도";
+"dynamicSpeed" = "동적 속도";
+
+/* Settings */
+"camera" = "카메라";
+"microphone" = "마이크";
+"location" = "위치";
+"permission" = "권한";
+"bluetooth" = "블루투스";
+"general" = "일반";
+"language" = "언어";
+"languageSubtitle" = "앱 표시 언어를 선택하세요";
+"systemDefault" = "시스템 기본값";
+"applyingLanguage" = "언어 적용 중…";
+"webSignalingServer" = "웹 시그널링 서버";
+"webSignalingServerPlaceholder" = "ws://192.168.1.40:8080/ws";
+
+/* Bluetooth Status */
+"connect" = "연결";
+"disconnect" = "연결 해제";
+"connecting" = "연결 중";
+"disconnecting" = "연결 해제 중";
+
+/* Model management */
+"modelDetails" = "모델 상세 정보";
+"name" = "이름";
+"type" = "유형";
+"class" = "클래스";
+"inputOfModel" = "입력 (가로 x 세로)";
+"tfliteLabel" = ".tflite";
+"cancel" = "취소";
+"done" = "완료";
+"file" = "파일";
+"url" = "URL";
+"addNewModel" = "새 모델 추가";
+
+/* Robot Info */
+"voltageDivider" = "전압 분배기";
+"bumperText" = "범퍼";
+"wheelOdometer" = "휠 오도메트리";
+"status" = "상태";
+"motors" = "모터";
+"forward" = "전진";
+"backward" = "후진";
+"stopLabel" = "정지";
+"readings" = "측정값";
+"battery" = "배터리 **.* V";
+"speedText" = "속도 (좌,우) ***,*** rpm";
+"sendCommand" = "명령 전송";
+
+/* Navigation */
+"setGoal" = "목표 설정";
+"setGoalText" = "휴대폰을 로봇에 장착하고 \n 목표를 지정하세요. 시작을 누르면\n 로봇이 목표에 도달하려고 시도합니다.";
+"left" = "왼쪽";
+"meter" = "[m]";
+"startLabel" = "시작";
+"canceled" = "취소";
+"info" = "정보";
+"restart" = "다시 시작";
+
+/* Settings > Permissions */
+"important" = "중요";
+"cameraAccessRequiredMessage" = "FriendBot에 카메라 접근 권한이 필요합니다";
+"allowPermissionMessageFormat" = "FriendBot이 %@에 접근하도록 허용해 주세요";
+"allowButtonFormat" = "%@ 허용";
+
+/* Logout */
+"logOut" = "로그아웃";
+"confirmLogoutTitle" = "로그아웃 확인";
+"confirmLogoutMessage" = "정말 로그아웃하시겠습니까?";
+
+/* Tab bar */
+"homeTab" = "홈";
+"profileTab" = "프로필";
+
+/* Loading / generic alerts */
+"loadingTitle" = "불러오는 중";
+"loadingProfileMessage" = "프로필을 불러오는 중입니다...";
+"loadingDataMessage" = "데이터를 불러오는 중입니다...";
+"pleaseWaitMessage" = "잠시만 기다려 주세요...";
+"errorHeading" = "오류";
+"genericErrorMessage" = "이런! 문제가 발생했습니다. 다시 시도해 주세요.";
+"okAction" = "확인";
+
+/* Profile screen */
+"myProfileHeading" = "내 프로필";
+"setupProfilePromptLine1" = "다음으로 로그인하여";
+"setupProfilePromptLine2" = "프로필을 설정하세요: Google 계정.";
+"editProfile" = "프로필 편집";
+"logoutMenuItem" = "로그아웃";
+"firstNameFieldLabel" = "이름";
+"lastNameFieldLabel" = "성";
+"dateOfBirthFieldLabel" = "생년월일";
+"emailFieldLabel" = "이메일";
+"unknownFallback" = "알 수 없음";
+"saveChangesButton" = "변경 사항 저장";
+"profileUpdatedSuccessToast" = "프로필이 성공적으로 업데이트되었습니다";
+"profilePictureLoadErrorToast" = "프로필 사진을 불러오지 못했습니다";
+"signInWithGoogle" = "Google 계정으로 로그인";
+
+
+
+
+/* Robot Info headings */
+"robotTypeHeading" = "로봇 유형";
+"sensorsHeading" = "센서";
+"batteryReadingFormat" = "배터리 %@ V";
+
+/* Point Goal Navigation */
+"goalReachedMessage" = "목표 도달";
+
+/* Model Management filter dropdown */
+"modelFilterAll" = "전체";
+"modelFilterAllCaps" = "전체";
+"modelFilterAutoPilot" = "자율 주행";
+"modelFilterDetector" = "감지기";
+"modelFilterNavigation" = "내비게이션";
+
+/* Data Collection / Autopilot server dropdown default state */
+"noServer" = "서버 없음";
+
+/* Object avoidance and GPS mission files */
+"avoid_title" = "Object avoidance";
+"avoid_on" = "Avoid ON";
+"avoid_off" = "Avoid OFF";
+"avoid_enabled" = "Enabled";
+"avoid_margin" = "Margin (AVOID_MARGIN)";
+"avoid_backup" = "Back-up speed (AVOID_BACKUP_SPD)";
+"avoid_backup_off" = "Off";
+"avoid_note" = "Stops before obstacles closer than the margin, in every driving mode. Back-up speed reverses away when something closes in from the front; 0 turns it off.";
+"avoid_settings" = "Avoidance";
+"gps_nav_fix_lost" = "GPS fix lost, holding";
+"gps_nav_files" = "Files";
+"gps_nav_export_kml" = "Export KML";
+"gps_nav_share_waypoints" = "Share .waypoints";
+"gps_nav_open_waypoints" = "Open .waypoints";
+"gps_nav_imported" = "Loaded %ld waypoints";
+"gps_nav_compass_unreliable" = "Compass unreliable: calibrate (figure 8) or move the phone away from the motors";
+
+/* RC mode face (firmware 'm' report) */
+"rc_mode_manual" = "수동 – RC 조종 중";
+"rc_mode_hold" = "정지 – 멈춤";
+"rc_mode_lost" = "RC 신호 끊김 – 멈춤";
+"rc_mode_tap_hint" = "탭하여 숨기기";
+
+/* Car dashboard and STOP button */
+"stop_button_stop" = "정지";
+"stop_button_resume" = "재개";
+"dash_title_connected_usb" = "차량 연결됨 (USB)";
+"dash_title_connected_ble" = "차량 연결됨 (블루투스)";
+"dash_title_disconnected" = "차량이 연결되지 않음";
+"dash_detail_usb" = "휴대폰을 차량의 USB 포트에 연결한 뒤 연결을 누르세요.";
+"dash_detail_ble" = "차량을 켜고 연결을 눌러 목록에서 선택하세요.";
+"dash_detail_connected" = "준비 완료. 아래에서 할 일을 선택하세요.";
+"dash_detail_stopped" = "정지 버튼으로 멈췄습니다. 다시 달리려면 재개를 누르세요.";
+"dash_connect" = "연결";
+"dash_connection_settings" = "연결 설정";
+"dash_rc_none" = "RC: –";
+"dash_rc_manual" = "RC: 수동";
+"dash_rc_auto" = "RC: 자동";
+"dash_rc_hold" = "RC: 정지";
+"dash_rc_lost" = "RC: 신호 끊김";
+"dash_chip_avoid_on" = "장애물 회피: 켜짐";
+"dash_chip_avoid_off" = "장애물 회피: 꺼짐";
+"dash_tasks_header" = "무엇을 할까요?";
+"dash_drive_title" = "운전";
+"dash_drive_desc" = "휴대폰이나 게임 컨트롤러로 운전합니다.";
+"dash_mission_title" = "GPS 미션";
+"dash_mission_desc" = "지도의 지점으로 가거나 출발점으로 돌아옵니다.";
+"dash_setup_title" = "차량 설정";
+"dash_setup_desc" = "센서와 장애물 회피를 확인합니다.";
+"dash_more_show" = "더 많은 기능";
+"dash_more_hide" = "기능 줄이기";
+
+/* GPS Mission panel */
+"gps_panel_hide" = "데이터 숨기기";
+"gps_panel_show" = "데이터 보기";
+"gps_panel_toggle" = "미션 데이터 보기/숨기기";
+"gps_panel_connection" = "차량 연결";
+"gps_mode_idle" = "준비됨 — 웨이포인트를 추가하거나 지도를 누르세요";
+"gps_mode_mission" = "미션 주행 중";
+"gps_mode_guided" = "선택한 지점으로 이동 중";
+"gps_mode_rtl" = "출발점으로 복귀 중";
+"sensor_link_button" = "센서 링크";
+"sensor_link_off" = "센서 링크: 꺼짐";
+"sensor_link_server" = "브라우저에서 %1$@ 열기 · %2$d개 연결";
+"sensor_link_server_no_ip" = "포트 %1$d에서 센서 공유 중 · 휴대폰의 Wi-Fi나 핫스팟에 연결하세요";
+"sensor_link_server_failed" = "센서 서버를 시작할 수 없음: %1$@";
+"sensor_link_client_connecting" = "%1$@에 연결 중…";
+"sensor_link_client_connected" = "%1$@에 연결됨 · GPS 대기 중";
+"sensor_link_client_gps" = "%1$@에 연결됨 · GPS ±%2$.0f m";
+"sensor_link_client_no_address" = "센서 링크: 다른 휴대폰 주소를 입력하세요";
+"sensor_link_title" = "센서 링크 (SensorServer)";
+"sensor_link_mode_off" = "끄기";
+"sensor_link_mode_server" = "이 휴대폰의 센서 공유 (서버, 브라우저 페이지)";
+"sensor_link_mode_client" = "다른 휴대폰의 센서 사용 (클라이언트)";
+"sensor_link_port" = "포트";
+"sensor_link_address" = "다른 휴대폰 주소 (예: 192.168.43.1:8080)";
+"sensor_link_use_gps" = "GPS 미션에 그 휴대폰의 GPS와 나침반 사용";
+"sensor_link_help" = "서버: 같은 Wi-Fi나 핫스팟의 브라우저에서 http://휴대폰주소:포트 를 열면 센서와 GPS를 실시간으로 볼 수 있습니다. 스크립트는 SensorServer WebSocket API를 사용할 수 있습니다 (ws://주소:포트/sensor/connect, /sensors/connect, /gps). GPS 미션, 객체 추적, 자동 주행 화면이 열려 있는 동안 동작합니다.";
+"sensor_link_save" = "저장";
+"sensor_link_cancel" = "취소";
+"sensor_link_bad_port" = "포트는 1024–65535여야 합니다";
+"setup_drive_ackermann" = "ESC 스로틀 · 조향 서보 (애커먼 차량)";
+"setup_drive_unknown" = "차량을 연결하면 구성을 읽어옵니다";
+"setup_features" = "차량이 알려주는 기능";
+"setup_feat_rc" = "RC 수신기";
+"setup_rc_mode" = "RC 스위치";
+"setup_rc_manual" = "수동 (송신기 조종)";
+"setup_rc_auto" = "자동 (앱 조종)";
+"setup_rc_hold" = "정지 (HOLD)";
+"setup_rc_lost" = "RC 연결 끊김 (정지)";
+"setup_link" = "차량 연결";
+"setup_link_usb" = "USB 케이블";
+"setup_link_ble" = "블루투스";
+"setup_link_none" = "연결 안 됨";
+"setup_steering" = "조향";
+"setup_left" = "왼쪽";
+"setup_right" = "오른쪽";
+"setup_centre" = "가운데";
+"setup_off" = "끄기";
+"setup_test_note" = "바퀴를 띄운 상태로 시험하세요. 각 시험은 약 1초 동안 동작한 뒤 차량이 스스로 멈추고 바퀴를 정렬합니다.";
+"gps_nav_pause" = "일시정지";
+"gps_nav_resume" = "재개";
+
+/* Voice Control (Xiaozhi) */
+"tile_voice_control" = "음성 제어";
+"voice_tap_to_speak" = "마이크를 누르고 말하세요";
+"voice_listening" = "듣는 중…";
+"voice_thinking" = "생각하는 중…";
+"voice_you_said" = "말한 내용";
+"voice_command" = "명령";
+"voice_speed" = "속도";
+"voice_speed_value" = "%1$d%%";
+"voice_forward" = "앞으로";
+"voice_backward" = "뒤로";
+"voice_left" = "왼쪽으로 돌기";
+"voice_right" = "오른쪽으로 돌기";
+"voice_stop" = "정지";
+"voice_faster" = "빠르게";
+"voice_slower" = "느리게";
+"voice_send" = "보내기";
+"voice_type_hint" = "또는 명령을 입력하세요. 예: 앞으로 가";
+"voice_log" = "로그";
+"voice_log_ready" = "준비되었습니다. 말하려면 마이크를 누르세요.";
+"voice_not_connected" = "로봇이 연결되지 않음";
+"voice_connected" = "연결됨 (%1$@)";
+"voice_no_match" = "죄송합니다. 이해하지 못했습니다";
+"voice_no_speech_recognizer" = "이 휴대폰에서 사용할 수 있는 음성 인식기가 없습니다";
+"voice_mic_permission_denied" = "음성 제어에 마이크 권한이 필요합니다";
+"voice_status_stopped" = "정지됨";
+"voice_action_move" = "%2$d ms 동안 %1$@";
+"voice_xiaozhi_settings" = "Xiaozhi 설정";
+"voice_xiaozhi_settings_help" = "서버가 구성되면 Xiaozhi LLM이, 아니면 내장 키워드가 음성 명령을 이해합니다. 내장 키워드를 사용하려면 토큰을 비워 두세요.";
+"voice_xiaozhi_endpoint_hint" = "서버 URL (채팅 완성)";
+"voice_xiaozhi_token_hint" = "액세스 토큰";
+"voice_xiaozhi_model_hint" = "모델 이름";
+"voice_save" = "저장";
+"voice_cancel" = "취소";
+"voice_xiaozhi_saved" = "Xiaozhi 설정이 저장되었습니다";
+"voice_xiaozhi_fallback" = "Xiaozhi를 사용할 수 없어(%1$@) 내장 키워드를 사용했습니다";
+"voice_xiaozhi_sign_in" = "xiaozhi.me로 로그인";
+"voice_xiaozhi_login_title" = "Xiaozhi 로그인";
+"voice_xiaozhi_login_waiting" = "기기를 생성하는 중입니다. 잠시만 기다려 주세요…";
+"voice_xiaozhi_login_code" = "인증 코드: %1$@ — xiaozhi.me를 열고 로그인한 뒤 기기를 추가하고 이 코드를 입력하세요.";
+"voice_xiaozhi_login_success" = "로그인 완료 — API 키가 저장되었습니다";
+"voice_xiaozhi_login_error" = "로그인 실패: %1$@";
+"voice_xiaozhi_login_cancelled" = "로그인이 취소되었습니다";
+"voice_pair_title" = "최초 페어링";
+"voice_pair_instructions" = "xiaozhi.me를 열고 로그인한 뒤 새 기기를 추가하고 여기에 표시된 코드를 입력하세요. 바인딩되면 기기가 자동으로 연결됩니다. 로그인 정보는 기기에 저장됩니다 — 다음에는 앱이 페어링을 건너뛰고 곧바로 연결됩니다.";
+"voice_pair_waiting" = "바인딩 대기 중…";
+"voice_pair_bound" = "바인딩 완료! 연결 중…";
+"voice_pair_retry" = "다시 시도";
+"voice_pair_skip" = "오프라인 모드 사용";
+"voice_pair_code" = "코드: %1$@";
+"voice_ws_ready" = "Xiaozhi 준비됨";
+"voice_ws_offline" = "Xiaozhi 오프라인";
+"voice_log_you" = "나:";
+"voice_log_bot" = "Xiaozhi:";
+"voice_assistant_silent" = "어시스턴트가 응답하지 않아 내장 브레인을 사용했습니다";
+"voice_state_idle" = "준비됨";
+"voice_state_connecting" = "연결 중…";
+"voice_state_listening" = "듣는 중…";
+"voice_state_speaking" = "말하는 중…";
+"voice_language_title" = "음성 언어";
+"voice_language_system" = "시스템 기본값";
+
+"voice_sharing_wifi" = "연결됨 (%1$@) · WiFi로 공유 중";
+"voice_relay_connected" = "%1$@ (WiFi)로 제어 중";
+"voice_relay_searching" = "WiFi에서 로봇을 찾는 중…";
+"voice_robot_picker_title" = "로봇 선택";
+"voice_robot_this_phone" = "이 휴대폰 · %1$@";
+"voice_robot_wifi_item" = "%1$@ · WiFi";
+"voice_robot_none_found" = "아직 WiFi로 공유된 로봇이 없습니다. 로봇이 연결된 휴대폰에서 음성 페이지를 여세요.";
+"tile_remote_mic" = "원걱 마이크";
+"remote_mic_help" = "이 휴대폰의 마이크가 로봇이 연결된 휴대폰의 Xiaozhi와 대화합니다. 여기에서 명령을 말하세요 — 대화와 Xiaozhi의 답변은 그 휴대폰에 남습니다.";
+"remote_mic_tap_to_start" = "말하려면 마이크를 탭하세요";
+"remote_mic_streaming" = "듣는 중 — 탭하여 중지";
+"remote_mic_host" = "%1$@에 말하는 중 (WiFi)";
+"remote_mic_live_on" = "%1$@에서 라이브";
+"remote_mic_host_not_ready" = "먼저 %1$@에서 음성 제어 페ì´지를 열세요";
+"remote_mic_mic_unavailable" = "마이크를 사용할 수 없습니다";
+"tool_take_photo" = "사진 찍기";
+"voice_camera_switch" = "카메라 전환";

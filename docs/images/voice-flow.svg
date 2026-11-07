@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 470" font-family="Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <style>
+      .t { font-size: 16px; font-weight: bold; fill: #111827; }
+      .b { font-size: 12px; fill: #4B5563; }
+      .w { font-size: 12px; fill: #FFFFFF; }
+      .ws { font-size: 11px; fill: #E0F2FE; }
+      .arrow { stroke: #6B7280; stroke-width: 2; fill: none; marker-end: url(#arr); }
+      .dash { stroke: #9CA3AF; stroke-width: 2; fill: none; stroke-dasharray: 6,5; marker-end: url(#arrg); }
+    </style>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#6B7280"/>
+    </marker>
+    <marker id="arrg" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#9CA3AF"/>
+    </marker>
+  </defs>
+
+  <text x="30" y="36" class="t">Voice pipeline — phone is the Xiaozhi device</text>
+
+  <!-- you speak -->
+  <rect x="30" y="150" width="130" height="70" rx="12" fill="#E5E7EB"/>
+  <text x="95" y="180" text-anchor="middle" class="t" font-size="14">You speak</text>
+  <text x="95" y="200" text-anchor="middle" class="b">any language</text>
+
+  <line x1="160" y1="185" x2="205" y2="185" class="arrow"/>
+
+  <!-- mic stream -->
+  <rect x="210" y="150" width="150" height="70" rx="12" fill="#E0F2FE" stroke="#0277BD" stroke-width="1.5"/>
+  <text x="285" y="180" text-anchor="middle" class="t" font-size="14">Voice stream</text>
+  <text x="285" y="200" text-anchor="middle" class="b">Opus → server ASR</text>
+
+  <line x1="360" y1="185" x2="405" y2="185" class="arrow"/>
+
+  <!-- xiaozhi session -->
+  <rect x="410" y="80" width="240" height="180" rx="14" fill="#0277BD"/>
+  <text x="530" y="112" text-anchor="middle" class="t" fill="#FFFFFF">Xiaozhi session</text>
+  <text x="530" y="136" text-anchor="middle" class="ws">WebSocket · hello v1</text>
+  <text x="530" y="156" text-anchor="middle" class="ws">stt / tts / llm / mcp</text>
+  <text x="530" y="182" text-anchor="middle" class="ws">signed in with xiaozhi.me</text>
+  <text x="530" y="202" text-anchor="middle" class="ws">(pairing code → API key)</text>
+  <rect x="452" y="218" width="156" height="26" rx="13" fill="#FFFFFF" fill-opacity="0.15"/>
+  <text x="530" y="236" text-anchor="middle" class="ws">listen start/stop · text detect</text>
+
+  <!-- tool call -->
+  <line x1="650" y1="150" x2="700" y2="150" class="arrow"/>
+  <rect x="705" y="115" width="185" height="70" rx="12" fill="#E0F2FE" stroke="#0277BD" stroke-width="1.5"/>
+  <text x="797" y="143" text-anchor="middle" class="t" font-size="13">MCP tools/call</text>
+  <text x="797" y="163" text-anchor="middle" class="b">self.robot.move / stop / set_lights</text>
+
+  <!-- robot link -->
+  <line x1="797" y1="185" x2="797" y2="240" class="arrow"/>
+  <rect x="705" y="245" width="185" height="66" rx="12" fill="#E5E7EB"/>
+  <text x="797" y="272" text-anchor="middle" class="t" font-size="13">OpenBot link</text>
+  <text x="797" y="292" text-anchor="middle" class="b">BLE/USB · c&lt;left&gt;,&lt;right&gt; · 250 ms</text>
+
+  <!-- robot -->
+  <line x1="797" y1="311" x2="797" y2="356" class="arrow"/>
+  <rect x="705" y="360" width="185" height="60" rx="12" fill="#111827"/>
+  <text x="797" y="386" text-anchor="middle" class="t" font-size="14" fill="#FFFFFF">2WD robot</text>
+  <text x="797" y="405" text-anchor="middle" class="ws">ESP32 + MX1508</text>
+
+  <!-- tts reply -->
+  <path d="M 530,260 L 530,320 L 285,320 L 285,225" class="dash"/>
+  <rect x="330" y="300" width="150" height="40" rx="10" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1.5"/>
+  <text x="405" y="325" text-anchor="middle" class="b">Xiaozhi voice reply</text>
+
+  <!-- fallback strip -->
+  <rect x="30" y="386" width="620" height="60" rx="12" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <text x="48" y="411" class="b" font-weight="bold">Fallbacks (always drivable):</text>
+  <text x="48" y="432" class="b">typed input offline → REST LLM (chat-completions JSON) → built-in keywords (en/vi/zh) → quick buttons</text>
+
+  <text x="30" y="464" class="b">Safety: each move auto-stops at its duration · firmware failsafe stops after 1 s of link silence · STOP latch overrides everything</text>
+</svg>

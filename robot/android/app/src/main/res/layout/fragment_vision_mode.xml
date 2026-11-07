@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Shared page for the five vision modes (Follow a Coloured Object, Follow a Face, Follow a
+     Black Line, Object Avoidance, Object Tracking), built on the Autopilot page template
+     (fragment_autopilot.xml) with the same colours, sizes and fonts:
+     - full-screen camera overlay with a white drag-handle bottom sheet (peek 48dp);
+     - sheet header: Auto Mode switch (32dp start) and USB / Bluetooth / camera toggles
+       (openBotBlue, 40dp);
+     - sheet body: label / value rows like Autopilot's Server, Model, Inference and Threads rows
+       (black text at the default size, label paddingStart 16dp, paddingVertical 12dp);
+       the mode rows are added in code into mode_panel (see VisionModeFragment.addStepper);
+     - the shared control_buttons row at the bottom. -->
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <org.openbot.app.robot.vision.VisionOverlayView
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/control_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bottom_sheet_bg"
+        app:behavior_hideable="false"
+        app:behavior_peekHeight="48dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <View
+            android:id="@+id/drag_handle"
+            android:layout_width="48dp"
+            android:layout_height="5dp"
+            android:layout_marginTop="16dp"
+            android:alpha="0.5"
+            android:background="@drawable/button_item_background_black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/auto_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/auto_mode"
+            app:layout_constraintBottom_toTopOf="@+id/content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/drag_handle" />
+
+        <LinearLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/controllerContainer"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <!-- Status row: same shape as Autopilot's "Inference  time/fps" row. -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.8"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="12dp"
+                    android:paddingStart="16dp"
+                    android:text="@string/status"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/status_text"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3.2"
+                    android:gravity="center_vertical|start"
+                    android:paddingHorizontal="8dp"
+                    android:text="@string/vision_stopped"
+                    android:textColor="@android:color/black"
+                    tools:text="▲ Running" />
+            </LinearLayout>
+
+            <!-- Mode-specific rows (tolerance, threshold, stop distance, lock target ...). -->
+            <LinearLayout
+                android:id="@+id/mode_panel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <!-- Guide row: label + a spinner_bg chip, like Autopilot's "Threads [- 1 +]". -->
+            <LinearLayout
+                android:id="@+id/help_row"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="4">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="12dp"
+                    android:paddingStart="16dp"
+                    android:text="@string/tile_guides"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/help_button"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="2"
+                    android:background="@drawable/spinner_bg"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:text="@string/vision_help"
+                    android:textColor="@color/openBotBlue" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/usbToggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:button="@drawable/usb_toggle"
+            app:layout_constraintBottom_toBottomOf="@+id/camera_toggle"
+            app:layout_constraintEnd_toStartOf="@+id/camera_toggle"
+            app:layout_constraintTop_toTopOf="@+id/camera_toggle" />
+
+        <CheckBox
+            android:id="@+id/bleToggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:button="@drawable/ble_toggle"
+            app:layout_constraintBottom_toBottomOf="@+id/camera_toggle"
+            app:layout_constraintEnd_toStartOf="@+id/camera_toggle"
+            app:layout_constraintTop_toTopOf="@+id/camera_toggle" />
+
+        <ImageView
+            android:id="@+id/camera_toggle"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="16dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/camera_facing_back"
+            android:scaleType="center"
+            android:src="@drawable/ic_cameraswitch"
+            app:layout_constraintBottom_toBottomOf="@+id/auto_switch"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/auto_switch"
+            app:tint="@color/openBotBlue" />
+
+        <include
+            android:id="@+id/controllerContainer"
+            layout="@layout/control_buttons" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

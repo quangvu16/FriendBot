@@ -1,0 +1,372 @@
+/* Screens */
+"OpenBot" = "FriendBot";
+"freeRoam" = "फ्री रोम";
+"dataCollection" = "डेटा संग्रहण";
+"controllerMapping" = "कंट्रोलर मैपिंग";
+"autoPilot" = "ऑटो पायलट";
+"objectTracking" = "ऑब्जेक्ट ट्रैकिंग";
+"modelManagement" = "मॉडल प्रबंधन";
+"robotInfo" = "रोबोट जानकारी";
+"navigation" = "लक्ष्य नेविगेशन";
+
+/* GPS Mission Navigation */
+"gpsMission" = "जीपीएस मिशन नेविगेशन";
+"gps_nav_start" = "शुरू करें";
+"gps_nav_stop" = "रोकें";
+"gps_nav_rtl" = "वापसी";
+"gps_nav_add_wp" = "वेपॉइंट जोड़ें";
+"gps_nav_clear" = "साफ़ करें";
+"gps_nav_export" = "निर्यात";
+"gps_nav_add_here" = "वेपॉइंट के रूप में जोड़ें";
+"gps_nav_go_here" = "अभी यहाँ जाएँ";
+"gps_nav_cancel" = "रद्द करें";
+"gps_nav_ok" = "ठीक है";
+"gps_nav_no_fix" = "अभी कोई उपयोगी जीपीएस सिग्नल नहीं है। खुली जगह पर जाकर प्रतीक्षा करें।";
+"gps_nav_no_waypoints" = "पहले एक वेपॉइंट जोड़ें, फिर शुरू करें।";
+"gps_nav_no_home" = "अभी तक कोई प्रारंभ स्थान दर्ज नहीं है।";
+"gps_nav_paused" = "रोका गया";
+"gps_nav_exported" = "सहेजा गया: %@";
+
+
+/* Misc */
+"controller" = "कंट्रोलर";
+"speed" = "गति";
+"driveMode" = "ड्राइव मोड";
+"gamepad" = "गेमपैड";
+"phone" = "फ़ोन";
+"web" = "वेब";
+"joystick" = "जॉयस्टिक";
+"game" = "गेम";
+"dual" = "ड्यूल";
+"slow" = "धीमी";
+"medium" = "मध्यम";
+"fast" = "तेज़";
+"logData" = "डेटा लॉग करें";
+"previewResolutionMedium" = "प्रीव्यू रिज़ॉल्यूशन (1280 x 720)";
+"previewResolutionLow" = "प्रीव्यू रिज़ॉल्यूशन (960 x 540)";
+"previewResolutionHigh" = "प्रीव्यू रिज़ॉल्यूशन (1920 x 1080)";
+"low" = "कम";
+"high" = "अधिक";
+"modelResolution" = "मॉडल रिज़ॉल्यूशन ";
+"server" = "सर्वर";
+"preview" = "प्रीव्यू";
+"training" = "प्रशिक्षण";
+"sensorData" = "सेंसर डेटा";
+"vehicle" = "वाहन";
+"gps" = "जीपीएस";
+"accelerometer" = "एक्सेलेरोमीटर";
+"magnetic" = "मैग्नेटिक सेंसर";
+"gyroscope" = "जायरोस्कोप";
+"delay" = "देरी (ms)";
+"Autopilot" = "ऑटो पायलट";
+"ObjectTracking" = "ऑब्जेक्ट ट्रैकिंग";
+"autoMode" = "ऑटो मोड";
+"model" = "मॉडल";
+"input" = "इनपुट";
+"device" = "डिवाइस";
+"threads" = "थ्रेड्स";
+"object" = "ऑब्जेक्ट";
+"confidence" = "कॉन्फिडेंस";
+"dynamicSpeed" = "डायनामिक स्पीड";
+
+/* Settings */
+"camera" = "कैमरा";
+"microphone" = "माइक्रोफ़ोन";
+"location" = "लोकेशन";
+"permission" = "अनुमतियाँ";
+"bluetooth" = "ब्लूटूथ";
+"general" = "सामान्य";
+"language" = "भाषा";
+"languageSubtitle" = "ऐप की डिस्प्ले भाषा चुनें";
+"systemDefault" = "सिस्टम डिफ़ॉल्ट";
+"applyingLanguage" = "भाषा लागू की जा रही है…";
+"webSignalingServer" = "वेब सिग्नलिंग सर्वर";
+"webSignalingServerPlaceholder" = "ws://192.168.1.40:8080/ws";
+
+/* Bluetooth Status */
+"connect" = "कनेक्ट करें";
+"disconnect" = "डिस्कनेक्ट करें";
+"connecting" = "कनेक्ट हो रहा है";
+"disconnecting" = "डिस्कनेक्ट हो रहा है";
+
+/* Model management */
+"modelDetails" = "मॉडल विवरण";
+"name" = "नाम";
+"type" = "प्रकार";
+"class" = "क्लास";
+"inputOfModel" = "इनपुट (चौड़ाई x ऊँचाई)";
+"tfliteLabel" = ".tflite";
+"cancel" = "रद्द करें";
+"done" = "हो गया";
+"file" = "फ़ाइल";
+"url" = "URL";
+"addNewModel" = "नया मॉडल जोड़ें";
+
+/* Robot Info */
+"voltageDivider" = "वोल्टेज डिवाइडर";
+"bumperText" = "बम्पर";
+"wheelOdometer" = "व्हील ओडोमेट्री";
+"status" = "स्थिति";
+"motors" = "मोटर्स";
+"forward" = "आगे बढ़ें";
+"backward" = "पीछे जाएँ";
+"stopLabel" = "रोकें";
+"readings" = "रीडिंग";
+"battery" = "बैटरी **.* V";
+"speedText" = "गति (बाएँ,दाएँ) ***,*** rpm";
+"sendCommand" = "कमांड भेजें";
+
+/* Navigation */
+"setGoal" = "लक्ष्य निर्धारित करें";
+"setGoalText" = "फ़ोन को रोबोट पर लगाएँ और \n एक लक्ष्य निर्धारित करें। स्टार्ट दबाने के बाद\n रोबोट लक्ष्य तक पहुँचने की कोशिश करेगा।";
+"left" = "बाएँ";
+"meter" = "[मी.]";
+"startLabel" = "शुरू करें";
+"canceled" = "रद्द करें";
+"info" = "जानकारी";
+"restart" = "पुनः आरंभ करें";
+
+/* Settings > Permissions */
+"important" = "महत्वपूर्ण";
+"cameraAccessRequiredMessage" = "FriendBot को कैमरे की अनुमति चाहिए";
+"allowPermissionMessageFormat" = "कृपया FriendBot को %@ का एक्सेस दें";
+"allowButtonFormat" = "%@ की अनुमति दें";
+
+/* Logout */
+"logOut" = "लॉग आउट";
+"confirmLogoutTitle" = "लॉगआउट की पुष्टि करें";
+"confirmLogoutMessage" = "क्या आप वाकई लॉग आउट करना चाहते हैं?";
+
+/* Tab bar */
+"homeTab" = "होम";
+"profileTab" = "प्रोफ़ाइल";
+
+/* Loading / generic alerts */
+"loadingTitle" = "लोड हो रहा है";
+"loadingProfileMessage" = "कृपया प्रतीक्षा करें, प्रोफ़ाइल लोड हो रही है...";
+"loadingDataMessage" = "कृपया प्रतीक्षा करें, डेटा लोड हो रहा है...";
+"pleaseWaitMessage" = "कृपया प्रतीक्षा करें...";
+"errorHeading" = "त्रुटि";
+"genericErrorMessage" = "उफ़! कुछ गलत हो गया। कृपया फिर से प्रयास करें।";
+"okAction" = "ठीक है";
+
+/* Profile screen */
+"myProfileHeading" = "मेरी प्रोफ़ाइल";
+"setupProfilePromptLine1" = "अपने Google खाते से साइन इन करके";
+"setupProfilePromptLine2" = "अपनी प्रोफ़ाइल सेट करें।";
+"editProfile" = "प्रोफ़ाइल संपादित करें";
+"logoutMenuItem" = "लॉग आउट";
+"firstNameFieldLabel" = "पहला नाम";
+"lastNameFieldLabel" = "अंतिम नाम";
+"dateOfBirthFieldLabel" = "जन्म तिथि";
+"emailFieldLabel" = "ईमेल";
+"unknownFallback" = "अज्ञात";
+"saveChangesButton" = "बदलाव सहेजें";
+"profileUpdatedSuccessToast" = "प्रोफ़ाइल सफलतापूर्वक अपडेट की गई";
+"profilePictureLoadErrorToast" = "प्रोफ़ाइल फ़ोटो लोड करने में त्रुटि";
+"signInWithGoogle" = "Google से साइन इन करें";
+
+
+
+
+/* Robot Info headings */
+"robotTypeHeading" = "रोबोट प्रकार";
+"sensorsHeading" = "सेंसर";
+"batteryReadingFormat" = "बैटरी %@ V";
+
+/* Point Goal Navigation */
+"goalReachedMessage" = "लक्ष्य तक पहुँच गए";
+
+/* Model Management filter dropdown */
+"modelFilterAll" = "सभी";
+"modelFilterAllCaps" = "सभी";
+"modelFilterAutoPilot" = "ऑटो पायलट";
+"modelFilterDetector" = "डिटेक्टर";
+"modelFilterNavigation" = "नेविगेशन";
+
+/* Data Collection / Autopilot server dropdown default state */
+"noServer" = "कोई सर्वर नहीं";
+
+/* Object avoidance and GPS mission files */
+"avoid_title" = "Object avoidance";
+"avoid_on" = "Avoid ON";
+"avoid_off" = "Avoid OFF";
+"avoid_enabled" = "Enabled";
+"avoid_margin" = "Margin (AVOID_MARGIN)";
+"avoid_backup" = "Back-up speed (AVOID_BACKUP_SPD)";
+"avoid_backup_off" = "Off";
+"avoid_note" = "Stops before obstacles closer than the margin, in every driving mode. Back-up speed reverses away when something closes in from the front; 0 turns it off.";
+"avoid_settings" = "Avoidance";
+"gps_nav_fix_lost" = "GPS fix lost, holding";
+"gps_nav_files" = "Files";
+"gps_nav_export_kml" = "Export KML";
+"gps_nav_share_waypoints" = "Share .waypoints";
+"gps_nav_open_waypoints" = "Open .waypoints";
+"gps_nav_imported" = "Loaded %ld waypoints";
+"gps_nav_compass_unreliable" = "Compass unreliable: calibrate (figure 8) or move the phone away from the motors";
+
+/* RC mode face (firmware 'm' report) */
+"rc_mode_manual" = "मैनुअल – RC चला रहा है";
+"rc_mode_hold" = "होल्ड – रुका हुआ";
+"rc_mode_lost" = "RC सिग्नल खो गया – रुका हुआ";
+"rc_mode_tap_hint" = "छिपाने के लिए टैप करें";
+
+/* Car dashboard and STOP button */
+"stop_button_stop" = "रुको";
+"stop_button_resume" = "फिर चलाओ";
+"dash_title_connected_usb" = "कार जुड़ी है (USB)";
+"dash_title_connected_ble" = "कार जुड़ी है (ब्लूटूथ)";
+"dash_title_disconnected" = "कार नहीं जुड़ी";
+"dash_detail_usb" = "फ़ोन को कार के USB पोर्ट से जोड़ें, फिर कनेक्ट दबाएँ।";
+"dash_detail_ble" = "कार चालू करें, फिर कनेक्ट दबाकर सूची से उसे चुनें।";
+"dash_detail_connected" = "तैयार। नीचे चुनें कि क्या करना है।";
+"dash_detail_stopped" = "रुको बटन से रोका गया। फिर चलाने के लिए फिर चलाओ दबाएँ।";
+"dash_connect" = "कनेक्ट";
+"dash_connection_settings" = "कनेक्शन";
+"dash_rc_none" = "RC: –";
+"dash_rc_manual" = "RC: मैनुअल";
+"dash_rc_auto" = "RC: ऑटो";
+"dash_rc_hold" = "RC: होल्ड";
+"dash_rc_lost" = "RC: सिग्नल खोया";
+"dash_chip_avoid_on" = "बाधा से बचाव: चालू";
+"dash_chip_avoid_off" = "बाधा से बचाव: बंद";
+"dash_tasks_header" = "आप क्या करना चाहते हैं?";
+"dash_drive_title" = "चलाएँ";
+"dash_drive_desc" = "फ़ोन या गेम कंट्रोलर से कार चलाएँ।";
+"dash_mission_title" = "GPS मिशन";
+"dash_mission_desc" = "नक्शे पर बिंदुओं तक जाएँ या घर लौटें।";
+"dash_setup_title" = "कार सेटअप";
+"dash_setup_desc" = "सेंसर और बाधा से बचाव जाँचें।";
+"dash_more_show" = "और सुविधाएँ";
+"dash_more_hide" = "कम सुविधाएँ";
+
+/* GPS Mission panel */
+"gps_panel_hide" = "डेटा छिपाएँ";
+"gps_panel_show" = "डेटा दिखाएँ";
+"gps_panel_toggle" = "मिशन डेटा दिखाएँ या छिपाएँ";
+"gps_panel_connection" = "कार कनेक्शन";
+"gps_mode_idle" = "तैयार — वेपॉइंट जोड़ें या नक्शे पर टैप करें";
+"gps_mode_mission" = "मिशन चल रहा है";
+"gps_mode_guided" = "चुने हुए बिंदु की ओर जा रहा है";
+"gps_mode_rtl" = "घर लौट रहा है";
+"sensor_link_button" = "सेंसर लिंक";
+"sensor_link_off" = "सेंसर लिंक: बंद";
+"sensor_link_server" = "ब्राउज़र में %1$@ खोलें · %2$d जुड़े";
+"sensor_link_server_no_ip" = "पोर्ट %1$d पर सेंसर साझा · फ़ोन के Wi-Fi या हॉटस्पॉट से जुड़ें";
+"sensor_link_server_failed" = "सेंसर सर्वर शुरू नहीं हुआ: %1$@";
+"sensor_link_client_connecting" = "%1$@ से जुड़ रहा है…";
+"sensor_link_client_connected" = "%1$@ से जुड़ा · GPS का इंतज़ार";
+"sensor_link_client_gps" = "%1$@ से जुड़ा · GPS ±%2$.0f मी";
+"sensor_link_client_no_address" = "सेंसर लिंक: दूसरे फ़ोन का पता डालें";
+"sensor_link_title" = "सेंसर लिंक (SensorServer)";
+"sensor_link_mode_off" = "बंद";
+"sensor_link_mode_server" = "इस फ़ोन के सेंसर साझा करें (सर्वर, ब्राउज़र पेज)";
+"sensor_link_mode_client" = "दूसरे फ़ोन के सेंसर इस्तेमाल करें (क्लाइंट)";
+"sensor_link_port" = "पोर्ट";
+"sensor_link_address" = "दूसरे फ़ोन का पता, जैसे 192.168.43.1:8080";
+"sensor_link_use_gps" = "GPS मिशन के लिए उसका GPS और कंपास इस्तेमाल करें";
+"sensor_link_help" = "सर्वर: लाइव सेंसर और GPS देखने के लिए उसी Wi-Fi या हॉटस्पॉट पर किसी भी ब्राउज़र में http://फ़ोन-का-पता:पोर्ट खोलें। स्क्रिप्ट SensorServer WebSocket API इस्तेमाल कर सकती हैं (ws://पता:पोर्ट/sensor/connect, /sensors/connect, /gps)। लिंक तब तक चलता है जब तक GPS मिशन, ऑब्जेक्ट ट्रैकिंग या ऑटोपायलट खुला है।";
+"sensor_link_save" = "सहेजें";
+"sensor_link_cancel" = "रद्द करें";
+"sensor_link_bad_port" = "पोर्ट 1024–65535 होना चाहिए";
+"setup_drive_ackermann" = "ESC थ्रॉटल · स्टीयरिंग सर्वो (एकरमैन कार)";
+"setup_drive_unknown" = "कार जोड़ें ताकि पता चले उसमें क्या है";
+"setup_features" = "कार क्या बताती है";
+"setup_feat_rc" = "RC रिसीवर";
+"setup_rc_mode" = "RC स्विच";
+"setup_rc_manual" = "मैनुअल (ट्रांसमीटर चलाता है)";
+"setup_rc_auto" = "ऑटो (ऐप चलाता है)";
+"setup_rc_hold" = "होल्ड (रुका)";
+"setup_rc_lost" = "RC लिंक टूटा (रुका)";
+"setup_link" = "कार से कनेक्शन";
+"setup_link_usb" = "USB केबल";
+"setup_link_ble" = "ब्लूटूथ";
+"setup_link_none" = "जुड़ा नहीं";
+"setup_steering" = "स्टीयरिंग";
+"setup_left" = "बाएँ";
+"setup_right" = "दाएँ";
+"setup_centre" = "बीच";
+"setup_off" = "बंद";
+"setup_test_note" = "पहिए ज़मीन से ऊपर रखकर जाँचें। हर टेस्ट लगभग 1 सेकंड चलता है, फिर कार खुद रुककर सीधी हो जाती है।";
+"gps_nav_pause" = "रोकें";
+"gps_nav_resume" = "फिर शुरू करें";
+
+/* Voice Control (Xiaozhi) */
+"tile_voice_control" = "वॉइस कंट्रोल";
+"voice_tap_to_speak" = "माइक्रोफ़ोन दबाएँ और बोलें";
+"voice_listening" = "सुन रहा है…";
+"voice_thinking" = "सोच रहा है…";
+"voice_you_said" = "आपने कहा";
+"voice_command" = "कमांड";
+"voice_speed" = "गति";
+"voice_speed_value" = "%1$d%%";
+"voice_forward" = "आगे";
+"voice_backward" = "पीछे";
+"voice_left" = "बाएँ मुड़ें";
+"voice_right" = "दाएँ मुड़ें";
+"voice_stop" = "रोकें";
+"voice_faster" = "तेज़";
+"voice_slower" = "धीमा";
+"voice_send" = "भेजें";
+"voice_type_hint" = "या कमांड लिखें, जैसे आगे चलो";
+"voice_log" = "लॉग";
+"voice_log_ready" = "तैयार। बोलने के लिए माइक्रोफ़ोन दबाएँ।";
+"voice_not_connected" = "रोबोट कनेक्ट नहीं है";
+"voice_connected" = "कनेक्टेड (%1$@)";
+"voice_no_match" = "माफ़ कीजिए, मैं समझ नहीं पाया";
+"voice_no_speech_recognizer" = "इस फ़ोन पर कोई स्पीच रिकग्नाइज़र उपलब्ध नहीं है";
+"voice_mic_permission_denied" = "वॉइस कंट्रोल के लिए माइक्रोफ़ोन की अनुमति चाहिए";
+"voice_status_stopped" = "रुका हुआ";
+"voice_action_move" = "%1$@ %2$d ms के लिए";
+"voice_xiaozhi_settings" = "Xiaozhi सेटिंग्स";
+"voice_xiaozhi_settings_help" = "सर्वर कॉन्फ़िगर होने पर वॉइस कमांड Xiaozhi LLM समझता है, अन्यथा बिल्ट-इन कीवर्ड। बिल्ट-इन कीवर्ड उपयोग करने के लिए टोकन खाली छोड़ें।";
+"voice_xiaozhi_endpoint_hint" = "सर्वर URL (chat completions)";
+"voice_xiaozhi_token_hint" = "एक्सेस टोकन";
+"voice_xiaozhi_model_hint" = "मॉडल का नाम";
+"voice_save" = "सहेजें";
+"voice_cancel" = "रद्द करें";
+"voice_xiaozhi_saved" = "Xiaozhi सेटिंग्स सहेजी गईं";
+"voice_xiaozhi_fallback" = "Xiaozhi उपलब्ध नहीं (%1$@), बिल्ट-इन कीवर्ड उपयोग किए";
+"voice_xiaozhi_sign_in" = "xiaozhi.me से साइन इन करें";
+"voice_xiaozhi_login_title" = "Xiaozhi लॉगिन";
+"voice_xiaozhi_login_waiting" = "डिवाइस बनाया जा रहा है, कृपया प्रतीक्षा करें…";
+"voice_xiaozhi_login_code" = "आपका कोड: %1$@ — xiaozhi.me खोलें, साइन इन करें, एक डिवाइस जोड़ें और यह कोड दर्ज करें।";
+"voice_xiaozhi_login_success" = "साइन इन हो गया — API कुंजी सहेजी गई";
+"voice_xiaozhi_login_error" = "लॉगिन विफल: %1$@";
+"voice_xiaozhi_login_cancelled" = "लॉगिन रद्द किया गया";
+"voice_pair_title" = "पहली बार पेयरिंग";
+"voice_pair_instructions" = "xiaozhi.me खोलें, साइन इन करें, एक नया डिवाइस जोड़ें और यहाँ दिखाया गया कोड दर्ज करें। बाइंड होने के बाद, डिवाइस स्वतः कनेक्ट हो जाता है। लॉगिन जानकारी स्थानीय रूप से सहेजी जाती है — अगली बार ऐप पेयरिंग छोड़ देता है और अपने आप कनेक्ट हो जाता है।";
+"voice_pair_waiting" = "बाइंडिंग की प्रतीक्षा…";
+"voice_pair_bound" = "बाइंड हो गया! कनेक्ट हो रहा है…";
+"voice_pair_retry" = "पुनः प्रयास करें";
+"voice_pair_skip" = "ऑफ़लाइन मोड उपयोग करें";
+"voice_pair_code" = "कोड: %1$@";
+"voice_ws_ready" = "Xiaozhi तैयार";
+"voice_ws_offline" = "Xiaozhi ऑफ़लाइन";
+"voice_log_you" = "आप:";
+"voice_log_bot" = "Xiaozhi:";
+"voice_assistant_silent" = "असिस्टेंट चुप रहा, बिल्ट-इन ब्रेन उपयोग किया गया";
+"voice_state_idle" = "तैयार";
+"voice_state_connecting" = "कनेक्ट हो रहा है…";
+"voice_state_listening" = "सुन रहा है…";
+"voice_state_speaking" = "बोल रहा है…";
+"voice_language_title" = "आवाज़ की भाषा";
+"voice_language_system" = "सिस्टम डिफ़ॉल्ट";
+
+"voice_sharing_wifi" = "कनेक्टेड (%1$@) · WiFi पर साझा";
+"voice_relay_connected" = "वाया %1$@ (WiFi) नियंत्रित";
+"voice_relay_searching" = "WiFi पर रोबोट खोजा जा रहा है…";
+"voice_robot_picker_title" = "रोबोट चुनें";
+"voice_robot_this_phone" = "यह फ़ोन · %1$@";
+"voice_robot_wifi_item" = "%1$@ · WiFi";
+"voice_robot_none_found" = "अभी WiFi पर कोई रोबोट साझा नहीं है. रोबोट से जुड़े फ़ोन पर वॉइस पेज खोलें.";
+"tile_remote_mic" = "रिमोट माइक";
+"remote_mic_help" = "इस फ़ोन का माइक रोबोट-लिंक वाले फ़ोन पर Xiaozhi से बात करता है. अपना कमांड यहाँ बोलें — बातचीत और Xiaozhi के जवाब उसी फ़ोन पर रहते हैं.";
+"remote_mic_tap_to_start" = "बोलने के लिए माइक पर टैप करें";
+"remote_mic_streaming" = "सुन रहा है — रोकने के लिए टैप करें";
+"remote_mic_host" = "%1$@ से बात हो रही है (WiFi)";
+"remote_mic_live_on" = "%1$@ पर लाइव";
+"remote_mic_host_not_ready" = "पहले %1$@ पर वॉइस कंट्रोल पेज खोलें";
+"remote_mic_mic_unavailable" = "माइक उपलब्ध नहीं है";
+"tool_take_photo" = "फ़ोटो लें";
+"voice_camera_switch" = "कैमरा बदलें";

@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Voice Control — Android</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 20px 16px 14px; display: flex; flex-direction: column; gap: 12px; background: #F2F2F7; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', Inter, 'Segoe UI', Roboto, sans-serif; color: #1C1C1E">
+
+  <!-- Large title + settings -->
+  <div style="display: flex; align-items: center">
+    <h1 style="flex: 1; margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.4px">Voice Control</h1>
+    <button type="button" aria-label="Xiaozhi settings" style="width: 44px; height: 44px; border: 0; background: transparent; padding: 0; display: flex; align-items: center; justify-content: center">
+      <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="3.2" fill="none" stroke="#636366" stroke-width="2"></circle>
+        <circle cx="12" cy="12" r="8.2" fill="none" stroke="#636366" stroke-width="2"></circle>
+        <path d="M12 1.6v2.8M12 19.6v2.8M1.6 12h2.8M19.6 12h2.8M4.6 4.6l2 2M17.4 17.4l2 2M19.4 4.6l-2 2M6.6 17.4l-2 2" stroke="#636366" stroke-width="2" stroke-linecap="round"></path>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Connection capsule -->
+  <div style="align-self: flex-start; display: flex; align-items: center; gap: 6px; background: #E5E5EA; border-radius: 999px; padding: 6px 12px">
+    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M7 7l10 10-5 5V2l5 5L7 17" fill="none" stroke="#636366" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>
+    <span style="font-size: 12px; font-weight: 600; color: #48484A">Connected (BLE) · Xiaozhi ready</span>
+  </div>
+
+  <!-- Face hero card -->
+  <div style="background: #FFFFFF; border-radius: 22px; padding: 18px 16px; display: flex; flex-direction: column; align-items: center; gap: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.07)">
+    <div style="position: relative; width: 132px; height: 132px; display: flex; align-items: center; justify-content: center">
+      <div style="position: absolute; inset: 0; border-radius: 50%; background: #F4F4F6; border: 2px solid #D1D1D6; opacity: 0.9"></div>
+      <svg width="104" height="104" viewBox="0 0 104 104" role="img" aria-label="Xiaozhi face, ready">
+        <circle cx="52" cy="52" r="46" fill="#FFD764"></circle>
+        <circle cx="30" cy="62" r="6" fill="#FF9F8A" opacity="0.55"></circle>
+        <circle cx="74" cy="62" r="6" fill="#FF9F8A" opacity="0.55"></circle>
+        <path d="M26 37 Q32 33 38 36" fill="none" stroke="#3A3A3C" stroke-width="3.5" stroke-linecap="round"></path>
+        <path d="M66 36 Q72 33 78 37" fill="none" stroke="#3A3A3C" stroke-width="3.5" stroke-linecap="round"></path>
+        <circle cx="35" cy="49" r="5" fill="#3A3A3C"></circle>
+        <circle cx="69" cy="49" r="5" fill="#3A3A3C"></circle>
+        <path d="M39 66 Q52 75 65 66" fill="none" stroke="#3A3A3C" stroke-width="4.5" stroke-linecap="round"></path>
+      </svg>
+    </div>
+    <div style="font-size: 15px; font-weight: 600; color: #636366">Ready</div>
+    <div style="display: flex; gap: 2px; background: #E5E5EA; border-radius: 12px; padding: 2px">
+      <button type="button" style="font-family: inherit; font-size: 13px; font-weight: 600; border: 0; background: transparent; color: #636366; padding: 9px 18px; border-radius: 10px">Hands-free</button>
+      <button type="button" style="font-family: inherit; font-size: 13px; font-weight: 600; border: 0; background: #FFFFFF; color: #1C1C1E; padding: 9px 18px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.12)">Push to speak</button>
+    </div>
+    <svg width="214" height="26" viewBox="0 0 214 26" aria-hidden="true">
+      <rect x="0" y="11" width="4" height="4" rx="2" fill="#C7C7CC"></rect>
+      <rect x="10" y="10" width="4" height="6" rx="2" fill="#C7C7CC"></rect>
+      <rect x="20" y="11" width="4" height="4" rx="2" fill="#C7C7CC"></rect>
+      <rect x="30" y="9.5" width="4" height="7" rx="2" fill="#C7C7CC"></rect>
+      <rect x="40" y="10.5" width="4" height="5" rx="2" fill="#C7C7CC"></rect>
+      <rect x="50" y="11" width="4" height="4" rx="2" fill="#C7C7CC"></rect>
+      <rect x="60" y="9" width="4" height="8" rx="2" fill="#C7C7CC"></rect>
+      <rect x="70" y="10.5" width="4" height="5" rx="2" fill="#C7C7CC"></rect>
+      <rect x="80" y="11" width="4" height="4" rx="2" fill="#C7C7CC"></rect>
+      <rect x="90" y="9.5" width="4" height="7" rx="2" fill="#C7C7CC"></rect>
+      <rect x="100" y="11" width="4" height="4" rx="2" fill="#C7C7CC"></rect>
+      <rect x="110" y="10" width="4" height="6" rx="2" fill="#C7C7CC"></rect>
+      <rect x="120" y="11" width="4" height="4" rx="2" fill="#C7C7CC"></rect>
+      <rect x="130" y="9" width="4" height="8" rx="2" fill="#C7C7CC"></rect>
+      <rect x="140" y="10.5" width="4" height="5" rx="2" fill="#C7C7CC"></rect>
+      <rect x="150" y="11" width="4" height="4" rx="2" fill="#C7C7CC"></rect>
+      <rect x="160" y="9.5" width="4" height="7" rx="2" fill="#C7C7CC"></rect>
+      <rect x="170" y="11" width="4" height="4" rx="2" fill="#C7C7CC"></rect>
+      <rect x="180" y="10" width="4" height="6" rx="2" fill="#C7C7CC"></rect>
+      <rect x="190" y="11" width="4" height="4" rx="2" fill="#C7C7CC"></rect>
+      <rect x="200" y="9.5" width="4" height="7" rx="2" fill="#C7C7CC"></rect>
+      <rect x="210" y="11" width="4" height="4" rx="2" fill="#C7C7CC"></rect>
+    </svg>
+  </div>
+
+  <!-- Conversation transcript -->
+  <div style="flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; gap: 8px">
+    <div style="align-self: flex-start; max-width: 78%; background: #FFFFFF; color: #1C1C1E; font-size: 15px; line-height: 1.35; border-radius: 20px; padding: 10px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.06)">Xiaozhi: Ready when you are.</div>
+  </div>
+
+  <!-- Input row: mic + message capsule + send -->
+  <div style="display: flex; align-items: center; gap: 10px">
+    <button type="button" aria-label="Tap the microphone and speak" style="width: 56px; height: 56px; border: 0; border-radius: 50%; background: {{accent}}; padding: 0; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(10,102,214,0.35)">
+      <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="9" y="3" width="6" height="11" rx="3" fill="#FFFFFF"></rect>
+        <path d="M5 11a7 7 0 0 0 14 0" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"></path>
+        <path d="M12 18v3" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"></path>
+      </svg>
+    </button>
+    <div style="flex: 1; height: 52px; box-sizing: border-box; background: #FFFFFF; border-radius: 26px; display: flex; align-items: center; padding: 0 6px 0 16px; gap: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.06)">
+      <label for="msg-android" style="position: absolute; left: -9999px">Or type a command</label>
+      <input id="msg-android" type="text" placeholder="Or type a command, e.g. go forward" style="flex: 1; min-width: 0; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 15px; color: #1C1C1E">
+      <button type="button" aria-label="Send" style="width: 40px; height: 40px; border: 0; border-radius: 50%; background: {{accent}}; padding: 0; display: flex; align-items: center; justify-content: center">
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3.5 11.2l16.8-7.7-7.7 16.8-2.3-6.8-6.8-2.3z" fill="#FFFFFF"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Quick drive tiles -->
+  <div style="display: flex; gap: 8px">
+    <button type="button" style="flex: 1; height: 64px; font-family: inherit; border: 0; background: #FFFFFF; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.06)">
+      <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20V5M5 12l7-7 7 7" fill="none" stroke="#3A3A3C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      <span style="font-size: 10px; font-weight: 600; color: #3A3A3C">Forward</span>
+    </button>
+    <button type="button" style="flex: 1; height: 64px; font-family: inherit; border: 0; background: #FFFFFF; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.06)">
+      <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v15M5 12l7 7 7-7" fill="none" stroke="#3A3A3C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      <span style="font-size: 10px; font-weight: 600; color: #3A3A3C">Backward</span>
+    </button>
+    <button type="button" style="flex: 1; height: 64px; font-family: inherit; border: 0; background: #FFFFFF; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.06)">
+      <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H5M12 5l-7 7 7 7" fill="none" stroke="#3A3A3C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      <span style="font-size: 10px; font-weight: 600; color: #3A3A3C">Turn left</span>
+    </button>
+    <button type="button" style="flex: 1; height: 64px; font-family: inherit; border: 0; background: #FFFFFF; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.06)">
+      <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M12 5l7 7-7 7" fill="none" stroke="#3A3A3C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      <span style="font-size: 10px; font-weight: 600; color: #3A3A3C">Turn right</span>
+    </button>
+    <button type="button" style="flex: 1; height: 64px; font-family: inherit; border: 0; background: #FDECEA; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px">
+      <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="#D70015"></rect></svg>
+      <span style="font-size: 10px; font-weight: 600; color: #D70015">Stop</span>
+    </button>
+  </div>
+
+  <!-- Speed -->
+  <div style="background: #FFFFFF; border-radius: 16px; height: 58px; box-sizing: border-box; display: flex; align-items: center; gap: 10px; padding: 0 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.06)">
+    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 15a8 8 0 0 1 16 0" fill="none" stroke="#636366" stroke-width="2" stroke-linecap="round"></path>
+      <path d="M12 15l4.5-4.5" fill="none" stroke="#636366" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+    <label for="speed-android" style="font-size: 13px; font-weight: 600; color: #48484A">Speed</label>
+    <input id="speed-android" type="range" min="25" max="100" value="75" step="5" style="flex: 1; min-width: 0; accent-color: {{accent}}">
+    <span style="font-size: 13px; font-weight: 600; color: #1C1C1E">75%</span>
+  </div>
+
+  <!-- Log caption -->
+  <div style="font-size: 11px; color: #636366">Log · Ready. Tap the microphone to speak.</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#0A66D6"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return { accent: this.props.accent ?? '#0A66D6' };
+}
+}
+</script>
+</body>
+</html>

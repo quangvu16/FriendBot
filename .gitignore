@@ -1,0 +1,59 @@
+/vendor
+composer.phar
+composer.lock
+.phpunit.result.cache
+/phpunit.xml
+.DS_Store
+Thumbs.db
+wandb/
+
+# IDE's
+.idea/
+/.vscode
+.classpath
+.project
+.settings/
+
+# build
+/bin
+/node_modules/
+
+# local packaging / sync artifacts
+*.tgz
+*.tar.gz
+*.patch
+.sync/
+
+# loose firmware image (build from firmware/ instead)
+/*.bin
+
+# third-party app bundles (download them from their sources)
+*.xapk
+*.apk
+
+# Android build outputs
+robot/android/.gradle/
+robot/android/build/
+robot/android/app/build/
+robot/android/**/build/
+robot/android/local.properties
+robot/android/captures/
+
+# iOS build outputs
+robot/ios/**/DerivedData/
+robot/ios/**/xcuserdata/
+robot/ios/**/*.xcuserstate
+robot/ios/Pods/
+robot/ios/OpenBot/Pods/
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+/caches
+/wrapper
+controller/flutter/android/build
+/daemon
+kotlin-profile
+native
+jdks
+/robot/android/FakeDependency.jar

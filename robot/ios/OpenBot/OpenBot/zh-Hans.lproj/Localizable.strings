@@ -1,0 +1,372 @@
+/* Screens */
+"OpenBot" = "FriendBot";
+"freeRoam" = "自由漫游";
+"dataCollection" = "数据采集";
+"controllerMapping" = "控制器映射";
+"autoPilot" = "自动驾驶";
+"objectTracking" = "物体追踪";
+"modelManagement" = "模型管理";
+"robotInfo" = "机器人信息";
+"navigation" = "目标点导航";
+
+/* GPS Mission Navigation */
+"gpsMission" = "GPS 任务导航";
+"gps_nav_start" = "开始";
+"gps_nav_stop" = "停止";
+"gps_nav_rtl" = "返航";
+"gps_nav_add_wp" = "添加航点";
+"gps_nav_clear" = "清除";
+"gps_nav_export" = "导出";
+"gps_nav_add_here" = "添加为航点";
+"gps_nav_go_here" = "立即前往";
+"gps_nav_cancel" = "取消";
+"gps_nav_ok" = "确定";
+"gps_nav_no_fix" = "尚未获得可用的 GPS 定位。请到开阔处稍候。";
+"gps_nav_no_waypoints" = "请先添加航点，然后开始。";
+"gps_nav_no_home" = "尚未记录起点位置。";
+"gps_nav_paused" = "已暂停";
+"gps_nav_exported" = "已保存：%@";
+
+
+/* Misc */
+"controller" = "控制器";
+"speed" = "速度";
+"driveMode" = "驾驶模式";
+"gamepad" = "游戏手柄";
+"phone" = "手机";
+"web" = "网页";
+"joystick" = "摇杆";
+"game" = "游戏";
+"dual" = "双控";
+"slow" = "慢速";
+"medium" = "中速";
+"fast" = "快速";
+"logData" = "记录数据";
+"previewResolutionMedium" = "预览分辨率 (1280 x 720)";
+"previewResolutionLow" = "预览分辨率 (960 x 540)";
+"previewResolutionHigh" = "预览分辨率 (1920 x 1080)";
+"low" = "低";
+"high" = "高";
+"modelResolution" = "模型分辨率 ";
+"server" = "服务器";
+"preview" = "预览";
+"training" = "训练";
+"sensorData" = "传感器数据";
+"vehicle" = "车辆";
+"gps" = "GPS";
+"accelerometer" = "加速度计";
+"magnetic" = "磁力计";
+"gyroscope" = "陀螺仪";
+"delay" = "延迟 (毫秒)";
+"Autopilot" = "自动驾驶";
+"ObjectTracking" = "物体追踪";
+"autoMode" = "自动模式";
+"model" = "模型";
+"input" = "输入";
+"device" = "设备";
+"threads" = "线程数";
+"object" = "物体";
+"confidence" = "置信度";
+"dynamicSpeed" = "动态速度";
+
+/* Settings */
+"camera" = "相机";
+"microphone" = "麦克风";
+"location" = "位置";
+"permission" = "权限";
+"bluetooth" = "蓝牙";
+"general" = "通用";
+"language" = "语言";
+"languageSubtitle" = "选择应用的显示语言";
+"systemDefault" = "系统默认";
+"applyingLanguage" = "正在应用语言…";
+"webSignalingServer" = "网页信令服务器";
+"webSignalingServerPlaceholder" = "ws://192.168.1.40:8080/ws";
+
+/* Bluetooth Status */
+"connect" = "连接";
+"disconnect" = "断开连接";
+"connecting" = "正在连接";
+"disconnecting" = "正在断开";
+
+/* Model management */
+"modelDetails" = "模型详情";
+"name" = "名称";
+"type" = "类型";
+"class" = "类别";
+"inputOfModel" = "输入 (宽 x 高)";
+"tfliteLabel" = ".tflite";
+"cancel" = "取消";
+"done" = "完成";
+"file" = "文件";
+"url" = "URL";
+"addNewModel" = "添加新模型";
+
+/* Robot Info */
+"voltageDivider" = "分压器";
+"bumperText" = "保险杠";
+"wheelOdometer" = "车轮里程计";
+"status" = "状态";
+"motors" = "电机";
+"forward" = "前进";
+"backward" = "后退";
+"stopLabel" = "停止";
+"readings" = "读数";
+"battery" = "电池 **.* V";
+"speedText" = "速度 (左,右) ***,*** 转/分";
+"sendCommand" = "发送指令";
+
+/* Navigation */
+"setGoal" = "设置目标";
+"setGoalText" = "将手机安装到机器人上，\n 设置一个目标位置。按下开始后，\n 机器人将尝试到达该目标。";
+"left" = "左";
+"meter" = "[米]";
+"startLabel" = "开始";
+"canceled" = "取消";
+"info" = "信息";
+"restart" = "重新开始";
+
+/* Settings > Permissions */
+"important" = "重要提示";
+"cameraAccessRequiredMessage" = "FriendBot 需要访问相机权限";
+"allowPermissionMessageFormat" = "请允许 FriendBot 访问%@";
+"allowButtonFormat" = "允许访问%@";
+
+/* Logout */
+"logOut" = "退出登录";
+"confirmLogoutTitle" = "确认退出登录";
+"confirmLogoutMessage" = "确定要退出登录吗？";
+
+/* Tab bar */
+"homeTab" = "首页";
+"profileTab" = "我的";
+
+/* Loading / generic alerts */
+"loadingTitle" = "加载中";
+"loadingProfileMessage" = "正在加载个人资料，请稍候…";
+"loadingDataMessage" = "正在加载数据，请稍候…";
+"pleaseWaitMessage" = "请稍候…";
+"errorHeading" = "错误";
+"genericErrorMessage" = "哎呀，出了点问题，请重试。";
+"okAction" = "确定";
+
+/* Profile screen */
+"myProfileHeading" = "我的资料";
+"setupProfilePromptLine1" = "登录你的";
+"setupProfilePromptLine2" = "Google 账号以设置个人资料。";
+"editProfile" = "编辑资料";
+"logoutMenuItem" = "退出登录";
+"firstNameFieldLabel" = "名";
+"lastNameFieldLabel" = "姓";
+"dateOfBirthFieldLabel" = "出生日期";
+"emailFieldLabel" = "邮箱";
+"unknownFallback" = "未知";
+"saveChangesButton" = "保存更改";
+"profileUpdatedSuccessToast" = "资料更新成功";
+"profilePictureLoadErrorToast" = "加载头像失败";
+"signInWithGoogle" = "使用 Google 账号登录";
+
+
+
+
+/* Robot Info headings */
+"robotTypeHeading" = "机器人类型";
+"sensorsHeading" = "传感器";
+"batteryReadingFormat" = "电池 %@ V";
+
+/* Point Goal Navigation */
+"goalReachedMessage" = "已到达目标";
+
+/* Model Management filter dropdown */
+"modelFilterAll" = "全部";
+"modelFilterAllCaps" = "全部";
+"modelFilterAutoPilot" = "自动驾驶";
+"modelFilterDetector" = "检测器";
+"modelFilterNavigation" = "导航";
+
+/* Data Collection / Autopilot server dropdown default state */
+"noServer" = "无服务器";
+
+/* Object avoidance and GPS mission files */
+"avoid_title" = "Object avoidance";
+"avoid_on" = "Avoid ON";
+"avoid_off" = "Avoid OFF";
+"avoid_enabled" = "Enabled";
+"avoid_margin" = "Margin (AVOID_MARGIN)";
+"avoid_backup" = "Back-up speed (AVOID_BACKUP_SPD)";
+"avoid_backup_off" = "Off";
+"avoid_note" = "Stops before obstacles closer than the margin, in every driving mode. Back-up speed reverses away when something closes in from the front; 0 turns it off.";
+"avoid_settings" = "Avoidance";
+"gps_nav_fix_lost" = "GPS fix lost, holding";
+"gps_nav_files" = "Files";
+"gps_nav_export_kml" = "Export KML";
+"gps_nav_share_waypoints" = "Share .waypoints";
+"gps_nav_open_waypoints" = "Open .waypoints";
+"gps_nav_imported" = "Loaded %ld waypoints";
+"gps_nav_compass_unreliable" = "Compass unreliable: calibrate (figure 8) or move the phone away from the motors";
+
+/* RC mode face (firmware 'm' report) */
+"rc_mode_manual" = "手动 – 遥控器驾驶";
+"rc_mode_hold" = "保持 – 已停止";
+"rc_mode_lost" = "遥控信号丢失 – 已停止";
+"rc_mode_tap_hint" = "点击隐藏";
+
+/* Car dashboard and STOP button */
+"stop_button_stop" = "停止";
+"stop_button_resume" = "继续";
+"dash_title_connected_usb" = "小车已连接（USB）";
+"dash_title_connected_ble" = "小车已连接（蓝牙）";
+"dash_title_disconnected" = "小车未连接";
+"dash_detail_usb" = "用 USB 线把手机接到小车上，然后点“连接”。";
+"dash_detail_ble" = "打开小车电源，点“连接”，然后在列表中选择它。";
+"dash_detail_connected" = "已就绪。请在下方选择要做的事。";
+"dash_detail_stopped" = "已用“停止”按钮停车。点“继续”即可再次行驶。";
+"dash_connect" = "连接";
+"dash_connection_settings" = "连接设置";
+"dash_rc_none" = "遥控：–";
+"dash_rc_manual" = "遥控：手动";
+"dash_rc_auto" = "遥控：自动";
+"dash_rc_hold" = "遥控：保持";
+"dash_rc_lost" = "遥控：信号丢失";
+"dash_chip_avoid_on" = "避障：开";
+"dash_chip_avoid_off" = "避障：关";
+"dash_tasks_header" = "你想做什么？";
+"dash_drive_title" = "驾驶";
+"dash_drive_desc" = "用手机或游戏手柄驾驶小车。";
+"dash_mission_title" = "GPS 任务";
+"dash_mission_desc" = "驶向地图上的点，或返回起点。";
+"dash_setup_title" = "小车设置";
+"dash_setup_desc" = "检查传感器和避障。";
+"dash_more_show" = "更多功能";
+"dash_more_hide" = "收起功能";
+
+/* GPS Mission panel */
+"gps_panel_hide" = "隐藏数据";
+"gps_panel_show" = "显示数据";
+"gps_panel_toggle" = "显示或隐藏任务数据";
+"gps_panel_connection" = "小车连接";
+"gps_mode_idle" = "就绪——添加航点或点按地图";
+"gps_mode_mission" = "正在执行任务";
+"gps_mode_guided" = "正前往所选位置";
+"gps_mode_rtl" = "正在返回起点";
+"sensor_link_button" = "传感器连接";
+"sensor_link_off" = "传感器连接：关";
+"sensor_link_server" = "在浏览器中打开 %1$@ · 已连接 %2$d 个";
+"sensor_link_server_no_ip" = "正在端口 %1$d 共享传感器 · 请连接手机所在的 Wi-Fi 或热点";
+"sensor_link_server_failed" = "传感器服务器无法启动：%1$@";
+"sensor_link_client_connecting" = "正在连接 %1$@…";
+"sensor_link_client_connected" = "已连接 %1$@ · 等待 GPS";
+"sensor_link_client_gps" = "已连接 %1$@ · GPS ±%2$.0f 米";
+"sensor_link_client_no_address" = "传感器连接：请填写另一部手机的地址";
+"sensor_link_title" = "传感器连接（SensorServer）";
+"sensor_link_mode_off" = "关闭";
+"sensor_link_mode_server" = "共享本机传感器（服务器，浏览器页面）";
+"sensor_link_mode_client" = "使用另一部手机的传感器（客户端）";
+"sensor_link_port" = "端口";
+"sensor_link_address" = "另一部手机的地址，例如 192.168.43.1:8080";
+"sensor_link_use_gps" = "GPS 任务使用它的 GPS 和指南针";
+"sensor_link_help" = "服务器：在同一 Wi-Fi 或热点下的任意浏览器中打开 http://手机地址:端口，即可实时查看传感器和 GPS。脚本可使用 SensorServer WebSocket API（ws://地址:端口/sensor/connect、/sensors/connect、/gps）。在 GPS 任务、目标跟踪或自动驾驶界面打开时运行。";
+"sensor_link_save" = "保存";
+"sensor_link_cancel" = "取消";
+"sensor_link_bad_port" = "端口必须在 1024–65535 之间";
+"setup_drive_ackermann" = "ESC 油门 · 转向舵机（阿克曼小车）";
+"setup_drive_unknown" = "连接小车以读取它的配置";
+"setup_features" = "小车上报的功能";
+"setup_feat_rc" = "遥控接收机";
+"setup_rc_mode" = "遥控开关";
+"setup_rc_manual" = "手动（遥控器驾驶）";
+"setup_rc_auto" = "自动（应用驾驶）";
+"setup_rc_hold" = "保持（停止）";
+"setup_rc_lost" = "遥控信号丢失（停止）";
+"setup_link" = "与小车的连接";
+"setup_link_usb" = "USB 线";
+"setup_link_ble" = "蓝牙";
+"setup_link_none" = "未连接";
+"setup_steering" = "转向";
+"setup_left" = "左";
+"setup_right" = "右";
+"setup_centre" = "回正";
+"setup_off" = "关";
+"setup_test_note" = "请把车轮架空测试。每次测试约 1 秒，之后小车会自动停下并回正。";
+"gps_nav_pause" = "暂停";
+"gps_nav_resume" = "继续";
+
+/* Voice Control (Xiaozhi) */
+"tile_voice_control" = "语音控制";
+"voice_tap_to_speak" = "点击麦克风并说话";
+"voice_listening" = "正在聆听…";
+"voice_thinking" = "正在思考…";
+"voice_you_said" = "你说的话";
+"voice_command" = "指令";
+"voice_speed" = "速度";
+"voice_speed_value" = "%1$d%%";
+"voice_forward" = "前进";
+"voice_backward" = "后退";
+"voice_left" = "左转";
+"voice_right" = "右转";
+"voice_stop" = "停止";
+"voice_faster" = "快一点";
+"voice_slower" = "慢一点";
+"voice_send" = "发送";
+"voice_type_hint" = "或输入指令，例如：前进";
+"voice_log" = "日志";
+"voice_log_ready" = "准备就绪。点击麦克风开始说话。";
+"voice_not_connected" = "机器人未连接";
+"voice_connected" = "已连接（%1$@）";
+"voice_no_match" = "抱歉，我没有听懂";
+"voice_no_speech_recognizer" = "此手机上没有可用的语音识别器";
+"voice_mic_permission_denied" = "语音控制需要麦克风权限";
+"voice_status_stopped" = "已停止";
+"voice_action_move" = "%1$@，持续 %2$d 毫秒";
+"voice_xiaozhi_settings" = "小智设置";
+"voice_xiaozhi_settings_help" = "配置了服务器时，语音指令由小智大模型理解；否则由内置关键词理解。留空令牌即使用内置关键词。";
+"voice_xiaozhi_endpoint_hint" = "服务器地址（chat completions）";
+"voice_xiaozhi_token_hint" = "访问令牌";
+"voice_xiaozhi_model_hint" = "模型名称";
+"voice_save" = "保存";
+"voice_cancel" = "取消";
+"voice_xiaozhi_saved" = "小智设置已保存";
+"voice_xiaozhi_fallback" = "小智不可用（%1$@），已使用内置关键词";
+"voice_xiaozhi_sign_in" = "使用 xiaozhi.me 登录";
+"voice_xiaozhi_login_title" = "小智登录";
+"voice_xiaozhi_login_waiting" = "正在创建设备，请稍候…";
+"voice_xiaozhi_login_code" = "你的代码：%1$@——打开 xiaozhi.me，登录，添加设备并输入此代码。";
+"voice_xiaozhi_login_success" = "已登录——API 密钥已保存";
+"voice_xiaozhi_login_error" = "登录失败：%1$@";
+"voice_xiaozhi_login_cancelled" = "登录已取消";
+"voice_pair_title" = "首次配对";
+"voice_pair_instructions" = "打开 xiaozhi.me，登录，添加新设备并输入此处显示的代码。绑定后，设备会自动连接。凭据保存在本地——下次应用会跳过配对并自行连接。";
+"voice_pair_waiting" = "等待绑定…";
+"voice_pair_bound" = "已绑定！正在连接…";
+"voice_pair_retry" = "重试";
+"voice_pair_skip" = "使用离线模式";
+"voice_pair_code" = "代码：%1$@";
+"voice_ws_ready" = "Xiaozhi 就绪";
+"voice_ws_offline" = "Xiaozhi 离线";
+"voice_log_you" = "你：";
+"voice_log_bot" = "Xiaozhi：";
+"voice_assistant_silent" = "助手未发声，已使用内置大脑";
+"voice_state_idle" = "就绪";
+"voice_state_connecting" = "正在连接…";
+"voice_state_listening" = "正在聆听…";
+"voice_state_speaking" = "正在说话…";
+"voice_language_title" = "语音语言";
+"voice_language_system" = "系统默认";
+
+"voice_sharing_wifi" = "已连接（%1$@）· 通过 WiFi 共享";
+"voice_relay_connected" = "正在通过 %1$@（WiFi）控制";
+"voice_relay_searching" = "正在搜索 WiFi 上的机器人…";
+"voice_robot_picker_title" = "选择机器人";
+"voice_robot_this_phone" = "本手机 · %1$@";
+"voice_robot_wifi_item" = "%1$@ · WiFi";
+"voice_robot_none_found" = "目前没有通过 WiFi 共享的机器人。请在连接机器人的手机上打开语音页面。";
+"tile_remote_mic" = "远程麦克风";
+"remote_mic_help" = "本手机的麦克风与持有机器人连接的手机上的小智对话。在这里说出惇的指令 — 对话和小智的回答都留在那部手机上。";
+"remote_mic_tap_to_start" = "点按麦克风开始说话";
+"remote_mic_streaming" = "正在聆听 — 点按停止";
+"remote_mic_host" = "正在与 %1$@ 通话（WiFi）";
+"remote_mic_live_on" = "已在 %1$@ 上直播";
+"remote_mic_host_not_ready" = "请先在 %1$@ 上打开语音控制页面";
+"remote_mic_mic_unavailable" = "麦克风不可用";
+"tool_take_photo" = "拍照";
+"voice_camera_switch" = "切换摄像头";

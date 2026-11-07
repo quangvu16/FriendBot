@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Stop tile: light red fill, deep red icon/label. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="#FDECEA" />
+    <corners android:radius="16dp" />
+</shape>

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="330" height="640" viewBox="-20 -20 330 640" font-family="Inter, Helvetica, Arial, sans-serif">
+<title>FriendBot Android · Data Collection</title>
+<rect x="-20" y="-20" width="330" height="640" fill="#f8fafc"/>
+<g transform="translate(0,0)">
+<rect x="-10" y="-10" width="310" height="620" rx="34" fill="#0f172a"/>
+<clipPath id="c0"><rect x="0" y="0" width="290" height="600" rx="26"/></clipPath>
+<g clip-path="url(#c0)"><rect width="290" height="600" fill="#f6f7fb"/>
+<text x="14" y="18" font-size="10" font-weight="400" fill="#374151" text-anchor="start">9:41</text>
+<circle cx="145.0" cy="12" r="4" fill="#0f172a"/>
+<text x="276" y="18" font-size="10" font-weight="400" fill="#374151" text-anchor="end">▾ ◢ ▮</text>
+<rect x="0" y="26" width="290" height="44" rx="0" fill="#ffffff"/>
+<text x="14" y="54" font-size="16" font-weight="400" fill="#111827" text-anchor="start">←</text>
+<text x="42" y="54" font-size="15" font-weight="600" fill="#111827" text-anchor="start">Data Collection</text>
+<line x1="0" y1="70" x2="290" y2="70" stroke="#e5e7eb"/>
+<rect x="0" y="72" width="290" height="230" rx="0" fill="#94a3b8"/>
+<rect x="0" y="72" width="290" height="103.5" fill="#cbd5e1"/>
+<polygon points="0,302 290,302 179.8,175.5 110.2,175.5" fill="#64748b"/>
+<line x1="145.0" y1="177.8" x2="145.0" y2="302" stroke="#f8fafc" stroke-width="3" stroke-dasharray="10 8"/>
+<rect x="10" y="118.0" width="40" height="115.0" fill="#a3b1c2"/>
+<rect x="234" y="129.5" width="46" height="103.5" fill="#a3b1c2"/>
+<rect x="10" y="84" width="92" height="22" rx="11" fill="#dc2626"/>
+<circle cx="24" cy="95" r="5" fill="#fff"/>
+<text x="60" y="99" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">REC 00:42</text>
+<rect x="174" y="84" width="104" height="22" rx="11" fill="#0f172acc"/>
+<text x="226" y="99" font-size="10" font-weight="700" fill="#fff" text-anchor="middle" font-family="Menlo, monospace">c 144,144</text>
+<rect x="0" y="306" width="290" height="294" rx="16" fill="#ffffff"/>
+<rect x="127.0" y="312" width="36" height="4" rx="2" fill="#d1d5db"/>
+<text x="16" y="340" font-size="12.5" font-weight="700" fill="#111827" text-anchor="start">Log Data</text>
+<rect x="234" y="331" width="30" height="12" rx="6" fill="#93c5fd"/>
+<circle cx="256" cy="337" r="9" fill="#0A66D6"/>
+<text x="16" y="366" font-size="10.5" font-weight="400" fill="#374151" text-anchor="start">Preview Resolution</text>
+<rect x="150" y="352" width="124" height="22" rx="6" fill="#f3f4f6"/>
+<text x="158" y="367" font-size="10" font-weight="600" fill="#111827" text-anchor="start">Medium</text>
+<text x="264" y="367" font-size="10" font-weight="400" fill="#6b7280" text-anchor="end">▾</text>
+<text x="16" y="394" font-size="10.5" font-weight="400" fill="#374151" text-anchor="start">Model Resolution</text>
+<text x="272" y="394" font-size="10.5" font-weight="600" fill="#111827" text-anchor="end">256 x 96</text>
+<text x="16" y="422" font-size="10.5" font-weight="400" fill="#374151" text-anchor="start">Model</text>
+<rect x="150" y="408" width="124" height="22" rx="6" fill="#f3f4f6"/>
+<text x="158" y="423" font-size="10" font-weight="600" fill="#111827" text-anchor="start">CIL-Mobile-Cmd</text>
+<text x="264" y="423" font-size="10" font-weight="400" fill="#6b7280" text-anchor="end">▾</text>
+<text x="16" y="450" font-size="10.5" font-weight="400" fill="#374151" text-anchor="start">Save As</text>
+<rect x="150" y="436" width="124" height="22" rx="6" fill="#f3f4f6"/>
+<text x="158" y="451" font-size="10" font-weight="600" fill="#111827" text-anchor="start">Local Storage</text>
+<text x="264" y="451" font-size="10" font-weight="400" fill="#6b7280" text-anchor="end">▾</text>
+<rect x="16" y="468" width="14" height="14" rx="3" fill="#0A66D6" stroke="#0A66D6" stroke-width="1"/>
+<text x="23" y="479" font-size="10" font-weight="800" fill="#fff" text-anchor="middle">✓</text>
+<text x="36" y="479" font-size="10" font-weight="400" fill="#374151" text-anchor="start">Preview Images</text>
+<rect x="146" y="468" width="14" height="14" rx="3" fill="#0A66D6" stroke="#0A66D6" stroke-width="1"/>
+<text x="153" y="479" font-size="10" font-weight="800" fill="#fff" text-anchor="middle">✓</text>
+<text x="166" y="479" font-size="10" font-weight="400" fill="#374151" text-anchor="start">Training Images</text>
+<rect x="16" y="494" width="120" height="26" rx="8" fill="#e0ecff"/>
+<text x="76.0" y="510.6" font-size="10" font-weight="700" fill="#0A66D6" text-anchor="middle">Sensor data ▸</text>
+<text x="16" y="540" font-size="9.5" font-weight="400" fill="#6b7280" text-anchor="start">Drive with gamepad or phone while it logs.</text>
+<circle cx="250" cy="556" r="26" fill="#dc2626" stroke="#fff" stroke-width="3"/>
+<text x="250" y="560" font-size="10" font-weight="800" fill="#fff" text-anchor="middle">STOP</text>
+</g></g>
+</svg>

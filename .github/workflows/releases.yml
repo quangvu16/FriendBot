@@ -1,0 +1,128 @@
+on:
+  release:
+    types:
+      - published # We are using published instead of created because otherwise, it would never trigger if it was first created as a draft and then published.
+
+name: Upload Android Apk to Release
+
+permissions:
+  contents: write
+
+jobs:
+  upload-apk-to-release:
+    name: Add Android Release Apk to Release Assets
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ${{ github.event.release.tag_name }}
+    defaults:
+      run:
+        working-directory: robot/android
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refs/tags/${{ env.RELEASE_TAG }}
+      - name: Verify release exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY"
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'zulu'
+          cache: 'gradle'
+          cache-dependency-path: |
+            robot/android/**/*.gradle*
+            robot/android/gradle/wrapper/gradle-wrapper.properties
+      - name: Add google-services.json
+        run: |
+          echo "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" | base64 --decode > app/google-services.json
+          echo "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" | base64 --decode > app/src/main/assets/google-services.json
+      - name: Decode Release Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > release.keystore
+      - name: Assemble Release Apk
+        id: assemble_release_apk
+        run: |
+          ./gradlew :robot:assembleRelease \
+            -Pandroid.injected.signing.store.file=$PWD/release.keystore \
+            -Pandroid.injected.signing.store.password=$KEYSTORE_PASSWORD \
+            -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
+            -Pandroid.injected.signing.key.password=$KEY_PASSWORD
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      - name: Upload release APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=$(printf '%s' "$RELEASE_TAG" | sed 's/[^-a-zA-Z0-9.]/_/g; s/^v//')
+          cp app/build/outputs/apk/release/robot-release.apk "OpenBot-${version}.apk"
+          gh release upload "$RELEASE_TAG" "OpenBot-${version}.apk" \
+            --clobber --repo "$GITHUB_REPOSITORY"
+
+  upload-controller-apk-to-release:
+    name: Add Controller Release Apk to Release Assets
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ${{ github.event.release.tag_name }}
+    defaults:
+      run:
+        working-directory: controller/flutter
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refs/tags/${{ env.RELEASE_TAG }}
+      - name: Verify release exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY"
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'zulu'
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.1'
+          channel: 'stable'
+          cache: true
+      - name: Decode Release Keystore and create key.properties
+        working-directory: controller/flutter/android
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > release.keystore
+          printf 'storePassword=%s\nkeyPassword=%s\nkeyAlias=%s\nstoreFile=%s\n' \
+            "$KEYSTORE_PASSWORD" "$KEY_PASSWORD" "$KEY_ALIAS" "$PWD/release.keystore" > key.properties
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Derive build name and number from release tag
+        id: version
+        run: |
+          # Same scheme as the robot app (app-versioning plugin): major * 10000 + minor * 100 + patch
+          if [[ ! "$RELEASE_TAG" =~ ^v?([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+            echo "::error::Release tag '$RELEASE_TAG' must look like v<major>.<minor>.<patch>"
+            exit 1
+          fi
+          major=${BASH_REMATCH[1]} minor=${BASH_REMATCH[2]} patch=${BASH_REMATCH[3]}
+          echo "build_name=${major}.${minor}.${patch}" >> "$GITHUB_OUTPUT"
+          echo "build_number=$((10#$major * 10000 + 10#$minor * 100 + 10#$patch))" >> "$GITHUB_OUTPUT"
+      - name: Build Release Apk
+        run: |
+          flutter build apk --release \
+            --target-platform android-arm,android-arm64 \
+            --build-name=${{ steps.version.outputs.build_name }} \
+            --build-number=${{ steps.version.outputs.build_number }}
+      - name: Upload release APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=$(printf '%s' "$RELEASE_TAG" | sed 's/[^-a-zA-Z0-9.]/_/g; s/^v//')
+          cp build/app/outputs/flutter-apk/app-release.apk "Controller-${version}.apk"
+          gh release upload "$RELEASE_TAG" "Controller-${version}.apk" \
+            --clobber --repo "$GITHUB_REPOSITORY"

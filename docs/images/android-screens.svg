@@ -1,0 +1,430 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1720" viewBox="0 0 1400 1720" font-family="Inter, Helvetica, Arial, sans-serif">
+<rect width="100%" height="100%" fill="#f8fafc"/>
+<text x="40" y="52" font-size="28" font-weight="700" fill="#0f172a">FriendBot Android app · the other screens</text>
+<text x="40" y="80" font-size="13" fill="#475569">Source: robot/android/app/src/main/res/layout/{fragment_main, fragment_bluetooth, fragment_robot_info, fragment_free_roam, fragment_gps_navigation, fragment_remote_mic}.xml, res/xml/root_preferences.xml</text>
+<text x="40" y="100" font-size="13" fill="#475569">Based on OpenBot (www.openbot.org). Mock-ups drawn from the layout code; example values (144, 23 m, …) are illustrations. Voice Control has its own diagram: android-app.svg.</text>
+<g transform="translate(48,130)">
+<rect x="-10" y="-10" width="310" height="620" rx="34" fill="#0f172a"/>
+<clipPath id="c0"><rect x="0" y="0" width="290" height="600" rx="26"/></clipPath>
+<g clip-path="url(#c0)"><rect width="290" height="600" fill="#f6f7fb"/>
+<text x="14" y="18" font-size="10" font-weight="400" fill="#374151" text-anchor="start">9:41</text>
+<circle cx="145.0" cy="12" r="4" fill="#0f172a"/>
+<text x="276" y="18" font-size="10" font-weight="400" fill="#374151" text-anchor="end">▾ ◢ ▮</text>
+<rect x="0" y="26" width="290" height="44" rx="0" fill="#ffffff"/>
+<text x="14" y="54" font-size="16" font-weight="700" fill="#111827" text-anchor="start">FriendBot</text>
+<line x1="0" y1="70" x2="290" y2="70" stroke="#e5e7eb"/>
+<text x="272" y="66" font-size="16" font-weight="400" fill="#6b7280" text-anchor="end">⚙</text>
+<rect x="12" y="80" width="266" height="132" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<circle cx="30" cy="102" r="6" fill="#16a34a"/>
+<text x="44" y="106" font-size="13" font-weight="700" fill="#111827" text-anchor="start">Car connected (USB)</text>
+<text x="24" y="126" font-size="10" font-weight="400" fill="#4b5563" text-anchor="start">Ready. Choose what you want to do below.</text>
+<rect x="24" y="138" width="110" height="30" rx="8" fill="#e0ecff"/>
+<text x="79.0" y="156.78" font-size="10.5" font-weight="700" fill="#0A66D6" text-anchor="middle">Connected ✓</text>
+<rect x="142" y="138" width="110" height="30" rx="8" fill="#f3f4f6"/>
+<text x="197.0" y="156.78" font-size="10.5" font-weight="700" fill="#374151" text-anchor="middle">Connection</text>
+<rect x="24" y="178" width="70" height="22" rx="11" fill="#9ca3af"/>
+<text x="59.0" y="192.42" font-size="9.5" font-weight="700" fill="#fff" text-anchor="middle">RC: –</text>
+<rect x="100" y="178" width="104" height="22" rx="11" fill="#16a34a"/>
+<text x="152.0" y="192.42" font-size="9.5" font-weight="700" fill="#fff" text-anchor="middle">Avoidance: on</text>
+<text x="14" y="236" font-size="12.5" font-weight="700" fill="#111827" text-anchor="start">What do you want to do?</text>
+<rect x="12" y="248" width="266" height="56" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<rect x="22" y="258" width="36" height="36" rx="10" fill="#ff6d00"/>
+<text x="40" y="282" font-size="16" font-weight="400" fill="#fff" text-anchor="middle">🎮</text>
+<text x="68" y="273" font-size="12.5" font-weight="700" fill="#111827" text-anchor="start">Drive</text>
+<text x="68" y="290" font-size="9" font-weight="400" fill="#6b7280" text-anchor="start">Drive the car with the phone or a game contr</text>
+<rect x="12" y="312" width="266" height="56" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<rect x="22" y="322" width="36" height="36" rx="10" fill="#26c6da"/>
+<text x="40" y="346" font-size="16" font-weight="400" fill="#fff" text-anchor="middle">📍</text>
+<text x="68" y="337" font-size="12.5" font-weight="700" fill="#111827" text-anchor="start">GPS Mission</text>
+<text x="68" y="354" font-size="9" font-weight="400" fill="#6b7280" text-anchor="start">Drive to points on a map, or return home.</text>
+<rect x="12" y="376" width="266" height="56" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<rect x="22" y="386" width="36" height="36" rx="10" fill="#4b7bff"/>
+<text x="40" y="410" font-size="16" font-weight="400" fill="#fff" text-anchor="middle">🔧</text>
+<text x="68" y="401" font-size="12.5" font-weight="700" fill="#111827" text-anchor="start">Car setup</text>
+<text x="68" y="418" font-size="9" font-weight="400" fill="#6b7280" text-anchor="start">Check sensors and obstacle avoidance.</text>
+<rect x="12" y="446" width="266" height="32" rx="8" fill="#f3f4f6"/>
+<text x="145.0" y="465.96" font-size="11" font-weight="700" fill="#374151" text-anchor="middle">More features  ▾</text>
+<circle cx="250" cy="556" r="26" fill="#dc2626" stroke="#fff" stroke-width="3"/>
+<text x="250" y="560" font-size="10" font-weight="800" fill="#fff" text-anchor="middle">STOP</text>
+</g></g>
+<circle cx="60" cy="765" r="12" fill="#0A66D6"/><text x="60" y="769" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">1</text>
+<text x="80" y="770" font-size="15" font-weight="700" fill="#0f172a">Home · car dashboard</text>
+<text x="48" y="792" font-size="12.5" fill="#475569">connection card, RC + avoidance chips,</text>
+<text x="48" y="809" font-size="12.5" fill="#475569">3 main tasks, More features, STOP</text>
+<g transform="translate(386,130)">
+<rect x="-10" y="-10" width="310" height="620" rx="34" fill="#0f172a"/>
+<clipPath id="c1"><rect x="0" y="0" width="290" height="600" rx="26"/></clipPath>
+<g clip-path="url(#c1)"><rect width="290" height="600" fill="#f6f7fb"/>
+<text x="14" y="18" font-size="10" font-weight="400" fill="#374151" text-anchor="start">9:41</text>
+<circle cx="145.0" cy="12" r="4" fill="#0f172a"/>
+<text x="276" y="18" font-size="10" font-weight="400" fill="#374151" text-anchor="end">▾ ◢ ▮</text>
+<rect x="0" y="26" width="290" height="44" rx="0" fill="#ffffff"/>
+<text x="14" y="54" font-size="16" font-weight="700" fill="#111827" text-anchor="start">FriendBot</text>
+<line x1="0" y1="70" x2="290" y2="70" stroke="#e5e7eb"/>
+<text x="14" y="86" font-size="11" font-weight="600" fill="#6b7280" text-anchor="start">More features (full list)</text>
+<text x="14" y="110" font-size="12.5" font-weight="700" fill="#111827" text-anchor="start">General</text>
+<rect x="12" y="118" width="84" height="54" rx="12" fill="#ff6d00"/>
+<circle cx="54" cy="137" r="10" fill="#fff" opacity="0.45"/>
+<text x="54" y="162" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Drive</text>
+<rect x="102" y="118" width="84" height="54" rx="12" fill="#26c6da"/>
+<circle cx="144" cy="137" r="10" fill="#fff" opacity="0.45"/>
+<text x="144" y="162" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">GPS Mission</text>
+<rect x="192" y="118" width="84" height="54" rx="12" fill="#93c47d"/>
+<circle cx="234" cy="137" r="10" fill="#fff" opacity="0.45"/>
+<text x="234" y="158" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Data</text>
+<text x="234" y="168" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Collection</text>
+<rect x="12" y="178" width="84" height="54" rx="12" fill="#7268a6"/>
+<circle cx="54" cy="197" r="10" fill="#fff" opacity="0.45"/>
+<text x="54" y="218" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Controller</text>
+<text x="54" y="228" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Mapping</text>
+<rect x="102" y="178" width="84" height="54" rx="12" fill="#4b7bff"/>
+<circle cx="144" cy="197" r="10" fill="#fff" opacity="0.45"/>
+<text x="144" y="222" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Car setup</text>
+<rect x="192" y="178" width="84" height="54" rx="12" fill="#0277bd"/>
+<circle cx="234" cy="197" r="10" fill="#fff" opacity="0.45"/>
+<text x="234" y="218" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Voice</text>
+<text x="234" y="228" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Control</text>
+<rect x="12" y="238" width="84" height="54" rx="12" fill="#26a69a"/>
+<circle cx="54" cy="257" r="10" fill="#fff" opacity="0.45"/>
+<text x="54" y="282" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Remote Mic</text>
+<text x="14" y="314" font-size="12.5" font-weight="700" fill="#111827" text-anchor="start">AI</text>
+<rect x="12" y="322" width="84" height="54" rx="12" fill="#44525f"/>
+<circle cx="54" cy="341" r="10" fill="#fff" opacity="0.45"/>
+<text x="54" y="366" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Autopilot</text>
+<rect x="102" y="322" width="84" height="54" rx="12" fill="#e7ce88"/>
+<circle cx="144" cy="341" r="10" fill="#fff" opacity="0.45"/>
+<text x="144" y="362" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Object</text>
+<text x="144" y="372" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Tracking</text>
+<rect x="192" y="322" width="84" height="54" rx="12" fill="#1bbfbf"/>
+<circle cx="234" cy="341" r="10" fill="#fff" opacity="0.45"/>
+<text x="234" y="362" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Point</text>
+<text x="234" y="372" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Goal Navigation</text>
+<rect x="12" y="382" width="84" height="54" rx="12" fill="#bc7680"/>
+<circle cx="54" cy="401" r="10" fill="#fff" opacity="0.45"/>
+<text x="54" y="422" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Model</text>
+<text x="54" y="432" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Management</text>
+<text x="14" y="458" font-size="12.5" font-weight="700" fill="#111827" text-anchor="start">Legacy</text>
+<rect x="12" y="466" width="84" height="54" rx="12" fill="#f86363"/>
+<circle cx="54" cy="485" r="10" fill="#fff" opacity="0.45"/>
+<text x="54" y="510" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Default</text>
+<circle cx="250" cy="556" r="26" fill="#dc2626" stroke="#fff" stroke-width="3"/>
+<text x="250" y="560" font-size="10" font-weight="800" fill="#fff" text-anchor="middle">STOP</text>
+</g></g>
+<circle cx="398" cy="765" r="12" fill="#0A66D6"/><text x="398" y="769" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">2</text>
+<text x="418" y="770" font-size="15" font-weight="700" fill="#0f172a">More features</text>
+<text x="386" y="792" font-size="12.5" fill="#475569">the full feature grid: General,</text>
+<text x="386" y="809" font-size="12.5" fill="#475569">AI and Legacy groups</text>
+<g transform="translate(724,130)">
+<rect x="-10" y="-10" width="310" height="620" rx="34" fill="#0f172a"/>
+<clipPath id="c2"><rect x="0" y="0" width="290" height="600" rx="26"/></clipPath>
+<g clip-path="url(#c2)"><rect width="290" height="600" fill="#f6f7fb"/>
+<text x="14" y="18" font-size="10" font-weight="400" fill="#374151" text-anchor="start">9:41</text>
+<circle cx="145.0" cy="12" r="4" fill="#0f172a"/>
+<text x="276" y="18" font-size="10" font-weight="400" fill="#374151" text-anchor="end">▾ ◢ ▮</text>
+<rect x="0" y="26" width="290" height="44" rx="0" fill="#ffffff"/>
+<text x="14" y="54" font-size="16" font-weight="400" fill="#111827" text-anchor="start">←</text>
+<text x="42" y="54" font-size="15" font-weight="600" fill="#111827" text-anchor="start">Bluetooth</text>
+<line x1="0" y1="70" x2="290" y2="70" stroke="#e5e7eb"/>
+<text x="14" y="94" font-size="12" font-weight="700" fill="#6b7280" text-anchor="start">Nearby cars</text>
+<text x="276" y="94" font-size="11" font-weight="700" fill="#0A66D6" text-anchor="end">Refresh</text>
+<rect x="12" y="106" width="266" height="50" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<text x="26" y="128" font-size="12.5" font-weight="700" fill="#111827" text-anchor="start">FriendBot: MTV</text>
+<text x="26" y="144" font-size="9" font-weight="400" fill="#6b7280" text-anchor="start">61653dc3-… · −58 dBm</text>
+<rect x="186" y="118" width="78" height="26" rx="8" fill="#16a34a"/>
+<text x="225.0" y="134.42" font-size="9.5" font-weight="700" fill="#fff" text-anchor="middle">Connected</text>
+<rect x="12" y="164" width="266" height="50" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<text x="26" y="186" font-size="12.5" font-weight="400" fill="#111827" text-anchor="start">JBL Flip 5</text>
+<rect x="186" y="176" width="78" height="26" rx="8" fill="#f3f4f6"/>
+<text x="225.0" y="192.42" font-size="9.5" font-weight="700" fill="#374151" text-anchor="middle">Connect</text>
+<rect x="12" y="222" width="266" height="50" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<text x="26" y="244" font-size="12.5" font-weight="400" fill="#111827" text-anchor="start">Unknown device</text>
+<rect x="186" y="234" width="78" height="26" rx="8" fill="#f3f4f6"/>
+<text x="225.0" y="250.42" font-size="9.5" font-weight="700" fill="#374151" text-anchor="middle">Connect</text>
+<g opacity="0.9">
+<rect x="12" y="290" width="266" height="120" rx="12" fill="#eff6ff"/>
+<text x="24" y="314" font-size="11.5" font-weight="700" fill="#0A66D6" text-anchor="start">Tip</text>
+<text x="24" y="334" font-size="10" font-weight="400" fill="#1e3a8a" text-anchor="start">The list shows only devices with the</text>
+<text x="24" y="350" font-size="10" font-weight="400" fill="#1e3a8a" text-anchor="start">OpenBot service, plus nearby others.</text>
+<text x="24" y="366" font-size="10" font-weight="400" fill="#1e3a8a" text-anchor="start">Pick “FriendBot: MTV”. The robot LCD</text>
+<text x="24" y="382" font-size="10" font-weight="400" fill="#1e3a8a" text-anchor="start">then shows  BLE  on its first line.</text>
+</g>
+<rect x="12" y="424" width="266" height="60" rx="12" fill="#f1f5f9"/>
+<text x="24" y="448" font-size="11" font-weight="700" fill="#334155" text-anchor="start">Prefer a cable?</text>
+<text x="24" y="466" font-size="10" font-weight="400" fill="#334155" text-anchor="start">Car setup → USB on (115200 baud).</text>
+</g></g>
+<circle cx="736" cy="765" r="12" fill="#0A66D6"/><text x="736" y="769" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">3</text>
+<text x="756" y="770" font-size="15" font-weight="700" fill="#0f172a">Bluetooth</text>
+<text x="724" y="792" font-size="12.5" fill="#475569">pick “FriendBot: MTV”</text>
+<text x="724" y="809" font-size="12.5" fill="#475569">(the robot's BLE name)</text>
+<g transform="translate(1062,130)">
+<rect x="-10" y="-10" width="310" height="620" rx="34" fill="#0f172a"/>
+<clipPath id="c3"><rect x="0" y="0" width="290" height="600" rx="26"/></clipPath>
+<g clip-path="url(#c3)"><rect width="290" height="600" fill="#f6f7fb"/>
+<text x="14" y="18" font-size="10" font-weight="400" fill="#374151" text-anchor="start">9:41</text>
+<circle cx="145.0" cy="12" r="4" fill="#0f172a"/>
+<text x="276" y="18" font-size="10" font-weight="400" fill="#374151" text-anchor="end">▾ ◢ ▮</text>
+<rect x="0" y="26" width="290" height="44" rx="0" fill="#ffffff"/>
+<text x="14" y="54" font-size="16" font-weight="400" fill="#111827" text-anchor="start">←</text>
+<text x="42" y="54" font-size="15" font-weight="600" fill="#111827" text-anchor="start">Car setup</text>
+<line x1="0" y1="70" x2="290" y2="70" stroke="#e5e7eb"/>
+<rect x="12" y="80" width="266" height="92" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<text x="24" y="102" font-size="11" font-weight="400" fill="#6b7280" text-anchor="start">Robot Type:</text>
+<text x="100" y="102" font-size="12" font-weight="700" fill="#111827" text-anchor="start">MTV</text>
+<text x="24" y="126" font-size="11" font-weight="600" fill="#374151" text-anchor="start">USB</text>
+<rect x="56" y="119" width="30" height="12" rx="6" fill="#93c5fd"/>
+<circle cx="78" cy="125" r="9" fill="#0A66D6"/>
+<text x="110" y="126" font-size="11" font-weight="600" fill="#374151" text-anchor="start">Bluetooth</text>
+<rect x="172" y="119" width="30" height="12" rx="6" fill="#d1d5db"/>
+<circle cx="180" cy="125" r="9" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<text x="24" y="154" font-size="10" font-weight="400" fill="#6b7280" text-anchor="start">Reports: LEDs (i) · sonar (s)</text>
+<rect x="12" y="182" width="266" height="70" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<text x="24" y="202" font-size="12" font-weight="700" fill="#111827" text-anchor="start">Readings</text>
+<text x="24" y="222" font-size="10" font-weight="400" fill="#6b7280" text-anchor="start">RC switch</text>
+<text x="264" y="222" font-size="10" font-weight="600" fill="#111827" text-anchor="end">N/A</text>
+<text x="24" y="240" font-size="10" font-weight="400" fill="#6b7280" text-anchor="start">Link to the car</text>
+<text x="264" y="240" font-size="10" font-weight="600" fill="#111827" text-anchor="end">USB cable</text>
+<rect x="12" y="262" width="266" height="150" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<text x="24" y="282" font-size="12" font-weight="700" fill="#111827" text-anchor="start">Send Commands</text>
+<text x="24" y="302" font-size="10" font-weight="400" fill="#6b7280" text-anchor="start">Motors</text>
+<rect x="24" y="308" width="76" height="26" rx="8" fill="#e0ecff"/>
+<text x="62.0" y="324.42" font-size="9.5" font-weight="700" fill="#0A66D6" text-anchor="middle">▲ Forward</text>
+<rect x="106" y="308" width="76" height="26" rx="8" fill="#e0ecff"/>
+<text x="144.0" y="324.42" font-size="9.5" font-weight="700" fill="#0A66D6" text-anchor="middle">▼ Back</text>
+<rect x="188" y="308" width="76" height="26" rx="8" fill="#dc2626"/>
+<text x="226.0" y="324.42" font-size="9.5" font-weight="700" fill="#fff" text-anchor="middle">■ Stop</text>
+<text x="24" y="354" font-size="10" font-weight="400" fill="#6b7280" text-anchor="start">Steering (spins in place on FriendBot)</text>
+<rect x="24" y="360" width="76" height="26" rx="8" fill="#f3f4f6"/>
+<text x="62.0" y="376.42" font-size="9.5" font-weight="700" fill="#374151" text-anchor="middle">◀ Left</text>
+<rect x="106" y="360" width="76" height="26" rx="8" fill="#f3f4f6"/>
+<text x="144.0" y="376.42" font-size="9.5" font-weight="700" fill="#374151" text-anchor="middle">Centre</text>
+<rect x="188" y="360" width="76" height="26" rx="8" fill="#f3f4f6"/>
+<text x="226.0" y="376.42" font-size="9.5" font-weight="700" fill="#374151" text-anchor="middle">Right ▶</text>
+<text x="24" y="402" font-size="9" font-weight="400" fill="#9ca3af" text-anchor="start">Wheels off the ground · each test ≈ 1 s</text>
+<rect x="12" y="422" width="266" height="104" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<text x="24" y="442" font-size="12" font-weight="700" fill="#111827" text-anchor="start">Object avoidance</text>
+<text x="24" y="466" font-size="10" font-weight="400" fill="#374151" text-anchor="start">Avoid margin</text>
+<rect x="110" y="460" width="120" height="4" rx="2" fill="#e5e7eb"/>
+<rect x="110" y="460" width="42.0" height="4" rx="2" fill="#0A66D6"/>
+<circle cx="152.0" cy="462" r="7" fill="#0A66D6"/>
+<text x="266" y="466" font-size="10" font-weight="600" fill="#111827" text-anchor="end">0.5 m</text>
+<text x="24" y="496" font-size="10" font-weight="400" fill="#374151" text-anchor="start">Back-up speed</text>
+<rect x="110" y="490" width="120" height="4" rx="2" fill="#e5e7eb"/>
+<rect x="110" y="490" width="24.0" height="4" rx="2" fill="#0A66D6"/>
+<circle cx="134.0" cy="492" r="7" fill="#0A66D6"/>
+<text x="266" y="496" font-size="10" font-weight="600" fill="#111827" text-anchor="end">20 %</text>
+<circle cx="250" cy="556" r="26" fill="#dc2626" stroke="#fff" stroke-width="3"/>
+<text x="250" y="560" font-size="10" font-weight="800" fill="#fff" text-anchor="middle">STOP</text>
+</g></g>
+<circle cx="1074" cy="765" r="12" fill="#0A66D6"/><text x="1074" y="769" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">4</text>
+<text x="1094" y="770" font-size="15" font-weight="700" fill="#0f172a">Car setup</text>
+<text x="1062" y="792" font-size="12.5" fill="#475569">robot type MTV, link, motor tests,</text>
+<text x="1062" y="809" font-size="12.5" fill="#475569">avoidance margin + back-up speed</text>
+<g transform="translate(48,930)">
+<rect x="-10" y="-10" width="310" height="620" rx="34" fill="#0f172a"/>
+<clipPath id="c4"><rect x="0" y="0" width="290" height="600" rx="26"/></clipPath>
+<g clip-path="url(#c4)"><rect width="290" height="600" fill="#f6f7fb"/>
+<text x="14" y="18" font-size="10" font-weight="400" fill="#374151" text-anchor="start">9:41</text>
+<circle cx="145.0" cy="12" r="4" fill="#0f172a"/>
+<text x="276" y="18" font-size="10" font-weight="400" fill="#374151" text-anchor="end">▾ ◢ ▮</text>
+<rect x="0" y="26" width="290" height="44" rx="0" fill="#ffffff"/>
+<text x="14" y="54" font-size="16" font-weight="400" fill="#111827" text-anchor="start">←</text>
+<text x="42" y="54" font-size="15" font-weight="600" fill="#111827" text-anchor="start">Drive</text>
+<line x1="0" y1="70" x2="290" y2="70" stroke="#e5e7eb"/>
+<path d="M53.0,200 A92,92 0 0 1 237.0,200" fill="none" stroke="#e5e7eb" stroke-width="14" stroke-linecap="round"/>
+<path d="M53.0,200 A92,92 0 0 1 173.52,112.60000000000001" fill="none" stroke="#0A66D6" stroke-width="14" stroke-linecap="round"/>
+<text x="145.0" y="178" font-size="30" font-weight="800" fill="#111827" text-anchor="middle">144</text>
+<text x="145.0" y="196" font-size="9.5" font-weight="400" fill="#6b7280" text-anchor="middle">left · right  144,144</text>
+<rect x="127.0" y="212" width="36" height="28" rx="6" fill="#111827"/>
+<text x="145.0" y="232" font-size="16" font-weight="800" fill="#fff" text-anchor="middle">D</text>
+<text x="24" y="102" font-size="10.5" font-weight="400" fill="#6b7280" text-anchor="start">Battery -- V</text>
+<text x="170" y="102" font-size="10" font-weight="600" fill="#374151" text-anchor="start">USB</text>
+<rect x="200" y="95" width="30" height="12" rx="6" fill="#93c5fd"/>
+<circle cx="222" cy="101" r="9" fill="#0A66D6"/>
+<text x="260" y="124" font-size="10" font-weight="700" fill="#16a34a" text-anchor="end"></text>
+<rect x="12" y="256" width="266" height="40" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<text x="24" y="280" font-size="11" font-weight="600" fill="#374151" text-anchor="start">Avoid</text>
+<rect x="66" y="273" width="30" height="12" rx="6" fill="#93c5fd"/>
+<circle cx="88" cy="279" r="9" fill="#0A66D6"/>
+<text x="110" y="280" font-size="9.5" font-weight="400" fill="#6b7280" text-anchor="start">Object avoidance on · 0.5 m</text>
+<rect x="12" y="306" width="266" height="84" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<circle cx="60" cy="332" r="18" fill="#e0ecff"/>
+<text x="60" y="338" font-size="14" font-weight="400" fill="#0A66D6" text-anchor="middle">▯</text>
+<text x="60" y="364" font-size="9.5" font-weight="400" fill="#6b7280" text-anchor="middle">Controller</text>
+<text x="60" y="379" font-size="10.5" font-weight="700" fill="#111827" text-anchor="middle">Phone</text>
+<circle cx="148" cy="332" r="18" fill="#e0ecff"/>
+<text x="148" y="338" font-size="14" font-weight="400" fill="#0A66D6" text-anchor="middle">✥</text>
+<text x="148" y="364" font-size="9.5" font-weight="400" fill="#6b7280" text-anchor="middle">Drive Mode</text>
+<text x="148" y="379" font-size="10.5" font-weight="700" fill="#111827" text-anchor="middle">Dual</text>
+<circle cx="236" cy="332" r="18" fill="#e0ecff"/>
+<text x="236" y="338" font-size="14" font-weight="400" fill="#0A66D6" text-anchor="middle">»</text>
+<text x="236" y="364" font-size="9.5" font-weight="400" fill="#6b7280" text-anchor="middle">Speed</text>
+<text x="236" y="379" font-size="10.5" font-weight="700" fill="#111827" text-anchor="middle">Normal</text>
+<rect x="38" y="402" width="44" height="96" rx="22" fill="#e2e8f0"/>
+<circle cx="60" cy="442" r="20" fill="#0A66D6"/>
+<text x="60" y="516" font-size="10" font-weight="400" fill="#6b7280" text-anchor="middle">Left</text>
+<rect x="208" y="402" width="44" height="96" rx="22" fill="#e2e8f0"/>
+<circle cx="230" cy="442" r="20" fill="#0A66D6"/>
+<text x="230" y="516" font-size="10" font-weight="400" fill="#6b7280" text-anchor="middle">Right</text>
+<text x="145.0" y="442" font-size="10" font-weight="400" fill="#6b7280" text-anchor="middle">Dual mode:</text>
+<text x="145.0" y="456" font-size="10" font-weight="400" fill="#6b7280" text-anchor="middle">one thumb per wheel</text>
+<circle cx="250" cy="556" r="26" fill="#dc2626" stroke="#fff" stroke-width="3"/>
+<text x="250" y="560" font-size="10" font-weight="800" fill="#fff" text-anchor="middle">STOP</text>
+</g></g>
+<circle cx="60" cy="1565" r="12" fill="#0A66D6"/><text x="60" y="1569" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">5</text>
+<text x="80" y="1570" font-size="15" font-weight="700" fill="#0f172a">Drive</text>
+<text x="48" y="1592" font-size="12.5" fill="#475569">manual driving: gauge, gear,</text>
+<text x="48" y="1609" font-size="12.5" fill="#475569">controller / drive mode / speed</text>
+<g transform="translate(386,930)">
+<rect x="-10" y="-10" width="310" height="620" rx="34" fill="#0f172a"/>
+<clipPath id="c5"><rect x="0" y="0" width="290" height="600" rx="26"/></clipPath>
+<g clip-path="url(#c5)"><rect width="290" height="600" fill="#f6f7fb"/>
+<text x="14" y="18" font-size="10" font-weight="400" fill="#374151" text-anchor="start">9:41</text>
+<circle cx="145.0" cy="12" r="4" fill="#0f172a"/>
+<text x="276" y="18" font-size="10" font-weight="400" fill="#374151" text-anchor="end">▾ ◢ ▮</text>
+<rect x="0" y="26" width="290" height="44" rx="0" fill="#ffffff"/>
+<text x="14" y="54" font-size="16" font-weight="400" fill="#111827" text-anchor="start">←</text>
+<text x="42" y="54" font-size="15" font-weight="600" fill="#111827" text-anchor="start">GPS Mission</text>
+<line x1="0" y1="70" x2="290" y2="70" stroke="#e5e7eb"/>
+<rect x="0" y="72" width="290" height="300" rx="0" fill="#e8efe3"/>
+<line x1="0" y1="110" x2="290" y2="90" stroke="#ffffff" stroke-width="6"/>
+<line x1="0" y1="158" x2="290" y2="142" stroke="#ffffff" stroke-width="6"/>
+<line x1="0" y1="206" x2="290" y2="194" stroke="#ffffff" stroke-width="6"/>
+<line x1="0" y1="254" x2="290" y2="246" stroke="#ffffff" stroke-width="6"/>
+<line x1="0" y1="302" x2="290" y2="298" stroke="#ffffff" stroke-width="6"/>
+<line x1="0" y1="350" x2="290" y2="350" stroke="#ffffff" stroke-width="6"/>
+<line x1="60" y1="72" x2="120" y2="372" stroke="#ffffff" stroke-width="8"/>
+<rect x="180" y="100" width="70" height="50" rx="6" fill="#cfe3c4"/>
+<polyline points="70,300 110,210 200,180 230,280" fill="none" stroke="#0A66D6" stroke-width="3" stroke-dasharray="6 4"/>
+<circle cx="70" cy="300" r="10" fill="#ffffff" stroke="#0A66D6" stroke-width="2.5"/>
+<text x="70" y="304" font-size="10" font-weight="800" fill="#0A66D6" text-anchor="middle">1</text>
+<circle cx="110" cy="210" r="10" fill="#ffffff" stroke="#0A66D6" stroke-width="2.5"/>
+<text x="110" y="214" font-size="10" font-weight="800" fill="#0A66D6" text-anchor="middle">2</text>
+<circle cx="200" cy="180" r="10" fill="#ffffff" stroke="#0A66D6" stroke-width="2.5"/>
+<text x="200" y="184" font-size="10" font-weight="800" fill="#0A66D6" text-anchor="middle">3</text>
+<circle cx="230" cy="280" r="10" fill="#ffffff" stroke="#0A66D6" stroke-width="2.5"/>
+<text x="230" y="284" font-size="10" font-weight="800" fill="#0A66D6" text-anchor="middle">4</text>
+<path d="M66,328 l8,0 l-4,-14 z" fill="#dc2626"/>
+<text x="80" y="330" font-size="9" font-weight="700" fill="#dc2626" text-anchor="start">car</text>
+<rect x="208" y="80" width="70" height="22" rx="8" fill="#ffffff"/>
+<text x="243.0" y="94.24" font-size="9" font-weight="700" fill="#374151" text-anchor="middle">Satellite</text>
+<rect x="0" y="366" width="290" height="234" rx="16" fill="#ffffff"/>
+<rect x="127.0" y="372" width="36" height="4" rx="2" fill="#d1d5db"/>
+<text x="14" y="396" font-size="12" font-weight="700" fill="#16a34a" text-anchor="start">Driving the mission</text>
+<rect x="14" y="406" width="84" height="28" rx="8" fill="#0A66D6"/>
+<text x="56.0" y="423.6" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">Pause</text>
+<rect x="104" y="406" width="84" height="28" rx="8" fill="#dc2626"/>
+<text x="146.0" y="423.6" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">Stop</text>
+<rect x="194" y="406" width="84" height="28" rx="8" fill="#7c3aed"/>
+<text x="236.0" y="423.6" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">Return home</text>
+<text x="14" y="456" font-size="9.5" font-weight="600" fill="#111827" text-anchor="start" font-family="Menlo, monospace">Dist 23 m</text>
+<text x="82" y="456" font-size="9.5" font-weight="600" fill="#111827" text-anchor="start" font-family="Menlo, monospace">Brng 41°</text>
+<text x="150" y="456" font-size="9.5" font-weight="600" fill="#111827" text-anchor="start" font-family="Menlo, monospace">Spd 0.6 m/s</text>
+<text x="218" y="456" font-size="9.5" font-weight="600" fill="#111827" text-anchor="start" font-family="Menlo, monospace">Acc 4 m</text>
+<text x="14" y="478" font-size="10" font-weight="400" fill="#6b7280" text-anchor="start">Mission: 4 waypoints • 86 m total</text>
+<rect x="14" y="488" width="49" height="22" rx="8" fill="#f3f4f6"/>
+<text x="38.5" y="501.88" font-size="8" font-weight="700" fill="#374151" text-anchor="middle">+ WP here</text>
+<rect x="67" y="488" width="49" height="22" rx="8" fill="#f3f4f6"/>
+<text x="91.5" y="501.88" font-size="8" font-weight="700" fill="#374151" text-anchor="middle">Clear</text>
+<rect x="120" y="488" width="49" height="22" rx="8" fill="#f3f4f6"/>
+<text x="144.5" y="501.88" font-size="8" font-weight="700" fill="#374151" text-anchor="middle">Save</text>
+<rect x="173" y="488" width="49" height="22" rx="8" fill="#f3f4f6"/>
+<text x="197.5" y="501.88" font-size="8" font-weight="700" fill="#374151" text-anchor="middle">.waypoints</text>
+<rect x="226" y="488" width="49" height="22" rx="8" fill="#f3f4f6"/>
+<text x="250.5" y="501.88" font-size="8" font-weight="700" fill="#374151" text-anchor="middle">KML</text>
+<text x="14" y="532" font-size="10" font-weight="400" fill="#374151" text-anchor="start" font-family="Menlo, monospace">1  10.7769, 106.7009</text>
+<text x="14" y="548" font-size="10" font-weight="400" fill="#374151" text-anchor="start" font-family="Menlo, monospace">2  10.7773, 106.7013</text>
+<circle cx="250" cy="556" r="26" fill="#dc2626" stroke="#fff" stroke-width="3"/>
+<text x="250" y="560" font-size="10" font-weight="800" fill="#fff" text-anchor="middle">STOP</text>
+</g></g>
+<circle cx="398" cy="1565" r="12" fill="#0A66D6"/><text x="398" y="1569" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">6</text>
+<text x="418" y="1570" font-size="15" font-weight="700" fill="#0f172a">GPS Mission</text>
+<text x="386" y="1592" font-size="12.5" fill="#475569">waypoints on a map, Start/Pause,</text>
+<text x="386" y="1609" font-size="12.5" fill="#475569">Stop, Return home, .waypoints/KML</text>
+<g transform="translate(724,930)">
+<rect x="-10" y="-10" width="310" height="620" rx="34" fill="#0f172a"/>
+<clipPath id="c6"><rect x="0" y="0" width="290" height="600" rx="26"/></clipPath>
+<g clip-path="url(#c6)"><rect width="290" height="600" fill="#f6f7fb"/>
+<text x="14" y="18" font-size="10" font-weight="400" fill="#374151" text-anchor="start">9:41</text>
+<circle cx="145.0" cy="12" r="4" fill="#0f172a"/>
+<text x="276" y="18" font-size="10" font-weight="400" fill="#374151" text-anchor="end">▾ ◢ ▮</text>
+<rect x="0" y="26" width="290" height="44" rx="0" fill="#ffffff"/>
+<text x="14" y="54" font-size="16" font-weight="400" fill="#111827" text-anchor="start">←</text>
+<text x="42" y="54" font-size="15" font-weight="600" fill="#111827" text-anchor="start">Remote Mic</text>
+<line x1="0" y1="70" x2="290" y2="70" stroke="#e5e7eb"/>
+<rect x="12" y="80" width="266" height="30" rx="15" fill="#dcfce7"/>
+<text x="145.0" y="100" font-size="11" font-weight="700" fill="#166534" text-anchor="middle">Live on Vu's phone</text>
+<text x="145.0" y="140" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="middle">This phone's microphone speaks to</text>
+<text x="145.0" y="156" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="middle">Xiaozhi on the phone that holds the</text>
+<text x="145.0" y="172" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="middle">robot link. Replies stay on that phone.</text>
+<circle cx="145.0" cy="290" r="78" fill="#e0ecff"/>
+<circle cx="145.0" cy="290" r="58" fill="#0A66D6"/>
+<rect x="135.0" y="264" width="20" height="34" rx="10" fill="#fff"/>
+<path d="M125.0,290 Q145.0,320 165.0,290" fill="none" stroke="#fff" stroke-width="4"/>
+<line x1="145.0" y1="306" x2="145.0" y2="320" stroke="#fff" stroke-width="4"/>
+<text x="145.0" y="402" font-size="12.5" font-weight="700" fill="#0A66D6" text-anchor="middle">Listening — tap to stop</text>
+<rect x="40" y="420" width="210" height="8" rx="4" fill="#e5e7eb"/>
+<rect x="40" y="420" width="115.50000000000001" height="8" rx="4" fill="#16a34a"/>
+<text x="145.0" y="450" font-size="9.5" font-weight="400" fill="#9ca3af" text-anchor="middle">mic level</text>
+<rect x="12" y="488" width="266" height="62" rx="12" fill="#f8fafc" stroke="#e5e7eb" stroke-width="1"/>
+<text x="24" y="510" font-size="10" font-weight="400" fill="#374151" text-anchor="start">Tap the status line to pick</text>
+<text x="24" y="526" font-size="10" font-weight="400" fill="#374151" text-anchor="start">which host phone to speak to.</text>
+<text x="24" y="542" font-size="10" font-weight="700" fill="#374151" text-anchor="start">No Xiaozhi pairing needed here.</text>
+</g></g>
+<circle cx="736" cy="1565" r="12" fill="#0A66D6"/><text x="736" y="1569" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">7</text>
+<text x="756" y="1570" font-size="15" font-weight="700" fill="#0f172a">Remote Mic</text>
+<text x="724" y="1592" font-size="12.5" fill="#475569">second phone = wireless microphone</text>
+<text x="724" y="1609" font-size="12.5" fill="#475569">for the host's Xiaozhi session</text>
+<g transform="translate(1062,930)">
+<rect x="-10" y="-10" width="310" height="620" rx="34" fill="#0f172a"/>
+<clipPath id="c7"><rect x="0" y="0" width="290" height="600" rx="26"/></clipPath>
+<g clip-path="url(#c7)"><rect width="290" height="600" fill="#f6f7fb"/>
+<text x="14" y="18" font-size="10" font-weight="400" fill="#374151" text-anchor="start">9:41</text>
+<circle cx="145.0" cy="12" r="4" fill="#0f172a"/>
+<text x="276" y="18" font-size="10" font-weight="400" fill="#374151" text-anchor="end">▾ ◢ ▮</text>
+<rect x="0" y="26" width="290" height="44" rx="0" fill="#ffffff"/>
+<text x="14" y="54" font-size="16" font-weight="400" fill="#111827" text-anchor="start">←</text>
+<text x="42" y="54" font-size="15" font-weight="600" fill="#111827" text-anchor="start">Settings</text>
+<line x1="0" y1="70" x2="290" y2="70" stroke="#e5e7eb"/>
+<text x="16" y="92" font-size="11.5" font-weight="700" fill="#0A66D6" text-anchor="start">General</text>
+<rect x="12" y="100" width="266" height="44" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<text x="24" y="120" font-size="12" font-weight="600" fill="#111827" text-anchor="start">Language</text>
+<text x="24" y="135" font-size="9" font-weight="400" fill="#6b7280" text-anchor="start">Choose the app display language</text>
+<text x="264" y="126" font-size="10.5" font-weight="400" fill="#6b7280" text-anchor="end">Tiếng Việt ›</text>
+<text x="16" y="166" font-size="11.5" font-weight="700" fill="#0A66D6" text-anchor="start">Permissions</text>
+<rect x="12" y="174" width="266" height="36" rx="10" fill="#ffffff"/>
+<text x="24" y="197" font-size="11.5" font-weight="400" fill="#111827" text-anchor="start">Camera</text>
+<rect x="232" y="187" width="30" height="12" rx="6" fill="#93c5fd"/>
+<circle cx="254" cy="193" r="9" fill="#0A66D6"/>
+<rect x="12" y="212" width="266" height="36" rx="0" fill="#ffffff"/>
+<text x="24" y="235" font-size="11.5" font-weight="400" fill="#111827" text-anchor="start">Storage</text>
+<rect x="232" y="225" width="30" height="12" rx="6" fill="#93c5fd"/>
+<circle cx="254" cy="231" r="9" fill="#0A66D6"/>
+<rect x="12" y="250" width="266" height="36" rx="0" fill="#ffffff"/>
+<text x="24" y="273" font-size="11.5" font-weight="400" fill="#111827" text-anchor="start">Location</text>
+<rect x="232" y="263" width="30" height="12" rx="6" fill="#93c5fd"/>
+<circle cx="254" cy="269" r="9" fill="#0A66D6"/>
+<rect x="12" y="288" width="266" height="36" rx="0" fill="#ffffff"/>
+<text x="24" y="311" font-size="11.5" font-weight="400" fill="#111827" text-anchor="start">Microphone</text>
+<rect x="232" y="301" width="30" height="12" rx="6" fill="#93c5fd"/>
+<circle cx="254" cy="307" r="9" fill="#0A66D6"/>
+<rect x="12" y="326" width="266" height="36" rx="10" fill="#ffffff"/>
+<text x="24" y="349" font-size="11.5" font-weight="400" fill="#111827" text-anchor="start">Nearby Devices</text>
+<rect x="232" y="339" width="30" height="12" rx="6" fill="#93c5fd"/>
+<circle cx="254" cy="345" r="9" fill="#0A66D6"/>
+<text x="16" y="380" font-size="11.5" font-weight="700" fill="#0A66D6" text-anchor="start">Video Streaming</text>
+<rect x="12" y="388" width="266" height="40" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<text x="24" y="413" font-size="11.5" font-weight="400" fill="#111827" text-anchor="start">Stream Mode</text>
+<text x="264" y="413" font-size="10.5" font-weight="400" fill="#6b7280" text-anchor="end">WebRTC ›</text>
+<text x="16" y="450" font-size="11.5" font-weight="700" fill="#0A66D6" text-anchor="start">Connection Type</text>
+<rect x="12" y="458" width="266" height="40" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<text x="24" y="483" font-size="11.5" font-weight="400" fill="#111827" text-anchor="start">Connectivity Mode</text>
+<text x="264" y="483" font-size="10.5" font-weight="400" fill="#6b7280" text-anchor="end">Local ›</text>
+<text x="16" y="520" font-size="11.5" font-weight="700" fill="#0A66D6" text-anchor="start">Web Controller</text>
+<rect x="12" y="528" width="266" height="40" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<text x="24" y="553" font-size="11.5" font-weight="400" fill="#111827" text-anchor="start">Web Signaling Server</text>
+</g></g>
+<circle cx="1074" cy="1565" r="12" fill="#0A66D6"/><text x="1074" y="1569" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">8</text>
+<text x="1094" y="1570" font-size="15" font-weight="700" fill="#0f172a">Settings</text>
+<text x="1062" y="1592" font-size="12.5" fill="#475569">language, permissions, streaming,</text>
+<text x="1062" y="1609" font-size="12.5" fill="#475569">connection type, web controller</text>
+</svg>

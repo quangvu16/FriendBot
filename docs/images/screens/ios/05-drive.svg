@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="330" height="640" viewBox="-20 -20 330 640" font-family="Inter, Helvetica, Arial, sans-serif">
+<title>FriendBot iOS · Drive</title>
+<rect x="-20" y="-20" width="330" height="640" fill="#f8fafc"/>
+<rect x="-10" y="-10" width="310" height="620" rx="48" fill="#0f172a"/>
+<clipPath id="cs"><rect x="0" y="0" width="290" height="600" rx="40"/></clipPath>
+<g clip-path="url(#cs)"><rect width="290" height="600" fill="#f2f2f7"/>
+<text x="22" y="24" font-size="11.5" font-weight="700" fill="#111827" text-anchor="start">9:41</text>
+<rect x="99.0" y="9" width="92" height="22" rx="11" fill="#0f172a"/>
+<text x="12" y="64" font-size="13" font-weight="400" fill="#0A66D6" text-anchor="start">‹ Back</text>
+<text x="145.0" y="64" font-size="13.5" font-weight="700" fill="#111827" text-anchor="middle">Drive</text>
+<path d="M53.0,202 A92,92 0 0 1 237.0,202" fill="none" stroke="#e5e7eb" stroke-width="14" stroke-linecap="round"/>
+<path d="M53.0,202 A92,92 0 0 1 173.52,114.60000000000001" fill="none" stroke="#0A66D6" stroke-width="14" stroke-linecap="round"/>
+<text x="145.0" y="180" font-size="30" font-weight="800" fill="#111827" text-anchor="middle">144</text>
+<text x="145.0" y="198" font-size="9.5" font-weight="400" fill="#6b7280" text-anchor="middle">left · right  144,144</text>
+<rect x="127.0" y="214" width="36" height="28" rx="6" fill="#111827"/>
+<text x="145.0" y="234" font-size="16" font-weight="800" fill="#fff" text-anchor="middle">D</text>
+<text x="24" y="104" font-size="10.5" font-weight="400" fill="#6b7280" text-anchor="start">Battery -- V</text>
+<text x="266" y="104" font-size="10" font-weight="700" fill="#16a34a" text-anchor="end">BLE ●</text>
+<rect x="12" y="258" width="266" height="40" rx="14" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<text x="24" y="282" font-size="11" font-weight="600" fill="#374151" text-anchor="start">Avoid</text>
+<rect x="64" y="270" width="34" height="20" rx="10" fill="#16a34a"/>
+<circle cx="88" cy="280" r="8" fill="#fff"/>
+<text x="110" y="282" font-size="9.5" font-weight="400" fill="#6b7280" text-anchor="start">Object avoidance on · 0.5 m</text>
+<rect x="12" y="308" width="266" height="84" rx="14" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<circle cx="60" cy="334" r="18" fill="#e0ecff"/>
+<text x="60" y="340" font-size="14" font-weight="400" fill="#0A66D6" text-anchor="middle">▯</text>
+<text x="60" y="366" font-size="9.5" font-weight="400" fill="#6b7280" text-anchor="middle">Controller</text>
+<text x="60" y="381" font-size="10.5" font-weight="700" fill="#111827" text-anchor="middle">Phone</text>
+<circle cx="148" cy="334" r="18" fill="#e0ecff"/>
+<text x="148" y="340" font-size="14" font-weight="400" fill="#0A66D6" text-anchor="middle">✥</text>
+<text x="148" y="366" font-size="9.5" font-weight="400" fill="#6b7280" text-anchor="middle">Drive Mode</text>
+<text x="148" y="381" font-size="10.5" font-weight="700" fill="#111827" text-anchor="middle">Dual</text>
+<circle cx="236" cy="334" r="18" fill="#e0ecff"/>
+<text x="236" y="340" font-size="14" font-weight="400" fill="#0A66D6" text-anchor="middle">»</text>
+<text x="236" y="366" font-size="9.5" font-weight="400" fill="#6b7280" text-anchor="middle">Speed</text>
+<text x="236" y="381" font-size="10.5" font-weight="700" fill="#111827" text-anchor="middle">Normal</text>
+<rect x="38" y="404" width="44" height="96" rx="22" fill="#e2e8f0"/>
+<circle cx="60" cy="444" r="20" fill="#0A66D6"/>
+<text x="60" y="518" font-size="10" font-weight="400" fill="#6b7280" text-anchor="middle">Left</text>
+<rect x="208" y="404" width="44" height="96" rx="22" fill="#e2e8f0"/>
+<circle cx="230" cy="444" r="20" fill="#0A66D6"/>
+<text x="230" y="518" font-size="10" font-weight="400" fill="#6b7280" text-anchor="middle">Right</text>
+<text x="145.0" y="444" font-size="10" font-weight="400" fill="#6b7280" text-anchor="middle">Dual mode:</text>
+<text x="145.0" y="458" font-size="10" font-weight="400" fill="#6b7280" text-anchor="middle">one thumb per wheel</text>
+<circle cx="250" cy="556" r="26" fill="#dc2626" stroke="#fff" stroke-width="3"/>
+<text x="250" y="560" font-size="10" font-weight="800" fill="#fff" text-anchor="middle">STOP</text>
+<rect x="85.0" y="588" width="120" height="4" rx="2" fill="#0f172a"/>
+</g>
+</svg>

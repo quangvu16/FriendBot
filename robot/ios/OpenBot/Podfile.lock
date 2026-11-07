@@ -1,0 +1,127 @@
+PODS:
+  - AppAuth (3.0.0):
+    - AppAuth/Core (= 3.0.0)
+    - AppAuth/ExternalUserAgent (= 3.0.0)
+  - AppAuth/Core (3.0.0)
+  - AppAuth/ExternalUserAgent (3.0.0):
+    - AppAuth/Core
+  - AppCheckCore (11.3.2):
+    - GoogleUtilities/Environment (~> 8.0)
+    - GoogleUtilities/UserDefaults (~> 8.0)
+    - PromisesObjC (~> 2.4)
+    - PromisesSwift (~> 2.4)
+    - RecaptchaInterop (~> 101.0)
+  - DropDown (2.3.13)
+  - GoogleAPIClientForREST/Core (5.5.0):
+    - GTMSessionFetcher/Full (< 6.0, >= 1.6.1)
+  - GoogleAPIClientForREST/Drive (5.5.0):
+    - GoogleAPIClientForREST/Core
+    - GTMSessionFetcher/Full (< 6.0, >= 1.6.1)
+  - GoogleSignIn (10.1.0):
+    - AppAuth (~> 3.0)
+    - AppCheckCore (< 13.0, >= 11.0)
+    - GTMAppAuth (~> 6.0)
+    - GTMSessionFetcher/Core (< 6.0, >= 3.3)
+  - GoogleSignInSwiftSupport (10.1.0):
+    - GoogleSignIn (~> 10.1)
+  - GoogleUtilities/Environment (8.1.5):
+    - GoogleUtilities/Privacy
+  - GoogleUtilities/Logger (8.1.5):
+    - GoogleUtilities/Environment
+    - GoogleUtilities/Privacy
+  - GoogleUtilities/Privacy (8.1.5)
+  - GoogleUtilities/UserDefaults (8.1.5):
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Privacy
+  - GoogleWebRTC (1.1.32000)
+  - GTMAppAuth (6.0.0):
+    - AppAuth/Core (~> 3.0)
+    - GTMSessionFetcher/Core (< 6.0, >= 3.3)
+  - GTMSessionFetcher/Core (5.3.1)
+  - GTMSessionFetcher/Full (5.3.1):
+    - GTMSessionFetcher/Core
+  - libopus (1.1):
+    - libopus/float (= 1.1)
+  - libopus/float (1.1)
+  - PromisesObjC (2.4.1)
+  - PromisesSwift (2.4.1):
+    - PromisesObjC (= 2.4.1)
+  - RecaptchaInterop (101.0.0)
+  - Starscream (3.0.6)
+  - TensorFlowLiteC (0.0.1-nightly.20250619):
+    - TensorFlowLiteC/Core (= 0.0.1-nightly.20250619)
+  - TensorFlowLiteC/Core (0.0.1-nightly.20250619)
+  - TensorFlowLiteC/CoreML (0.0.1-nightly.20250619):
+    - TensorFlowLiteC/Core
+  - TensorFlowLiteC/Metal (0.0.1-nightly.20250619):
+    - TensorFlowLiteC/Core
+  - TensorFlowLiteSwift/Core (0.0.1-nightly.20250619):
+    - TensorFlowLiteC (= 0.0.1-nightly.20250619)
+    - TensorFlowLiteSwift/Privacy (= 0.0.1-nightly.20250619)
+  - TensorFlowLiteSwift/CoreML (0.0.1-nightly.20250619):
+    - TensorFlowLiteC/CoreML (= 0.0.1-nightly.20250619)
+    - TensorFlowLiteSwift/Core (= 0.0.1-nightly.20250619)
+    - TensorFlowLiteSwift/Privacy (= 0.0.1-nightly.20250619)
+  - TensorFlowLiteSwift/Metal (0.0.1-nightly.20250619):
+    - TensorFlowLiteC/Metal (= 0.0.1-nightly.20250619)
+    - TensorFlowLiteSwift/Core (= 0.0.1-nightly.20250619)
+    - TensorFlowLiteSwift/Privacy (= 0.0.1-nightly.20250619)
+  - TensorFlowLiteSwift/Privacy (0.0.1-nightly.20250619)
+  - ZIPFoundation (0.9.20)
+
+DEPENDENCIES:
+  - DropDown
+  - GoogleAPIClientForREST/Drive
+  - GoogleSignIn
+  - GoogleSignInSwiftSupport
+  - GoogleWebRTC
+  - libopus (~> 1.1)
+  - Starscream (~> 3.0.1)
+  - TensorFlowLiteSwift/CoreML (~> 0.0.1-nightly)
+  - TensorFlowLiteSwift/Metal (~> 0.0.1-nightly)
+  - ZIPFoundation (~> 0.9)
+
+SPEC REPOS:
+  trunk:
+    - AppAuth
+    - AppCheckCore
+    - DropDown
+    - GoogleAPIClientForREST
+    - GoogleSignIn
+    - GoogleSignInSwiftSupport
+    - GoogleUtilities
+    - GoogleWebRTC
+    - GTMAppAuth
+    - GTMSessionFetcher
+    - libopus
+    - PromisesObjC
+    - PromisesSwift
+    - RecaptchaInterop
+    - Starscream
+    - TensorFlowLiteC
+    - TensorFlowLiteSwift
+    - ZIPFoundation
+
+SPEC CHECKSUMS:
+  AppAuth: 5dec4b6a833eb0342b26bacbc5f3af694f71274a
+  AppCheckCore: be8fce5469f68d7f6a29aa94b25f097409ff7fdc
+  DropDown: 8a2116376c1981888557f72ec2ffc9a5e0e456ec
+  GoogleAPIClientForREST: c7a4398549da0ff33f2a8591eb29c3d323bc1391
+  GoogleSignIn: 52f0c3c702ae6ff72fcbcf695a9f26c52f31dc4b
+  GoogleSignInSwiftSupport: 8baae3cecc51c6f1fc4a114bc214a384c95167b1
+  GoogleUtilities: 7dc09b3fa9ecb5c2298b952313d14628b61b9da3
+  GoogleWebRTC: 4d261187b30512efdb711d21fa961a6adf138717
+  GTMAppAuth: 66e839a30bb63acb109b8986a0c3f642d56d48fd
+  GTMSessionFetcher: a6d2b2aa203485893d4511ff64642dc811f7c09f
+  libopus: ad5f060dcb8f30f139777244d70f9111f1c80863
+  PromisesObjC: 752c3227f599e3467650e47ea36f433eeb10c273
+  PromisesSwift: 217dea0fd5d2ad65222a109c48698add13cc1c5b
+  RecaptchaInterop: 11e0b637842dfb48308d242afc3f448062325aba
+  Starscream: ef3ece99d765eeccb67de105bfa143f929026cf5
+  TensorFlowLiteC: 215ef57653dd0fa09a474e7d94d79ae64a870b28
+  TensorFlowLiteSwift: 6de8da348de331778167a0f751ad74c41d8b0554
+  ZIPFoundation: dfd3d681c4053ff7e2f7350bc4e53b5dba3f5351
+
+PODFILE CHECKSUM: 49fae1b9b01755eb428bdef8df7535b911729195
+
+COCOAPODS: 1.17.0

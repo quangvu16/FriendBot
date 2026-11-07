@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="830" viewBox="0 0 1400 830" font-family="Inter, Helvetica, Arial, sans-serif">
+<rect width="100%" height="100%" fill="#f8fafc"/>
+<text x="40" y="52" font-size="28" font-weight="700" fill="#0f172a">FriendBot · Follow a Coloured Object (Android + iOS)</text>
+<text x="40" y="80" font-size="13" fill="#475569">Source: Android: vision/FollowColourFragment.java · iOS: Controllers/Vision/FollowColourController.swift</text>
+<text x="40" y="100" font-size="13" fill="#475569">FriendBot page based on Kirstin813/L4-Individual-Project (src/objectTracking). Mock-ups drawn from the layout code; values shown are examples.</text>
+<g transform="translate(50,150)">
+<rect x="-10" y="-10" width="310" height="620" rx="34" fill="#0f172a"/>
+<clipPath id="c0"><rect x="0" y="0" width="290" height="600" rx="26"/></clipPath>
+<g clip-path="url(#c0)"><rect width="290" height="600" fill="#f6f7fb"/>
+<text x="14" y="18" font-size="10" font-weight="400" fill="#374151" text-anchor="start">9:41</text>
+<circle cx="145.0" cy="12" r="4" fill="#0f172a"/>
+<text x="276" y="18" font-size="10" font-weight="400" fill="#374151" text-anchor="end">▾ ◢ ▮</text>
+<rect x="0" y="26" width="290" height="44" rx="0" fill="#ffffff"/>
+<text x="14" y="54" font-size="16" font-weight="400" fill="#111827" text-anchor="start">←</text>
+<text x="42" y="54" font-size="15" font-weight="600" fill="#111827" text-anchor="start">Follow a Coloured Object</text>
+<line x1="0" y1="70" x2="290" y2="70" stroke="#e5e7eb"/>
+<rect x="0" y="72" width="290" height="424" rx="0" fill="#94a3b8"/>
+<rect x="0" y="72" width="290" height="190.8" fill="#cbd5e1"/>
+<polygon points="0,496 290,496 179.8,262.8 110.2,262.8" fill="#64748b"/>
+<line x1="145.0" y1="267.04" x2="145.0" y2="496" stroke="#f8fafc" stroke-width="3" stroke-dasharray="10 8"/>
+<rect x="10" y="156.8" width="40" height="212.0" fill="#a3b1c2"/>
+<rect x="234" y="178.0" width="46" height="190.8" fill="#a3b1c2"/>
+<circle cx="151.0" cy="270" r="34" fill="#e11d48"/>
+<circle cx="140.0" cy="258" r="9" fill="#fb7185"/>
+<rect x="111.0" y="230" width="80" height="80" fill="none" stroke="#22c55e" stroke-width="4" rx="4"/>
+<rect x="238" y="82" width="40" height="40" rx="8" fill="#ffffff"/>
+<rect x="242" y="86" width="32" height="32" rx="6" fill="#e11d48"/>
+<text x="258" y="136" font-size="9" font-weight="700" fill="#ffffff" text-anchor="middle">target</text>
+<line x1="96.66666666666666" y1="72" x2="96.66666666666666" y2="496" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.85"/>
+<line x1="193.33333333333331" y1="72" x2="193.33333333333331" y2="496" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.85"/>
+<rect x="8" y="80" width="158.8" height="24" rx="6" fill="#00000099"/>
+<text x="16" y="96" font-size="11" font-weight="700" fill="#ffffff" text-anchor="start">▲ Following the colour</text>
+<rect x="0" y="488" width="290" height="112" rx="16" fill="#1f2937"/>
+<text x="16" y="518" font-size="12.5" font-weight="700" fill="#ffffff" text-anchor="start">Auto</text>
+<rect x="58" y="511" width="30" height="12" rx="6" fill="#93c5fd"/>
+<circle cx="80" cy="517" r="9" fill="#0A66D6"/>
+<circle cx="140" cy="514" r="15" fill="#374151"/>
+<text x="140" y="519" font-size="14" font-weight="800" fill="#ffffff" text-anchor="middle">»</text>
+<circle cx="178" cy="514" r="15" fill="#374151"/>
+<text x="178" y="519" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">⟲</text>
+<rect x="202" y="500" width="78" height="28" rx="8" fill="#ffffff33"/>
+<text x="241" y="518" font-size="10" font-weight="700" fill="#ffffff" text-anchor="middle">How to use</text>
+<text x="16" y="558" font-size="11" font-weight="400" fill="#e5e7eb" text-anchor="start">Colour tolerance</text>
+<rect x="146" y="542" width="28" height="24" rx="6" fill="#374151"/>
+<text x="160" y="559" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">−</text>
+<text x="196" y="559" font-size="12" font-weight="800" fill="#ffffff" text-anchor="middle">15</text>
+<rect x="218" y="542" width="28" height="24" rx="6" fill="#374151"/>
+<text x="232" y="559" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">+</text>
+<text x="16" y="582" font-size="10.5" font-weight="400" fill="#9ca3af" text-anchor="start" font-family="Menlo, monospace">left 192, right 192</text>
+</g></g>
+<text x="195.0" y="792" text-anchor="middle" font-size="15" font-weight="700" fill="#0f172a">Android</text>
+<g transform="translate(390,150)">
+<rect x="-10" y="-10" width="310" height="620" rx="48" fill="#0f172a"/>
+<clipPath id="c1"><rect x="0" y="0" width="290" height="600" rx="40"/></clipPath>
+<g clip-path="url(#c1)"><rect width="290" height="600" fill="#f2f2f7"/>
+<text x="22" y="24" font-size="11.5" font-weight="700" fill="#111827" text-anchor="start">9:41</text>
+<rect x="99.0" y="9" width="92" height="22" rx="11" fill="#0f172a"/>
+<text x="12" y="64" font-size="13" font-weight="400" fill="#0A66D6" text-anchor="start">‹ Back</text>
+<text x="145.0" y="64" font-size="13.5" font-weight="700" fill="#111827" text-anchor="middle">Follow a Coloured Object</text>
+<rect x="0" y="74" width="290" height="422" rx="0" fill="#94a3b8"/>
+<rect x="0" y="74" width="290" height="189.9" fill="#cbd5e1"/>
+<polygon points="0,496 290,496 179.8,263.9 110.2,263.9" fill="#64748b"/>
+<line x1="145.0" y1="268.12" x2="145.0" y2="496" stroke="#f8fafc" stroke-width="3" stroke-dasharray="10 8"/>
+<rect x="10" y="158.4" width="40" height="211.0" fill="#a3b1c2"/>
+<rect x="234" y="179.5" width="46" height="189.9" fill="#a3b1c2"/>
+<circle cx="151.0" cy="272" r="34" fill="#e11d48"/>
+<circle cx="140.0" cy="260" r="9" fill="#fb7185"/>
+<rect x="111.0" y="232" width="80" height="80" fill="none" stroke="#22c55e" stroke-width="4" rx="4"/>
+<rect x="238" y="84" width="40" height="40" rx="8" fill="#ffffff"/>
+<rect x="242" y="88" width="32" height="32" rx="6" fill="#e11d48"/>
+<text x="258" y="138" font-size="9" font-weight="700" fill="#ffffff" text-anchor="middle">target</text>
+<line x1="96.66666666666666" y1="74" x2="96.66666666666666" y2="496" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.85"/>
+<line x1="193.33333333333331" y1="74" x2="193.33333333333331" y2="496" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.85"/>
+<rect x="8" y="82" width="158.8" height="24" rx="6" fill="#00000099"/>
+<text x="16" y="98" font-size="11" font-weight="700" fill="#ffffff" text-anchor="start">▲ Following the colour</text>
+<rect x="0" y="488" width="290" height="112" rx="16" fill="#1f2937"/>
+<text x="16" y="518" font-size="12.5" font-weight="700" fill="#ffffff" text-anchor="start">Auto</text>
+<rect x="56" y="506" width="34" height="20" rx="10" fill="#16a34a"/>
+<circle cx="80" cy="516" r="8" fill="#fff"/>
+<circle cx="140" cy="514" r="15" fill="#374151"/>
+<text x="140" y="519" font-size="14" font-weight="800" fill="#ffffff" text-anchor="middle">»</text>
+<circle cx="178" cy="514" r="15" fill="#374151"/>
+<text x="178" y="519" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">⟲</text>
+<rect x="202" y="500" width="78" height="28" rx="8" fill="#ffffff33"/>
+<text x="241" y="518" font-size="10" font-weight="700" fill="#ffffff" text-anchor="middle">How to use</text>
+<text x="16" y="558" font-size="11" font-weight="400" fill="#e5e7eb" text-anchor="start">Colour tolerance</text>
+<rect x="146" y="542" width="28" height="24" rx="6" fill="#374151"/>
+<text x="160" y="559" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">−</text>
+<text x="196" y="559" font-size="12" font-weight="800" fill="#ffffff" text-anchor="middle">15</text>
+<rect x="218" y="542" width="28" height="24" rx="6" fill="#374151"/>
+<text x="232" y="559" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">+</text>
+<text x="16" y="582" font-size="10.5" font-weight="400" fill="#9ca3af" text-anchor="start" font-family="Menlo, monospace">left 192, right 192</text>
+<rect x="85.0" y="588" width="120" height="4" rx="2" fill="#0f172a"/>
+</g></g>
+<text x="535.0" y="792" text-anchor="middle" font-size="15" font-weight="700" fill="#0f172a">iOS</text>
+<rect x="720" y="130" width="640" height="97" rx="12" fill="#ffffff" stroke="#e2e8f0"/>
+<rect x="720" y="130" width="6" height="97" rx="3" fill="#0A66D6"/>
+<text x="740" y="156" font-size="15" font-weight="700" fill="#0f172a">What it does</text>
+<text x="740" y="178" font-size="12.5" fill="#334155">The robot follows an object of a chosen colour with the phone camera.</text>
+<text x="740" y="197" font-size="12.5" fill="#334155">Object in the middle third → forward; left third → turn left; right third → turn right;</text>
+<text x="740" y="216" font-size="12.5" fill="#334155">colour not seen → stop. A red, blue, green or yellow object works best.</text>
+<rect x="720" y="241" width="640" height="97" rx="12" fill="#ffffff" stroke="#e2e8f0"/>
+<rect x="720" y="241" width="6" height="97" rx="3" fill="#16a34a"/>
+<text x="740" y="267" font-size="15" font-weight="700" fill="#0f172a">How to use it</text>
+<text x="740" y="289" font-size="12.5" fill="#334155">1. Connect the robot, mount the phone (camera forward), open Vision Modes → Follow</text>
+<text x="740" y="308" font-size="12.5" fill="#334155">   a Coloured Object.  2. Tap the object in the view: the swatch shows the colour.</text>
+<text x="740" y="327" font-size="12.5" fill="#334155">3. Press Auto, move the object — the robot follows.  4. Auto off to end.</text>
+<rect x="720" y="352" width="640" height="116" rx="12" fill="#ffffff" stroke="#e2e8f0"/>
+<rect x="720" y="352" width="6" height="116" rx="3" fill="#ca8a04"/>
+<text x="740" y="378" font-size="15" font-weight="700" fill="#0f172a">Rules in the code</text>
+<text x="740" y="400" font-size="12.5" fill="#334155">A pixel matches when R, G and B are each within the tolerance of the picked colour:</text>
+<text x="740" y="419" font-size="12.5" fill="#334155">5–60, step 5, default 15. Every 3rd pixel is checked; ≥ 8 matches = found, and the</text>
+<text x="740" y="438" font-size="12.5" fill="#334155">centre of all matches decides the third (the original used only the first match).</text>
+<text x="740" y="457" font-size="12.5" fill="#334155">Commands: turn = (−1, 1) / (1, −1), forward = (1, 1), × speed (» button: 128 / 192 / 255).</text>
+<rect x="720" y="482" width="640" height="78" rx="12" fill="#ffffff" stroke="#e2e8f0"/>
+<rect x="720" y="482" width="6" height="78" rx="3" fill="#7c3aed"/>
+<text x="740" y="508" font-size="15" font-weight="700" fill="#0f172a">Example</text>
+<text x="740" y="530" font-size="12.5" fill="#334155">Red ball in the middle third → “▲” → c192,192 at Normal speed.</text>
+<text x="740" y="549" font-size="12.5" fill="#334155">Car ignores the ball → raise tolerance to 25; follows the red sofa too → lower it to 10.</text>
+</svg>

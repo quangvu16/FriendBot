@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GPS Mission, in the same design as Object Tracking: the map fills the screen and everything
+     else lives in one bottom sheet with a drag handle. The sheet header (status, connection,
+     Start / Stop / Return home) always shows; the data panel below it can be hidden by dragging
+     the sheet down, tapping the handle, or tapping "Hide data". -->
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".gpsNav.GpsNavigationFragment">
+
+    <org.openbot.app.robot.gpsNav.MissionMapView
+        android:id="@+id/map_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FF101820" />
+
+    <!-- Mission Planner's map provider switch, a map control, so it stays on the map. Top-left:
+         the top-right corner is the STOP button's on driving screens. -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/map_type_button"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_gravity="top|start"
+        android:layout_margin="12dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:minWidth="0dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:contentDescription="@string/gps_nav_map_type_satellite"
+        android:tooltipText="@string/gps_nav_map_type_satellite"
+        app:backgroundTint="#E6101820"
+        app:cornerRadius="20dp"
+        app:iconTint="@android:color/white"
+        app:strokeColor="@android:color/white"
+        app:icon="@drawable/ic_btn_layers"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:iconSize="24dp" />
+
+    <LinearLayout
+        android:id="@+id/mission_bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bottom_sheet_bg"
+        android:orientation="vertical"
+        app:behavior_hideable="false"
+        app:behavior_peekHeight="140dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <!-- Header: always visible, even with the data panel hidden. -->
+        <LinearLayout
+            android:id="@+id/sheet_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="12dp">
+
+            <!-- Same handle as Object Tracking; the whole strip around it is the tap target. -->
+            <FrameLayout
+                android:id="@+id/sheet_handle_area"
+                android:layout_width="match_parent"
+                android:layout_height="28dp"
+                android:clickable="true"
+                android:contentDescription="@string/gps_panel_toggle"
+                android:focusable="true">
+
+                <View
+                    android:id="@+id/sheet_handle"
+                    android:layout_width="48dp"
+                    android:layout_height="5dp"
+                    android:layout_gravity="center"
+                    android:alpha="0.5"
+                    android:background="@drawable/button_item_background_black" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/hud_status"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:maxLines="2"
+                    android:text="@string/gps_nav_status_idle"
+                    android:textColor="@color/black_text"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="Ready — add waypoints or tap the map" />
+
+                <ImageView
+                    android:id="@+id/connection_icon"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginStart="8dp"
+                    android:contentDescription="@string/gps_panel_connection"
+                    android:src="@drawable/ic_usb" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/toggle_panel_button"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="4dp"
+                    android:minWidth="0dp"
+                    android:contentDescription="@string/gps_panel_hide"
+                    android:tooltipText="@string/gps_panel_hide"
+                    android:textColor="@color/openBotBlue"
+                    app:icon="@drawable/ic_btn_expand_more"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp"
+                    app:iconSize="24dp"
+                    app:iconTint="@color/openBotBlue"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp" />
+            </LinearLayout>
+
+            <!-- The three actions a mission needs while it runs. -->
+            <LinearLayout
+                android:id="@+id/mission_controls"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/start_pause_button"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/gps_nav_start"
+                    android:tooltipText="@string/gps_nav_start"
+                    app:backgroundTint="@color/openBotBlue"
+                    app:cornerRadius="12dp"
+                    app:icon="@drawable/ic_btn_play_arrow"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp"
+                    app:iconSize="32dp"
+                    android:minWidth="48dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/stop_button"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/gps_nav_stop"
+                    android:tooltipText="@string/gps_nav_stop"
+                    app:cornerRadius="12dp"
+                    app:icon="@drawable/ic_btn_stop"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp"
+                    app:iconSize="24dp"
+                    android:minWidth="48dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/rtl_button"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1.2"
+                    android:contentDescription="@string/gps_nav_rtl"
+                    android:tooltipText="@string/gps_nav_rtl"
+                    app:cornerRadius="12dp"
+                    app:icon="@drawable/ic_btn_home"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp"
+                    app:iconSize="24dp"
+                    android:minWidth="48dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Data panel: hidden when the sheet is collapsed. -->
+        <LinearLayout
+            android:id="@+id/data_panel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#1F000000" />
+
+            <!-- Readouts: distance and bearing to the next waypoint, speed, GPS accuracy. -->
+            <LinearLayout
+                android:id="@+id/hud_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/hud_distance"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/gps_nav_distance_placeholder"
+                    android:textColor="@color/black_text"
+                    android:textSize="14sp"
+                    tools:text="Dist  -- m" />
+
+                <TextView
+                    android:id="@+id/hud_bearing"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/gps_nav_bearing_placeholder"
+                    android:textColor="@color/black_text"
+                    android:textSize="14sp"
+                    tools:text="Brng  --°" />
+
+                <TextView
+                    android:id="@+id/hud_speed"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/gps_nav_speed_placeholder"
+                    android:textColor="@color/black_text"
+                    android:textSize="14sp"
+                    tools:text="Spd  -- m/s" />
+
+                <TextView
+                    android:id="@+id/hud_accuracy"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/gps_nav_accuracy_placeholder"
+                    android:textColor="@color/black_text"
+                    android:textSize="14sp"
+                    tools:text="Acc  -- m" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/mission_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/gps_nav_mission_empty"
+                android:textColor="#FF5F6368"
+                android:textSize="13sp"
+                tools:text="Mission: 0 waypoints" />
+
+            <!-- Quick-disable for object avoidance, same control as Object Tracking. -->
+            <include
+                android:id="@+id/object_avoidance"
+                layout="@layout/object_avoidance_control"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp" />
+
+            <!-- SensorServer WebSocket link: share this phone's sensors, or use another phone's.
+                 See sensor_link_control.xml. -->
+            <include
+                android:id="@+id/sensor_link"
+                layout="@layout/sensor_link_control"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!-- Planning tools: used before a mission, not during it. -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/add_waypoint_button"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:layout_marginEnd="8dp"
+                        android:contentDescription="@string/gps_nav_add_wp_here"
+                        android:tooltipText="@string/gps_nav_add_wp_here"
+                        app:icon="@drawable/ic_btn_add_location_alt"
+                        app:iconGravity="textStart"
+                        app:iconPadding="0dp"
+                        app:iconSize="24dp"
+                        android:minWidth="48dp"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/clear_button"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:layout_marginEnd="8dp"
+                        android:contentDescription="@string/gps_nav_clear"
+                        android:tooltipText="@string/gps_nav_clear"
+                        app:icon="@drawable/ic_btn_delete"
+                        app:iconGravity="textStart"
+                        app:iconPadding="0dp"
+                        app:iconSize="24dp"
+                        android:minWidth="48dp"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/save_button"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:layout_marginEnd="8dp"
+                        android:contentDescription="@string/gps_nav_save"
+                        android:tooltipText="@string/gps_nav_save"
+                        app:icon="@drawable/ic_btn_save"
+                        app:iconGravity="textStart"
+                        app:iconPadding="0dp"
+                        app:iconSize="24dp"
+                        android:minWidth="48dp"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/import_waypoints_button"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:layout_marginEnd="8dp"
+                        android:contentDescription="@string/gps_nav_import_waypoints"
+                        android:tooltipText="@string/gps_nav_import_waypoints"
+                        app:icon="@drawable/ic_btn_file_download"
+                        app:iconGravity="textStart"
+                        app:iconPadding="0dp"
+                        app:iconSize="24dp"
+                        android:minWidth="48dp"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/export_waypoints_button"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:layout_marginEnd="8dp"
+                        android:contentDescription="@string/gps_nav_export_waypoints"
+                        android:tooltipText="@string/gps_nav_export_waypoints"
+                        app:icon="@drawable/ic_btn_file_upload"
+                        app:iconGravity="textStart"
+                        app:iconPadding="0dp"
+                        app:iconSize="24dp"
+                        android:minWidth="48dp"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/export_button"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:contentDescription="@string/gps_nav_export_kml"
+                        android:tooltipText="@string/gps_nav_export_kml"
+                        app:icon="@drawable/ic_btn_public"
+                        app:iconGravity="textStart"
+                        app:iconPadding="0dp"
+                        app:iconSize="24dp"
+                        android:minWidth="48dp"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp" />
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/waypoint_list"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="6dp"
+                android:clipToPadding="false"
+                android:paddingBottom="16dp"
+                tools:listitem="@layout/item_waypoint" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

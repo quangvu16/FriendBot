@@ -1,0 +1,171 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1060" viewBox="0 0 1400 1060" font-family="Inter, Helvetica, Arial, sans-serif">
+<defs><marker id="dot" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7"><circle cx="5" cy="5" r="4" fill="#0f172a"/></marker></defs>
+<rect width="100%" height="100%" fill="#f8fafc"/>
+<text x="40" y="52" font-size="28" font-weight="700" fill="#0f172a">FriendBot Android app · Voice Control screen</text>
+<text x="40" y="80" font-size="14" fill="#475569">Source: robot/android/app/src/main/res/layout/fragment_voice_control.xml, .../robot/voice/VoiceControlFragment.java, XiaozhiSession.java · app based on OpenBot (www.openbot.org)</text>
+<rect x="456" y="96" width="428" height="888" rx="34" fill="#0f172a"/>
+<rect x="470" y="110" width="400" height="860" rx="24" fill="#f2f2f7"/>
+<circle cx="670.0" cy="128" r="6" fill="#0f172a"/>
+<text x="492" y="134" font-size="12" fill="#334155">9:41</text>
+<text x="848" y="134" text-anchor="end" font-size="12" fill="#334155">▾ ◢ ▮</text>
+<text x="492" y="192" font-size="26" font-weight="800" fill="#111827">Voice Control</text>
+<circle cx="834" cy="184" r="13" fill="none" stroke="#6b7280" stroke-width="3"/><circle cx="834" cy="184" r="4" fill="#6b7280"/>
+<rect x="758" y="214" width="92" height="120" rx="14" fill="#374151"/>
+<path d="M768,314 L793,282 L810,300 L824,286 L844,314 Z" fill="#6b7280"/>
+<circle cx="828" cy="244" r="9" fill="#9ca3af"/>
+<circle cx="834" cy="318" r="11" fill="#ffffff" opacity="0.9"/><text x="834" y="322" text-anchor="middle" font-size="11" fill="#111827">⟲</text>
+<rect x="488" y="214" width="250" height="28" rx="14" fill="#e5e7eb"/>
+<text x="502" y="233" font-size="12" font-weight="600" fill="#374151">Connected (USB) · Sharing over WiFi</text>
+<rect x="488" y="254" width="260" height="250" rx="22" fill="#ffffff"/>
+<circle cx="618.0" cy="336" r="62" fill="#f5f9ff" stroke="#7aa7e6" stroke-width="3"/>
+<circle cx="618.0" cy="336" r="44" fill="#ffd966"/>
+<circle cx="603.0" cy="330" r="5" fill="#1f2937"/><circle cx="633.0" cy="330" r="5" fill="#1f2937"/>
+<path d="M600.0,348 Q618.0,364 636.0,348" fill="none" stroke="#1f2937" stroke-width="4" stroke-linecap="round"/>
+<path d="M566.0,322 Q558.0,336 566.0,350" fill="none" stroke="#0A66D6" stroke-width="4" stroke-linecap="round"/>
+<path d="M670.0,322 Q678.0,336 670.0,350" fill="none" stroke="#0A66D6" stroke-width="4" stroke-linecap="round"/>
+<text x="618.0" y="426" text-anchor="middle" font-size="16" font-weight="700" fill="#0A66D6">Listening…</text>
+<rect x="513.0" y="438" width="210" height="32" rx="10" fill="#e5e7eb"/>
+<rect x="516.0" y="441" width="100" height="26" rx="8" fill="#ffffff"/>
+<text x="566.0" y="459" text-anchor="middle" font-size="12" font-weight="700" fill="#111827">Hands-free</text>
+<text x="670.0" y="459" text-anchor="middle" font-size="12" font-weight="600" fill="#6b7280">Push to speak</text>
+<rect x="533.0" y="484.0" width="4" height="8" rx="2" fill="#0A66D6"/>
+<rect x="543.0" y="481.0" width="4" height="14" rx="2" fill="#0A66D6"/>
+<rect x="553.0" y="478.0" width="4" height="20" rx="2" fill="#0A66D6"/>
+<rect x="563.0" y="482.0" width="4" height="12" rx="2" fill="#0A66D6"/>
+<rect x="573.0" y="476.0" width="4" height="24" rx="2" fill="#0A66D6"/>
+<rect x="583.0" y="480.0" width="4" height="16" rx="2" fill="#0A66D6"/>
+<rect x="593.0" y="483.0" width="4" height="10" rx="2" fill="#0A66D6"/>
+<rect x="603.0" y="477.0" width="4" height="22" rx="2" fill="#0A66D6"/>
+<rect x="613.0" y="481.0" width="4" height="14" rx="2" fill="#0A66D6"/>
+<rect x="623.0" y="479.0" width="4" height="18" rx="2" fill="#0A66D6"/>
+<rect x="633.0" y="475.0" width="4" height="26" rx="2" fill="#0A66D6"/>
+<rect x="643.0" y="482.0" width="4" height="12" rx="2" fill="#0A66D6"/>
+<rect x="653.0" y="480.0" width="4" height="16" rx="2" fill="#0A66D6"/>
+<rect x="663.0" y="478.0" width="4" height="20" rx="2" fill="#0A66D6"/>
+<rect x="673.0" y="483.0" width="4" height="10" rx="2" fill="#0A66D6"/>
+<rect x="683.0" y="479.0" width="4" height="18" rx="2" fill="#0A66D6"/>
+<rect x="693.0" y="482.0" width="4" height="12" rx="2" fill="#0A66D6"/>
+<rect x="703.0" y="484.0" width="4" height="8" rx="2" fill="#0A66D6"/>
+<rect x="608.0" y="534" width="124" height="24" rx="12" fill="#e5e7eb"/>
+<text x="670.0" y="550" text-anchor="middle" font-size="11.5" font-weight="700" fill="#374151">» Move forward</text>
+<rect x="660" y="568" width="190" height="34" rx="17" fill="#0A66D6"/>
+<text x="755" y="590" text-anchor="middle" font-size="13" fill="#ffffff">You: đi thẳng 3 giây</text>
+<rect x="488" y="612" width="250" height="34" rx="17" fill="#ffffff"/>
+<text x="502" y="634" font-size="13" fill="#111827">Xiaozhi: Được, đang đi thẳng!</text>
+<circle cx="518" cy="692" r="28" fill="#0A66D6"/>
+<rect x="512" y="678" width="12" height="20" rx="6" fill="#fff"/><path d="M506,692 Q518,708 530,692" fill="none" stroke="#fff" stroke-width="2.5"/>
+<rect x="556" y="672" width="296" height="40" rx="20" fill="#ffffff"/>
+<text x="574" y="697" font-size="12.5" fill="#9ca3af">Or type a command, e.g. go forward</text>
+<circle cx="830" cy="692" r="16" fill="#0A66D6"/><path d="M823,692 L838,685 L832,700 Z" fill="#fff"/>
+<rect x="488.0" y="730" width="66.4" height="58" rx="12" fill="#ffffff"/>
+<text x="521.2" y="754" text-anchor="middle" font-size="16" fill="#111827">↑</text>
+<text x="521.2" y="776" text-anchor="middle" font-size="10.5" font-weight="700" fill="#374151">Forward</text>
+<rect x="562.4" y="730" width="66.4" height="58" rx="12" fill="#ffffff"/>
+<text x="595.6" y="754" text-anchor="middle" font-size="16" fill="#111827">↓</text>
+<text x="595.6" y="776" text-anchor="middle" font-size="10.5" font-weight="700" fill="#374151">Backward</text>
+<rect x="636.8" y="730" width="66.4" height="58" rx="12" fill="#ffffff"/>
+<text x="670.0" y="754" text-anchor="middle" font-size="16" fill="#111827">←</text>
+<text x="670.0" y="776" text-anchor="middle" font-size="10.5" font-weight="700" fill="#374151">Turn left</text>
+<rect x="711.2" y="730" width="66.4" height="58" rx="12" fill="#ffffff"/>
+<text x="744.4000000000001" y="754" text-anchor="middle" font-size="16" fill="#111827">→</text>
+<text x="744.4000000000001" y="776" text-anchor="middle" font-size="10.5" font-weight="700" fill="#374151">Turn right</text>
+<rect x="785.6" y="730" width="66.4" height="58" rx="12" fill="#fde8e8"/>
+<text x="818.8000000000001" y="754" text-anchor="middle" font-size="16" fill="#dc2626">■</text>
+<text x="818.8000000000001" y="776" text-anchor="middle" font-size="10.5" font-weight="700" fill="#dc2626">Stop</text>
+<rect x="488" y="802" width="364" height="50" rx="14" fill="#ffffff"/>
+<text x="504" y="833" font-size="13" font-weight="700" fill="#374151">Speed</text>
+<rect x="560" y="825" width="230" height="5" rx="3" fill="#e5e7eb"/><rect x="560" y="825" width="172" height="5" rx="3" fill="#0A66D6"/>
+<circle cx="732" cy="827" r="10" fill="#0A66D6" stroke="#0A66D6"/>
+<text x="836" y="833" text-anchor="end" font-size="13" font-weight="700" fill="#111827">75%</text>
+<text x="492" y="876" font-size="11.5" fill="#6b7280">Log · Move forward for 3000 ms</text>
+<path d="M912,138 C860,138 894,184 834,184" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#dot)"/>
+<rect x="920" y="120" width="440" height="66" rx="10" fill="#ffffff" stroke="#e2e8f0"/>
+<circle cx="938" cy="138" r="11" fill="#0A66D6"/><text x="938" y="142" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">1</text>
+<text x="958" y="143" font-size="14" font-weight="700" fill="#0f172a">Gear: Xiaozhi settings</text>
+<text x="958" y="162" font-size="12.5" fill="#475569">pairing again, server URL, token, model,</text>
+<text x="958" y="180" font-size="12.5" fill="#475569">voice language (default Vietnamese)</text>
+<path d="M912,234 C860,234 864,274 804,274" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#dot)"/>
+<rect x="920" y="216" width="440" height="66" rx="10" fill="#ffffff" stroke="#e2e8f0"/>
+<circle cx="938" cy="234" r="11" fill="#0A66D6"/><text x="938" y="238" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">2</text>
+<text x="958" y="239" font-size="14" font-weight="700" fill="#0f172a">Camera corner = the assistant's eye</text>
+<text x="958" y="258" font-size="12.5" fill="#475569">tap = take a photo and ask Xiaozhi what it sees</text>
+<text x="958" y="276" font-size="12.5" fill="#475569">⟲ flips back / front camera</text>
+<path d="M912,330 C860,330 796,228 736,228" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#dot)"/>
+<rect x="920" y="312" width="440" height="66" rx="10" fill="#ffffff" stroke="#e2e8f0"/>
+<circle cx="938" cy="330" r="11" fill="#0A66D6"/><text x="938" y="334" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">3</text>
+<text x="958" y="335" font-size="14" font-weight="700" fill="#0f172a">Connection line (tap to choose robot)</text>
+<text x="958" y="354" font-size="12.5" fill="#475569">“Connected (BLE)” · “(USB)” on Android only</text>
+<text x="958" y="372" font-size="12.5" fill="#475569">“Controlling via &lt;phone&gt; (WiFi)” on helpers</text>
+<path d="M912,426 C860,426 740.0,336 680.0,336" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#dot)"/>
+<rect x="920" y="408" width="440" height="66" rx="10" fill="#ffffff" stroke="#e2e8f0"/>
+<circle cx="938" cy="426" r="11" fill="#0A66D6"/><text x="938" y="430" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">4</text>
+<text x="958" y="431" font-size="14" font-weight="700" fill="#0f172a">Face + state</text>
+<text x="958" y="450" font-size="12.5" fill="#475569">Ready → Listening… → Thinking… → Speaking…</text>
+<text x="958" y="468" font-size="12.5" fill="#475569">blue ring and arcs = microphone is live</text>
+<path d="M912,522 C860,522 783.0,454 723.0,454" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#dot)"/>
+<rect x="920" y="504" width="440" height="66" rx="10" fill="#ffffff" stroke="#e2e8f0"/>
+<circle cx="938" cy="522" r="11" fill="#0A66D6"/><text x="938" y="526" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">5</text>
+<text x="958" y="527" font-size="14" font-weight="700" fill="#0f172a">Hands-free / Push to speak</text>
+<text x="958" y="546" font-size="12.5" fill="#475569">hands-free: just talk, server detects the end</text>
+<text x="958" y="564" font-size="12.5" fill="#475569">tap mic while it speaks = interrupt (barge-in)</text>
+<path d="M912,618 C860,618 910,584 850,584" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#dot)"/>
+<rect x="920" y="600" width="440" height="66" rx="10" fill="#ffffff" stroke="#e2e8f0"/>
+<circle cx="938" cy="618" r="11" fill="#0A66D6"/><text x="938" y="622" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">6</text>
+<text x="958" y="623" font-size="14" font-weight="700" fill="#0f172a">Chat transcript</text>
+<text x="958" y="642" font-size="12.5" fill="#475569">you on the right, Xiaozhi on the left</text>
+<text x="958" y="660" font-size="12.5" fill="#475569">» chips = robot actions the AI ran</text>
+<path d="M912,714 C860,714 906,692 846,692" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#dot)"/>
+<rect x="920" y="696" width="440" height="66" rx="10" fill="#ffffff" stroke="#e2e8f0"/>
+<circle cx="938" cy="714" r="11" fill="#0A66D6"/><text x="938" y="718" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">7</text>
+<text x="958" y="719" font-size="14" font-weight="700" fill="#0f172a">Mic + typed command</text>
+<text x="958" y="738" font-size="12.5" fill="#475569">typed text goes through the same AI;</text>
+<text x="958" y="756" font-size="12.5" fill="#475569">offline → built-in keywords (EN / VI / 中文)</text>
+<path d="M912,810 C860,810 910,759 850,759" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#dot)"/>
+<rect x="920" y="792" width="440" height="66" rx="10" fill="#ffffff" stroke="#e2e8f0"/>
+<circle cx="938" cy="810" r="11" fill="#0A66D6"/><text x="938" y="814" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">8</text>
+<text x="958" y="815" font-size="14" font-weight="700" fill="#0f172a">Quick buttons</text>
+<text x="958" y="834" font-size="12.5" fill="#475569">always work, even with no internet</text>
+<text x="958" y="852" font-size="12.5" fill="#475569">Stop wins over everything</text>
+<path d="M912,906 C860,906 910,827 850,827" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#dot)"/>
+<rect x="920" y="888" width="440" height="48" rx="10" fill="#ffffff" stroke="#e2e8f0"/>
+<circle cx="938" cy="906" r="11" fill="#0A66D6"/><text x="938" y="910" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">9</text>
+<text x="958" y="911" font-size="14" font-weight="700" fill="#0f172a">Speed slider 25–100 %</text>
+<text x="958" y="930" font-size="12.5" fill="#475569">scales every move · “faster” = +15 %</text>
+<rect x="40" y="110" width="370" height="860" rx="14" fill="#ffffff" stroke="#e2e8f0"/>
+<text x="60" y="142" font-size="18" font-weight="700" fill="#0f172a">Get it running</text>
+<circle cx="72" cy="180" r="13" fill="#0f172a"/><text x="72" y="185" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">1</text>
+<text x="96" y="186" font-size="15" font-weight="700" fill="#0f172a">Install</text>
+<text x="96" y="208" font-size="12.5" fill="#475569">Download FriendBot-android-debug.apk</text>
+<text x="96" y="227" font-size="12.5" fill="#475569">from the repo apk/ folder → open it →</text>
+<text x="96" y="246" font-size="12.5" fill="#475569">allow “install unknown apps”</text>
+<text x="96" y="265" font-size="12.5" fill="#475569">(or build: Android Studio → robot/android)</text>
+<circle cx="72" cy="322" r="13" fill="#0f172a"/><text x="72" y="327" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">2</text>
+<text x="96" y="328" font-size="15" font-weight="700" fill="#0f172a">Connect the robot</text>
+<text x="96" y="350" font-size="12.5" fill="#475569">USB-C OTG cable to the ESP32 → Robot</text>
+<text x="96" y="369" font-size="12.5" fill="#475569">Info → USB on, 115200 baud</text>
+<text x="96" y="388" font-size="12.5" fill="#475569">or Bluetooth → “FriendBot: MTV”</text>
+<circle cx="72" cy="445" r="13" fill="#0f172a"/><text x="72" y="450" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">3</text>
+<text x="96" y="451" font-size="15" font-weight="700" fill="#0f172a">Open Voice Control</text>
+<text x="96" y="473" font-size="12.5" fill="#475569">Home grid → General → Voice Control</text>
+<text x="96" y="492" font-size="12.5" fill="#475569">allow Microphone (and Camera later)</text>
+<circle cx="72" cy="549" r="13" fill="#0f172a"/><text x="72" y="554" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">4</text>
+<text x="96" y="555" font-size="15" font-weight="700" fill="#0f172a">Pair with Xiaozhi once</text>
+<text x="96" y="577" font-size="12.5" fill="#475569">app shows a 6-digit code →</text>
+<text x="96" y="596" font-size="12.5" fill="#475569">xiaozhi.me → Add device → enter code</text>
+<text x="96" y="615" font-size="12.5" fill="#475569">saved: next launch connects by itself</text>
+<circle cx="72" cy="672" r="13" fill="#0f172a"/><text x="72" y="677" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">5</text>
+<text x="96" y="678" font-size="15" font-weight="700" fill="#0f172a">Talk</text>
+<text x="96" y="700" font-size="12.5" fill="#475569">“go forward”, “rẽ trái”, “停”</text>
+<text x="96" y="719" font-size="12.5" fill="#475569">or “what do you see?” → photo tool</text>
+<circle cx="72" cy="776" r="13" fill="#0f172a"/><text x="72" y="781" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">6</text>
+<text x="96" y="782" font-size="15" font-weight="700" fill="#0f172a">More phones (optional)</text>
+<text x="96" y="804" font-size="12.5" fill="#475569">2nd phone on same Wi-Fi: open</text>
+<text x="96" y="823" font-size="12.5" fill="#475569">Voice Control (drive) or Remote Mic</text>
+<rect x="56" y="866" width="338" height="88" rx="10" fill="#eff6ff"/>
+<text x="70" y="890" font-size="13.5" font-weight="700" fill="#0A66D6">Example: “đi thẳng 3 giây”</text>
+<text x="70" y="912" font-size="12.5" fill="#1e3a8a">Xiaozhi → self.robot.move(forward, 3000 ms)</text>
+<text x="70" y="931" font-size="12.5" fill="#1e3a8a">app sends c144,144 every 250 ms (75 %)</text>
+<text x="70" y="950" font-size="12.5" fill="#1e3a8a">after 3 s the app sends c0,0 → stop</text>
+<text x="40" y="1010" font-size="13" fill="#475569">Android app id org.openbot.app.robot · min Android 7.0 (SDK 24) · target SDK 36 · permissions: microphone, camera, Bluetooth, location</text>
+<text x="40" y="1032" font-size="13" fill="#475569">Mock-up drawn from the layout code — colours and spacing are close to, not identical with, the real screen.</text>
+</svg>

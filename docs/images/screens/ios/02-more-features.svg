@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="330" height="640" viewBox="-20 -20 330 640" font-family="Inter, Helvetica, Arial, sans-serif">
+<title>FriendBot iOS · More features</title>
+<rect x="-20" y="-20" width="330" height="640" fill="#f8fafc"/>
+<rect x="-10" y="-10" width="310" height="620" rx="48" fill="#0f172a"/>
+<clipPath id="cs"><rect x="0" y="0" width="290" height="600" rx="40"/></clipPath>
+<g clip-path="url(#cs)"><rect width="290" height="600" fill="#f2f2f7"/>
+<text x="22" y="24" font-size="11.5" font-weight="700" fill="#111827" text-anchor="start">9:41</text>
+<rect x="99.0" y="9" width="92" height="22" rx="11" fill="#0f172a"/>
+<text x="16" y="76" font-size="24" font-weight="800" fill="#111827" text-anchor="start">FriendBot</text>
+<text x="14" y="98" font-size="11" font-weight="600" fill="#6b7280" text-anchor="start">More features (full list)</text>
+<text x="14" y="122" font-size="12.5" font-weight="700" fill="#111827" text-anchor="start">General</text>
+<rect x="12" y="130" width="84" height="54" rx="12" fill="#f76924"/>
+<circle cx="54" cy="149" r="10" fill="#fff" opacity="0.45"/>
+<text x="54" y="174" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Drive</text>
+<rect x="102" y="130" width="84" height="54" rx="12" fill="#93c47d"/>
+<circle cx="144" cy="149" r="10" fill="#fff" opacity="0.45"/>
+<text x="144" y="170" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Data</text>
+<text x="144" y="180" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Collection</text>
+<rect x="192" y="130" width="84" height="54" rx="12" fill="#7268a6"/>
+<circle cx="234" cy="149" r="10" fill="#fff" opacity="0.45"/>
+<text x="234" y="170" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Controller</text>
+<text x="234" y="180" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Mapping</text>
+<rect x="12" y="190" width="84" height="54" rx="12" fill="#4b7bff"/>
+<circle cx="54" cy="209" r="10" fill="#fff" opacity="0.45"/>
+<text x="54" y="234" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Car setup</text>
+<rect x="102" y="190" width="84" height="54" rx="12" fill="#26c6da"/>
+<circle cx="144" cy="209" r="10" fill="#fff" opacity="0.45"/>
+<text x="144" y="234" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">GPS Mission</text>
+<rect x="192" y="190" width="84" height="54" rx="12" fill="#0277bd"/>
+<circle cx="234" cy="209" r="10" fill="#fff" opacity="0.45"/>
+<text x="234" y="230" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Voice</text>
+<text x="234" y="240" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Control</text>
+<rect x="12" y="250" width="84" height="54" rx="12" fill="#26a69a"/>
+<circle cx="54" cy="269" r="10" fill="#fff" opacity="0.45"/>
+<text x="54" y="294" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Remote Mic</text>
+<text x="14" y="326" font-size="12.5" font-weight="700" fill="#111827" text-anchor="start">AI</text>
+<rect x="12" y="334" width="84" height="54" rx="12" fill="#44525f"/>
+<circle cx="54" cy="353" r="10" fill="#fff" opacity="0.45"/>
+<text x="54" y="378" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Autopilot</text>
+<rect x="102" y="334" width="84" height="54" rx="12" fill="#e7ce88"/>
+<circle cx="144" cy="353" r="10" fill="#fff" opacity="0.45"/>
+<text x="144" y="374" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Object</text>
+<text x="144" y="384" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Tracking</text>
+<rect x="192" y="334" width="84" height="54" rx="12" fill="#1bbfbf"/>
+<circle cx="234" cy="353" r="10" fill="#fff" opacity="0.45"/>
+<text x="234" y="374" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Point</text>
+<text x="234" y="384" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Goal Navigation</text>
+<rect x="12" y="394" width="84" height="54" rx="12" fill="#bc7680"/>
+<circle cx="54" cy="413" r="10" fill="#fff" opacity="0.45"/>
+<text x="54" y="434" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Model</text>
+<text x="54" y="444" font-size="8.8" font-weight="700" fill="#fff" text-anchor="middle">Management</text>
+<circle cx="250" cy="556" r="26" fill="#dc2626" stroke="#fff" stroke-width="3"/>
+<text x="250" y="560" font-size="10" font-weight="800" fill="#fff" text-anchor="middle">STOP</text>
+<rect x="85.0" y="588" width="120" height="4" rx="2" fill="#0f172a"/>
+</g>
+</svg>

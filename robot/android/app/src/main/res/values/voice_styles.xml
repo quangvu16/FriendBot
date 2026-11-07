@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Corner shapes for the Voice Control redesign (friendly Apple radii). -->
+<resources>
+    <style name="VoiceSegmentShape">
+        <item name="cornerSize">10dp</item>
+    </style>
+    <style name="VoiceTileShape">
+        <item name="cornerSize">16dp</item>
+    </style>
+    <style name="VoiceSendShape">
+        <item name="cornerSize">50%</item>
+    </style>
+</resources>

@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="830" viewBox="0 0 1400 830" font-family="Inter, Helvetica, Arial, sans-serif">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker></defs>
+<rect width="100%" height="100%" fill="#f8fafc"/>
+<text x="40" y="52" font-size="28" font-weight="700" fill="#0f172a">Connect FriendBot to xiaozhi.me · get the code and bind the phone</text>
+<text x="40" y="80" font-size="14" fill="#475569">Sources: robot/android/.../voice/XiaozhiActivator.java (code, 2.5 s polling, 5 min limit) · xiaozhi.me console steps from the LAFVIN Xiaozhi tutorial (lafvinesp32-s3-169lcd2.readthedocs.io)</text>
+<rect x="40" y="120" width="244" height="476" rx="16" fill="#ffffff" stroke="#0A66D6" stroke-width="2"/>
+<circle cx="66" cy="148" r="15" fill="#0A66D6"/><text x="66" y="153" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">1</text>
+<text x="90" y="153" font-size="13" font-weight="700" fill="#0A66D6">FriendBot app</text>
+<line x1="286" y1="358.0" x2="302" y2="358.0" stroke="#334155" stroke-width="2.5" marker-end="url(#ar)"/>
+<rect x="80" y="176" width="164" height="300" rx="22" fill="#0f172a"/>
+<rect x="88" y="184" width="148" height="284" rx="16" fill="#f2f2f7"/>
+<text x="162" y="216" text-anchor="middle" font-size="12" font-weight="800" fill="#111827">Voice Control</text>
+<text x="162" y="246" text-anchor="middle" font-size="11" font-weight="700" fill="#374151">First-time pairing</text>
+<rect x="100" y="262" width="124" height="46" rx="10" fill="#ffffff" stroke="#0A66D6" stroke-width="2"/>
+<text x="162" y="293" text-anchor="middle" font-size="22" font-weight="800" letter-spacing="2" fill="#0A66D6">482915</text>
+<text x="162" y="328" text-anchor="middle" font-size="9.5" fill="#6b7280">Open xiaozhi.me, sign in,</text>
+<text x="162" y="341" text-anchor="middle" font-size="9.5" fill="#6b7280">add a device, enter this code</text>
+<text x="162" y="368" text-anchor="middle" font-size="10.5" font-weight="700" fill="#ca8a04">Waiting for binding…</text>
+<rect x="100" y="390" width="58" height="24" rx="8" fill="#e5e7eb"/><text x="129" y="406" text-anchor="middle" font-size="9" font-weight="700" fill="#374151">RETRY</text>
+<rect x="164" y="390" width="60" height="24" rx="8" fill="#e5e7eb"/><text x="194" y="406" text-anchor="middle" font-size="8" font-weight="700" fill="#374151">USE OFFLINE</text>
+<text x="56" y="500" font-size="12.5" font-weight="700" fill="#0f172a">Open Voice Control</text>
+<text x="56" y="518" font-size="12.5" fill="#0f172a">The app registers with Xiaozhi</text>
+<text x="56" y="536" font-size="12.5" fill="#0f172a">and shows a 6-digit code.</text>
+<text x="56" y="554" font-size="12.5" fill="#0f172a">Leave this screen open.</text>
+<text x="56" y="572" font-size="12.5" fill="#0f172a">Example code: 482915</text>
+<rect x="304" y="120" width="244" height="476" rx="16" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
+<circle cx="330" cy="148" r="15" fill="#7c3aed"/><text x="330" y="153" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">2</text>
+<text x="354" y="153" font-size="13" font-weight="700" fill="#7c3aed">xiaozhi.me · account</text>
+<line x1="550" y1="358.0" x2="566" y2="358.0" stroke="#334155" stroke-width="2.5" marker-end="url(#ar)"/>
+<rect x="319" y="176" width="214" height="300" rx="10" fill="#ffffff" stroke="#cbd5e1"/>
+<rect x="319" y="176" width="214" height="30" rx="10" fill="#e2e8f0"/>
+<circle cx="333" cy="191" r="4" fill="#f87171"/>
+<circle cx="345" cy="191" r="4" fill="#fbbf24"/>
+<circle cx="357" cy="191" r="4" fill="#34d399"/>
+<rect x="373" y="183" width="150" height="16" rx="8" fill="#ffffff"/>
+<text x="381" y="195" font-size="10" fill="#334155">xiaozhi.me</text>
+<rect x="449" y="218" width="70" height="22" rx="6" fill="#7c3aed"/><text x="484" y="233" text-anchor="middle" font-size="10.5" font-weight="700" fill="#fff">Console</text>
+<text x="333" y="262" font-size="10" fill="#6b7280">Country / region</text>
+<rect x="333" y="267" width="186" height="22" rx="5" fill="#f8fafc" stroke="#cbd5e1"/>
+<text x="341" y="282" font-size="10.5" fill="#334155">Vietnam +84</text>
+<text x="333" y="306" font-size="10" fill="#6b7280">Mobile number</text>
+<rect x="333" y="311" width="186" height="22" rx="5" fill="#f8fafc" stroke="#cbd5e1"/>
+<text x="341" y="326" font-size="10.5" fill="#334155">09xx xxx xxx</text>
+<text x="333" y="350" font-size="10" fill="#6b7280">Picture code</text>
+<rect x="333" y="355" width="186" height="22" rx="5" fill="#f8fafc" stroke="#cbd5e1"/>
+<text x="341" y="370" font-size="10.5" fill="#334155">a7K2</text>
+<text x="333" y="394" font-size="10" fill="#6b7280">SMS code</text>
+<rect x="333" y="399" width="120" height="22" rx="5" fill="#f8fafc" stroke="#cbd5e1"/>
+<text x="341" y="414" font-size="10.5" fill="#334155">______</text>
+<rect x="459" y="399" width="60" height="22" rx="5" fill="#ede9fe"/><text x="489" y="414" text-anchor="middle" font-size="9.5" font-weight="700" fill="#7c3aed">Send Code</text>
+<rect x="333" y="438" width="186" height="26" rx="6" fill="#7c3aed"/><text x="426" y="455" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">Sign in / Register</text>
+<text x="320" y="500" font-size="12.5" font-weight="700" fill="#0f172a">Use a computer or 2nd phone</text>
+<text x="320" y="518" font-size="12.5" fill="#0f172a">xiaozhi.me → Console</text>
+<text x="320" y="536" font-size="12.5" fill="#0f172a">country + phone number,</text>
+<text x="320" y="554" font-size="12.5" fill="#0f172a">picture code → Send Code,</text>
+<text x="320" y="572" font-size="12.5" fill="#0f172a">type the SMS code.</text>
+<rect x="568" y="120" width="244" height="476" rx="16" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
+<circle cx="594" cy="148" r="15" fill="#7c3aed"/><text x="594" y="153" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">3</text>
+<text x="618" y="153" font-size="13" font-weight="700" fill="#7c3aed">xiaozhi.me · agent</text>
+<line x1="814" y1="358.0" x2="830" y2="358.0" stroke="#334155" stroke-width="2.5" marker-end="url(#ar)"/>
+<rect x="583" y="176" width="214" height="300" rx="10" fill="#ffffff" stroke="#cbd5e1"/>
+<rect x="583" y="176" width="214" height="30" rx="10" fill="#e2e8f0"/>
+<circle cx="597" cy="191" r="4" fill="#f87171"/>
+<circle cx="609" cy="191" r="4" fill="#fbbf24"/>
+<circle cx="621" cy="191" r="4" fill="#34d399"/>
+<rect x="637" y="183" width="150" height="16" rx="8" fill="#ffffff"/>
+<text x="645" y="195" font-size="10" fill="#334155">xiaozhi.me/console/agents</text>
+<rect x="597" y="218" width="100" height="22" rx="6" fill="#7c3aed"/><text x="647" y="233" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">+ Create Agent</text>
+<text x="597" y="262" font-size="11" font-weight="700" fill="#0f172a">Configure Role</text>
+<text x="597" y="280" font-size="10" fill="#6b7280">Assistant name</text>
+<rect x="597" y="285" width="186" height="20" rx="5" fill="#f8fafc" stroke="#cbd5e1"/>
+<text x="605" y="299" font-size="10.5" fill="#334155">FriendBot</text>
+<text x="597" y="318" font-size="10" fill="#6b7280">Language</text>
+<rect x="597" y="323" width="186" height="20" rx="5" fill="#f8fafc" stroke="#cbd5e1"/>
+<text x="605" y="337" font-size="10.5" fill="#334155">Tiếng Việt</text>
+<text x="597" y="356" font-size="10" fill="#6b7280">Voice role</text>
+<rect x="597" y="361" width="186" height="20" rx="5" fill="#f8fafc" stroke="#cbd5e1"/>
+<text x="605" y="375" font-size="10.5" fill="#334155">female, friendly</text>
+<text x="597" y="394" font-size="10" fill="#6b7280">Language model</text>
+<rect x="597" y="399" width="186" height="20" rx="5" fill="#f8fafc" stroke="#cbd5e1"/>
+<text x="605" y="413" font-size="10.5" fill="#334155">default</text>
+<text x="597" y="438" font-size="9.5" fill="#6b7280">Role introduction: “You are FriendBot,</text>
+<text x="597" y="450" font-size="9.5" fill="#6b7280">a small robot car …”   </text>
+<rect x="733" y="442" width="50" height="22" rx="6" fill="#7c3aed"/><text x="758" y="457" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">Save</text>
+<text x="584" y="500" font-size="12.5" font-weight="700" fill="#0f172a">Create an agent (once)</text>
+<text x="584" y="518" font-size="12.5" fill="#0f172a">Create Agent → name →</text>
+<text x="584" y="536" font-size="12.5" fill="#0f172a">Configure Role: language,</text>
+<text x="584" y="554" font-size="12.5" fill="#0f172a">voice, model, personality</text>
+<text x="584" y="572" font-size="12.5" fill="#0f172a">→ Save</text>
+<rect x="832" y="120" width="244" height="476" rx="16" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
+<circle cx="858" cy="148" r="15" fill="#7c3aed"/><text x="858" y="153" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">4</text>
+<text x="882" y="153" font-size="13" font-weight="700" fill="#7c3aed">xiaozhi.me · add device</text>
+<line x1="1078" y1="358.0" x2="1094" y2="358.0" stroke="#334155" stroke-width="2.5" marker-end="url(#ar)"/>
+<rect x="847" y="176" width="214" height="300" rx="10" fill="#ffffff" stroke="#cbd5e1"/>
+<rect x="847" y="176" width="214" height="30" rx="10" fill="#e2e8f0"/>
+<circle cx="861" cy="191" r="4" fill="#f87171"/>
+<circle cx="873" cy="191" r="4" fill="#fbbf24"/>
+<circle cx="885" cy="191" r="4" fill="#34d399"/>
+<rect x="901" y="183" width="150" height="16" rx="8" fill="#ffffff"/>
+<text x="909" y="195" font-size="10" fill="#334155">xiaozhi.me/console/agents</text>
+<rect x="861" y="220" width="186" height="74" rx="8" fill="#f5f3ff" stroke="#ddd6fe"/>
+<text x="871" y="240" font-size="11.5" font-weight="700" fill="#0f172a">FriendBot (agent)</text>
+<text x="871" y="256" font-size="9.5" fill="#6b7280">Tiếng Việt · 0 devices</text>
+<rect x="871" y="264" width="84" height="22" rx="6" fill="#7c3aed"/><text x="913" y="279" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">Add Device</text>
+<rect x="857" y="310" width="194" height="140" rx="10" fill="#ffffff" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="869" y="332" font-size="11" font-weight="700" fill="#0f172a">Enter verification code</text>
+<rect x="869" y="344" width="24" height="32" rx="5" fill="#f8fafc" stroke="#0A66D6"/>
+<text x="881" y="366" text-anchor="middle" font-size="15" font-weight="700" fill="#0A66D6">4</text>
+<rect x="898" y="344" width="24" height="32" rx="5" fill="#f8fafc" stroke="#0A66D6"/>
+<text x="910" y="366" text-anchor="middle" font-size="15" font-weight="700" fill="#0A66D6">8</text>
+<rect x="927" y="344" width="24" height="32" rx="5" fill="#f8fafc" stroke="#0A66D6"/>
+<text x="939" y="366" text-anchor="middle" font-size="15" font-weight="700" fill="#0A66D6">2</text>
+<rect x="956" y="344" width="24" height="32" rx="5" fill="#f8fafc" stroke="#0A66D6"/>
+<text x="968" y="366" text-anchor="middle" font-size="15" font-weight="700" fill="#0A66D6">9</text>
+<rect x="985" y="344" width="24" height="32" rx="5" fill="#f8fafc" stroke="#0A66D6"/>
+<text x="997" y="366" text-anchor="middle" font-size="15" font-weight="700" fill="#0A66D6">1</text>
+<rect x="1014" y="344" width="24" height="32" rx="5" fill="#f8fafc" stroke="#0A66D6"/>
+<text x="1026" y="366" text-anchor="middle" font-size="15" font-weight="700" fill="#0A66D6">5</text>
+<rect x="967" y="408" width="72" height="26" rx="6" fill="#7c3aed"/><text x="1003" y="425" text-anchor="middle" font-size="10.5" font-weight="700" fill="#fff">Confirm</text>
+<text x="848" y="500" font-size="12.5" font-weight="700" fill="#0f172a">Type the code from step 1</text>
+<text x="848" y="518" font-size="12.5" fill="#0f172a">agent card → Add Device</text>
+<text x="848" y="536" font-size="12.5" fill="#0f172a">→ enter the 6 digits</text>
+<text x="848" y="554" font-size="12.5" fill="#0f172a">→ Confirm</text>
+<text x="848" y="572" font-size="12.5" fill="#0f172a">(within 5 minutes)</text>
+<rect x="1096" y="120" width="244" height="476" rx="16" fill="#ffffff" stroke="#16a34a" stroke-width="2"/>
+<circle cx="1122" cy="148" r="15" fill="#16a34a"/><text x="1122" y="153" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">5</text>
+<text x="1146" y="153" font-size="13" font-weight="700" fill="#16a34a">FriendBot app</text>
+<rect x="1136" y="176" width="164" height="300" rx="22" fill="#0f172a"/>
+<rect x="1144" y="184" width="148" height="284" rx="16" fill="#f2f2f7"/>
+<text x="1218" y="216" text-anchor="middle" font-size="12" font-weight="800" fill="#111827">Voice Control</text>
+<rect x="1152" y="232" width="132" height="20" rx="10" fill="#dcfce7"/><text x="1218" y="246" text-anchor="middle" font-size="9.5" font-weight="700" fill="#166534">Bound! Connecting…</text>
+<circle cx="1218" cy="308" r="40" fill="#f5f9ff" stroke="#7aa7e6" stroke-width="2.5"/><circle cx="1218" cy="308" r="28" fill="#ffd966"/>
+<circle cx="1209" cy="304" r="3.5" fill="#1f2937"/><circle cx="1227" cy="304" r="3.5" fill="#1f2937"/><path d="M1207,316 Q1218,326 1229,316" fill="none" stroke="#1f2937" stroke-width="3" stroke-linecap="round"/>
+<text x="1218" y="368" text-anchor="middle" font-size="11" font-weight="700" fill="#0A66D6">Xiaozhi ready</text>
+<rect x="1196" y="382" width="88" height="26" rx="13" fill="#0A66D6"/><text x="1240" y="399" text-anchor="middle" font-size="9.5" fill="#fff">You: xin chào</text>
+<rect x="1152" y="414" width="112" height="26" rx="13" fill="#ffffff"/><text x="1160" y="431" font-size="9.5" fill="#111827">Xiaozhi: Chào bạn!</text>
+<text x="1112" y="500" font-size="12.5" font-weight="700" fill="#0f172a">Done — talk!</text>
+<text x="1112" y="518" font-size="12.5" fill="#0f172a">The app sees the binding</text>
+<text x="1112" y="536" font-size="12.5" fill="#0f172a">in ≤ 2.5 s, saves the key</text>
+<text x="1112" y="554" font-size="12.5" fill="#0f172a">and connects by itself</text>
+<text x="1112" y="572" font-size="12.5" fill="#0f172a">next time too.</text>
+<rect x="40" y="616" width="1320" height="200" rx="14" fill="#ffffff" stroke="#e2e8f0"/>
+<text x="60" y="648" font-size="17" font-weight="700" fill="#0f172a">Good to know</text>
+<circle cx="68" cy="674" r="4" fill="#7c3aed"/>
+<text x="82" y="678" font-size="13" fill="#0f172a"><tspan font-weight="700">The code only works while the app waits.</tspan> The app asks Xiaozhi every 2.5 s for up to 5 minutes. After that it says “timed out” — tap Retry for a new code.</text>
+<circle cx="68" cy="700" r="4" fill="#7c3aed"/>
+<text x="82" y="704" font-size="13" fill="#0f172a"><tspan font-weight="700">You pair once per phone.</tspan> The key is saved in the app. Re-pair only after reinstalling the app, clearing its data, or deleting the device in the console.</text>
+<circle cx="68" cy="726" r="4" fill="#7c3aed"/>
+<text x="82" y="730" font-size="13" fill="#0f172a"><tspan font-weight="700">The agent decides the personality.</tspan> Language, voice and model are set in the xiaozhi.me agent, not in the app. Change them there any time — no re-pairing.</text>
+<circle cx="68" cy="752" r="4" fill="#7c3aed"/>
+<text x="82" y="756" font-size="13" fill="#0f172a"><tspan font-weight="700">Robot moves are added by the app.</tspan> When it connects, the app tells Xiaozhi about self.robot.move / self.robot.stop / self.camera.take_photo. No set-up on the website.</text>
+<circle cx="68" cy="778" r="4" fill="#7c3aed"/>
+<text x="82" y="782" font-size="13" fill="#0f172a"><tspan font-weight="700">Several phones = several devices.</tspan> Each phone gets its own code; add them all to the same agent. Remote Mic phones need no pairing.</text>
+</svg>

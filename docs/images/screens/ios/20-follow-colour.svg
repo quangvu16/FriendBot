@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="330" height="640" viewBox="-20 -20 330 640" font-family="Inter, Helvetica, Arial, sans-serif">
+<title>FriendBot iOS · Follow a Coloured Object</title>
+<rect x="-20" y="-20" width="330" height="640" fill="#f8fafc"/>
+<g transform="translate(0,0)">
+<rect x="-10" y="-10" width="310" height="620" rx="48" fill="#0f172a"/>
+<clipPath id="c0"><rect x="0" y="0" width="290" height="600" rx="40"/></clipPath>
+<g clip-path="url(#c0)"><rect width="290" height="600" fill="#f2f2f7"/>
+<text x="22" y="24" font-size="11.5" font-weight="700" fill="#111827" text-anchor="start">9:41</text>
+<rect x="99.0" y="9" width="92" height="22" rx="11" fill="#0f172a"/>
+<text x="12" y="64" font-size="13" font-weight="400" fill="#0A66D6" text-anchor="start">‹ Back</text>
+<text x="145.0" y="64" font-size="13.5" font-weight="700" fill="#111827" text-anchor="middle">Follow a Coloured Object</text>
+<rect x="0" y="74" width="290" height="422" rx="0" fill="#94a3b8"/>
+<rect x="0" y="74" width="290" height="189.9" fill="#cbd5e1"/>
+<polygon points="0,496 290,496 179.8,263.9 110.2,263.9" fill="#64748b"/>
+<line x1="145.0" y1="268.12" x2="145.0" y2="496" stroke="#f8fafc" stroke-width="3" stroke-dasharray="10 8"/>
+<rect x="10" y="158.4" width="40" height="211.0" fill="#a3b1c2"/>
+<rect x="234" y="179.5" width="46" height="189.9" fill="#a3b1c2"/>
+<circle cx="151.0" cy="272" r="34" fill="#e11d48"/>
+<circle cx="140.0" cy="260" r="9" fill="#fb7185"/>
+<rect x="111.0" y="232" width="80" height="80" fill="none" stroke="#22c55e" stroke-width="4" rx="4"/>
+<rect x="238" y="84" width="40" height="40" rx="8" fill="#ffffff"/>
+<rect x="242" y="88" width="32" height="32" rx="6" fill="#e11d48"/>
+<text x="258" y="138" font-size="9" font-weight="700" fill="#ffffff" text-anchor="middle">target</text>
+<line x1="96.66666666666666" y1="74" x2="96.66666666666666" y2="496" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.85"/>
+<line x1="193.33333333333331" y1="74" x2="193.33333333333331" y2="496" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.85"/>
+<rect x="8" y="82" width="158.8" height="24" rx="6" fill="#00000099"/>
+<text x="16" y="98" font-size="11" font-weight="700" fill="#ffffff" text-anchor="start">▲ Following the colour</text>
+<rect x="0" y="488" width="290" height="112" rx="16" fill="#1f2937"/>
+<text x="16" y="518" font-size="12.5" font-weight="700" fill="#ffffff" text-anchor="start">Auto</text>
+<rect x="56" y="506" width="34" height="20" rx="10" fill="#16a34a"/>
+<circle cx="80" cy="516" r="8" fill="#fff"/>
+<circle cx="140" cy="514" r="15" fill="#374151"/>
+<text x="140" y="519" font-size="14" font-weight="800" fill="#ffffff" text-anchor="middle">»</text>
+<circle cx="178" cy="514" r="15" fill="#374151"/>
+<text x="178" y="519" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">⟲</text>
+<rect x="202" y="500" width="78" height="28" rx="8" fill="#ffffff33"/>
+<text x="241" y="518" font-size="10" font-weight="700" fill="#ffffff" text-anchor="middle">How to use</text>
+<text x="16" y="558" font-size="11" font-weight="400" fill="#e5e7eb" text-anchor="start">Colour tolerance</text>
+<rect x="146" y="542" width="28" height="24" rx="6" fill="#374151"/>
+<text x="160" y="559" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">−</text>
+<text x="196" y="559" font-size="12" font-weight="800" fill="#ffffff" text-anchor="middle">15</text>
+<rect x="218" y="542" width="28" height="24" rx="6" fill="#374151"/>
+<text x="232" y="559" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">+</text>
+<text x="16" y="582" font-size="10.5" font-weight="400" fill="#9ca3af" text-anchor="start" font-family="Menlo, monospace">left 192, right 192</text>
+<rect x="85.0" y="588" width="120" height="4" rx="2" fill="#0f172a"/>
+</g></g>
+</svg>
