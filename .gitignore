@@ -57,3 +57,13 @@ kotlin-profile
 native
 jdks
 /robot/android/FakeDependency.jar
+# local assistant / scratch folders
+.claude/
+.claude-check/
+
+# desktop app build outputs
+desktop/macos/.build/
+desktop/macos/build/
+__pycache__/
+*.pyc
+desktop/python/.venv/

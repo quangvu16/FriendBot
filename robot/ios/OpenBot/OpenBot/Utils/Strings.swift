@@ -111,6 +111,11 @@ struct Strings {
     static let ScreenVoiceControl: String = "ScreenVoiceControl"
     /// Built in code (RemoteMicController), not in the storyboard.
     static let ScreenRemoteMic: String = "ScreenRemoteMic"
+    /// Built in code (RemoteMicController in internet mode), not in the storyboard.
+    static let ScreenInternetMic: String = "ScreenInternetMic"
+    /// Built in code (ProMicController), not in the storyboard.
+    static let ScreenWifiMicPro: String = "ScreenWifiMicPro"
+    static let ScreenInternetMicPro: String = "ScreenInternetMicPro"
 
     // UIVIew Identifiers
     static let secondView: String = "secondView"

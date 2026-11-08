@@ -17,7 +17,17 @@ public final class RelayPinPrompt {
 
   private RelayPinPrompt() {}
 
+  /** Receives the 4 digits the user typed. */
+  public interface OnPin {
+    void onPin(String pin);
+  }
+
   public static void show(Context context, String hostName, boolean wrong) {
+    show(context, hostName, wrong, pin -> VoiceRelayClient.get().setPin(hostName, pin));
+  }
+
+  /** Same prompt, handing the PIN to {@code onPin} (the Remote Mic page's own link). */
+  public static void show(Context context, String hostName, boolean wrong, OnPin onPin) {
     EditText input = new EditText(context);
     input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
     input.setFilters(new InputFilter[] {new InputFilter.LengthFilter(4)});
@@ -39,10 +49,10 @@ public final class RelayPinPrompt {
             (d, which) -> {
               String pin = input.getText().toString().trim();
               if (pin.length() == 4) {
-                VoiceRelayClient.get().setPin(hostName, pin);
+                onPin.onPin(pin);
               } else {
                 // Not a PIN: ask again instead of silently giving up.
-                input.postDelayed(() -> show(context, hostName, false), 350);
+                input.postDelayed(() -> show(context, hostName, false, onPin), 350);
               }
             })
         .setNegativeButton(R.string.voice_cancel, null)

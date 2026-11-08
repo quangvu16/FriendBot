@@ -78,7 +78,7 @@
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Voice control sends your microphone to Xiaozhi so the assistant can hear your commands. The Remote Mic page streams this phone's microphone into the voice control page on the phone connected to the robot.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>When you ask the assistant to see something on the Voice Control page, it takes one photo with this phone's camera and asks Xiaozhi to explain the environment.</string>
+	<string>When you ask the assistant to see something on the Voice Control page, it takes one photo with this phone's camera and asks Xiaozhi to explain the environment. The Remote Mic page also uses the camera to scan the robot phone's QR code.</string>
 	<key>NSSupportsSuddenTermination</key>
 	<false/>
 	<key>UIAppFonts</key>

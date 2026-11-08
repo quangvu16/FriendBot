@@ -1,0 +1,11 @@
+# FriendBot Mic (desktop) — Python 3.9+
+sounddevice>=0.4      # microphone (PortAudio is bundled on macOS / Windows wheels)
+numpy>=1.21
+opuslib>=3.0          # Opus encoder — needs the Opus library: macOS `brew install opus`, Ubuntu `apt install libopus0`
+paho-mqtt>=1.6        # Internet Mic (MQTT over secure WebSocket)
+cryptography>=41      # Internet Mic (AES-256-GCM)
+# Optional:
+opencv-python>=4.8    # scan the robot phone's QR with the webcam or from a photo
+zeroconf>=0.100       # find iPhone robot phones (Bonjour) on the same WiFi
+# Pro app (friendbot_mic_pro.py): shows the robot camera
+pillow

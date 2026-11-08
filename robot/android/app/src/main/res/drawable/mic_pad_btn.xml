@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pro pages: one arrow key of the drive pad (fills cyan while held). -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#7FE7FF" />
+            <corners android:radius="14dp" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#0B141A" />
+            <stroke android:width="1.5dp" android:color="#997FE7FF" />
+            <corners android:radius="14dp" />
+        </shape>
+    </item>
+</selector>

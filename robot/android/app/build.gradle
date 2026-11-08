@@ -124,6 +124,11 @@ dependencies {
     // ML Kit face detection for the Follow a Face vision mode
     implementation 'com.google.mlkit:face-detection:16.1.7'
 
+    // Remote Mic pairing by QR code: ZXing draws the QR on the robot phone, Google's code
+    // scanner (Play services, no camera permission needed) reads it on the other phone
+    implementation 'com.google.zxing:core:3.5.3'
+    implementation 'com.google.android.gms:play-services-code-scanner:16.1.0'
+
     implementation "com.google.android.gms:play-services-location:$location_version"
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
     implementation 'org.zeroturnaround:zt-zip:1.14'

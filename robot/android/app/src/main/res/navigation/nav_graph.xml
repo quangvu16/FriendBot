@@ -47,6 +47,15 @@
             android:id="@+id/action_mainFragment_to_remoteMicFragment"
             app:destination="@id/remoteMicFragment" />
         <action
+            android:id="@+id/action_mainFragment_to_internetMicFragment"
+            app:destination="@id/internetMicFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_wifiMicProFragment"
+            app:destination="@id/wifiMicProFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_internetMicProFragment"
+            app:destination="@id/internetMicProFragment" />
+        <action
             android:id="@+id/action_mainFragment_to_followColourFragment"
             app:destination="@id/followColourFragment" />
         <action
@@ -174,6 +183,24 @@
         android:name="org.openbot.app.robot.voice.RemoteMicFragment"
         android:label="@string/tile_remote_mic"
         tools:layout="@layout/fragment_remote_mic" />
+
+    <fragment
+        android:id="@+id/internetMicFragment"
+        android:name="org.openbot.app.robot.voice.InternetMicFragment"
+        android:label="@string/tile_internet_mic"
+        tools:layout="@layout/fragment_remote_mic" />
+
+    <fragment
+        android:id="@+id/wifiMicProFragment"
+        android:name="org.openbot.app.robot.voice.ProMicFragment$Wifi"
+        android:label="@string/tile_wifi_mic_pro"
+        tools:layout="@layout/fragment_pro_mic" />
+
+    <fragment
+        android:id="@+id/internetMicProFragment"
+        android:name="org.openbot.app.robot.voice.ProMicFragment$Internet"
+        android:label="@string/tile_internet_mic_pro"
+        tools:layout="@layout/fragment_pro_mic" />
 
     <fragment
         android:id="@+id/followColourFragment"

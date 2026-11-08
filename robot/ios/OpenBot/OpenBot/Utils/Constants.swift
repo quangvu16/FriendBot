@@ -127,6 +127,18 @@ struct Constants {
                          icon: UIImage(systemName: "mic.circle.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal) ?? UIImage(),
                          identifier: Strings.ScreenRemoteMic,
                          color: UIColor(red: 0.15, green: 0.65, blue: 0.60, alpha: 1)),
+                ModeItem(label: L10n.string("tile_internet_mic"),
+                         icon: UIImage(systemName: "globe")?.withTintColor(.white, renderingMode: .alwaysOriginal) ?? UIImage(),
+                         identifier: Strings.ScreenInternetMic,
+                         color: UIColor(red: 0.36, green: 0.42, blue: 0.75, alpha: 1)),
+                ModeItem(label: L10n.string("tile_wifi_mic_pro"),
+                         icon: UIImage(systemName: "gamecontroller.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal) ?? UIImage(),
+                         identifier: Strings.ScreenWifiMicPro,
+                         color: UIColor(red: 0.0, green: 0.54, blue: 0.48, alpha: 1)),
+                ModeItem(label: L10n.string("tile_internet_mic_pro"),
+                         icon: UIImage(systemName: "antenna.radiowaves.left.and.right")?.withTintColor(.white, renderingMode: .alwaysOriginal) ?? UIImage(),
+                         identifier: Strings.ScreenInternetMicPro,
+                         color: UIColor(red: 0.22, green: 0.29, blue: 0.67, alpha: 1)),
             ],
             // Vision Modes
             [

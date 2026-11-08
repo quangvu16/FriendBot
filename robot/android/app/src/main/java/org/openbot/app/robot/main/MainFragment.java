@@ -256,6 +256,21 @@ public class MainFragment extends Fragment implements OnItemClickListener<SubCat
             .navigate(R.id.action_mainFragment_to_remoteMicFragment);
         break;
 
+      case FeatureList.INTERNET_MIC:
+        Navigation.findNavController(requireView())
+            .navigate(R.id.action_mainFragment_to_internetMicFragment);
+        break;
+
+      case FeatureList.WIFI_MIC_PRO:
+        Navigation.findNavController(requireView())
+            .navigate(R.id.action_mainFragment_to_wifiMicProFragment);
+        break;
+
+      case FeatureList.INTERNET_MIC_PRO:
+        Navigation.findNavController(requireView())
+            .navigate(R.id.action_mainFragment_to_internetMicProFragment);
+        break;
+
       case FeatureList.AUTOPILOT:
         Navigation.findNavController(requireView())
             .navigate(R.id.action_mainFragment_to_autopilotFragment);

@@ -31,6 +31,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.'
         DropDown.startListeningToKeyboard()
+        // Share this phone over WiFi whenever the app runs — not just while the voice
+        // page is on screen. Remote Mic pages on other phones can then pick this phone
+        // and connect no matter what it is showing.
+        VoiceRelayServer.shared.start()
         // Google sign-in (for Google Drive projects) needs a real OAuth client ID.
         // Without one the app still drives, runs missions and shows the RC faces.
         if GoogleAccount.clientID != nil {

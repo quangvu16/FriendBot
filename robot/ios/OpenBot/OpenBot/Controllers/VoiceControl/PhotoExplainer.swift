@@ -19,6 +19,7 @@
 //
 
 import AVFoundation
+import CoreImage
 import UIKit
 
 /// Small well that keeps its `AVCaptureVideoPreviewLayer` sized to its bounds.
@@ -39,7 +40,8 @@ final class CameraPreviewHost: UIView {
     }
 }
 
-final class PhotoExplainer: NSObject, AVCapturePhotoCaptureDelegate {
+final class PhotoExplainer: NSObject, AVCapturePhotoCaptureDelegate,
+                            AVCaptureVideoDataOutputSampleBufferDelegate {
 
     /// Main-thread callbacks of one capture.
     struct Handlers {
@@ -60,6 +62,15 @@ final class PhotoExplainer: NSObject, AVCapturePhotoCaptureDelegate {
     private var session: AVCaptureSession?
     private var photoOutput: AVCapturePhotoOutput?
     private(set) var isFront = false
+
+    // Small live pictures for Pro remote pages (Wi-Fi Mic Pro / Internet Mic Pro).
+    private let frameQueue = DispatchQueue(label: "org.openbot.friendbot.frames")
+    private let frameLock = NSLock()
+    private var latestJpegData: Data?
+    private var latestFrameAt: TimeInterval = 0
+    /// Frames are only encoded while someone asked for one in the last 2 s.
+    private var framesWantedAt: TimeInterval = 0
+    private lazy var ciContext = CIContext()
 
     private var pending: Handlers?
     private var pendingQuestion = ""
@@ -104,12 +115,45 @@ final class PhotoExplainer: NSObject, AVCapturePhotoCaptureDelegate {
         let output = AVCapturePhotoOutput()
         guard session.canAddOutput(output) else { return }
         session.addOutput(output)
+        let frames = AVCaptureVideoDataOutput()
+        frames.alwaysDiscardsLateVideoFrames = true
+        frames.setSampleBufferDelegate(self, queue: frameQueue)
+        if session.canAddOutput(frames) { session.addOutput(frames) }
         self.session = session
         self.photoOutput = output
         let layer = AVCaptureVideoPreviewLayer(session: session)
         layer.videoGravity = .resizeAspectFill
         DispatchQueue.main.async { host.attach(layer: layer) }
         session.startRunning()
+    }
+
+    /// The newest small (320 px wide) JPEG of the corner camera, or nil (no camera / old).
+    /// Asking also keeps the frame encoder running for the next 2 s. Any thread.
+    func latestJpeg() -> Data? {
+        let now = ProcessInfo.processInfo.systemUptime
+        frameLock.lock()
+        defer { frameLock.unlock() }
+        framesWantedAt = now
+        guard now - latestFrameAt < 2 else { return nil }
+        return latestJpegData
+    }
+
+    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer,
+                       from connection: AVCaptureConnection) {
+        let now = ProcessInfo.processInfo.systemUptime
+        frameLock.lock()
+        let wanted = now - framesWantedAt < 2 && now - latestFrameAt >= 0.12
+        frameLock.unlock()
+        guard wanted, let pixels = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
+        var image = CIImage(cvPixelBuffer: pixels).oriented(isFront ? .leftMirrored : .right)
+        let scale = 320 / max(1, image.extent.width)
+        image = image.transformed(by: CGAffineTransform(scaleX: scale, y: scale))
+        guard let cg = ciContext.createCGImage(image, from: image.extent),
+              let jpeg = UIImage(cgImage: cg).jpegData(compressionQuality: 0.5) else { return }
+        frameLock.lock()
+        latestJpegData = jpeg
+        latestFrameAt = now
+        frameLock.unlock()
     }
 
     private func teardownSession() {

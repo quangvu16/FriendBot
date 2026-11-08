@@ -19,6 +19,9 @@ public class FeatureList {
   public static final String ROBOT_INFO = "Robot Info";
   public static final String VOICE_CONTROL = "Voice Control";
   public static final String REMOTE_MIC = "Remote Mic";
+  public static final String INTERNET_MIC = "Internet Mic";
+  public static final String WIFI_MIC_PRO = "Wi-Fi Mic Pro";
+  public static final String INTERNET_MIC_PRO = "Internet Mic Pro";
 
   // Game
   public static final String GAME = "Game";
@@ -136,6 +139,15 @@ public class FeatureList {
     subCategories.add(
         new SubCategory(
             REMOTE_MIC, R.string.tile_remote_mic, R.drawable.ic_mic, "#26A69A"));
+    subCategories.add(
+        new SubCategory(
+            INTERNET_MIC, R.string.tile_internet_mic, R.drawable.ic_mic, "#5C6BC0"));
+    subCategories.add(
+        new SubCategory(
+            WIFI_MIC_PRO, R.string.tile_wifi_mic_pro, R.drawable.ic_mic, "#00897B"));
+    subCategories.add(
+        new SubCategory(
+            INTERNET_MIC_PRO, R.string.tile_internet_mic_pro, R.drawable.ic_mic, "#3949AB"));
     categories.add(new Category(AI, R.string.tile_ai, subCategories));
 
     subCategories = new ArrayList<>();

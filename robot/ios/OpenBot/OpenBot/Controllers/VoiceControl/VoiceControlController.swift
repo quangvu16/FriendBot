@@ -95,6 +95,13 @@ final class VoiceControlController: UIViewController {
     private let pairRetryButton = UIButton(type: .system)
     private let contentStack = UIStackView()
     private let faceView = VoiceFaceView()
+    /// Face-only screen: the robot face covers the whole page (long-press = STOP,
+    /// double-tap = the controls for 30 s; hidden while pairing).
+    private let robotFace = RobotFaceView()
+    /// Internet QR on the face screen: one tap shows the code the Internet Mic page scans.
+    private let faceQrButton = UIButton(type: .system)
+    private var faceBackWork: DispatchWorkItem?
+    private var pairingShown = false
     private let stateIconView = UIImageView()
     private let stateLabel = UILabel()
     private let modeToggle = UISegmentedControl(items: [
@@ -213,6 +220,9 @@ final class VoiceControlController: UIViewController {
         // Listen mode is a persisted choice; hands-free is the default.
         listenHandsFree = UserDefaults.standard.string(forKey: Self.listenModeKey) != Self.modeKeyPtt
         layout()
+        installRobotFace()
+        // Internet Mic: phones on another WiFi or 4G/5G reach this page through the relay.
+        InternetRelayHost.shared.start()
         NotificationCenter.default.addObserver(self, selector: #selector(updateConnection),
                                                name: .bluetoothConnected, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateConnection),
@@ -229,6 +239,8 @@ final class VoiceControlController: UIViewController {
         super.viewWillAppear(animated)
         // A Remote Mic page on another phone feeds this page's session while it is on screen.
         relayServer.setMicSink(self)
+        // Pro remote pages may watch the corner camera (small pictures, only when asked).
+        relayServer.proCamera = { [weak self] in self?.photoExplainer.latestJpeg() }
         // Another phone's shared robot asks for its PIN before this phone may drive it.
         // (promptForPin retries while this page is mid-transition — do not drop it here.)
         relayClient.onPinRequired = { [weak self] host, wrong in
@@ -246,19 +258,22 @@ final class VoiceControlController: UIViewController {
         stopMicSession(notify: session.isReady)
         remoteMicActive = false
         relayServer.setMicSink(nil)
+        relayServer.proCamera = nil
         assistantWait?.invalidate()
         thinkingTimer?.invalidate()
         flushPlayback()
         teardownAudio()
         photoExplainer.teardown()
         cameraStillWork?.cancel()
+        faceBackWork?.cancel()
         // Only a real departure ends the session (alerts present over us as well).
         if isMovingFromParent || isBeingDismissed {
-            // Share the robot only while this page is open.
-            relayServer.stop()
+            // The relay server keeps sharing while the app is open (see AppDelegate);
+            // only the microphone sink follows this page.
             session.disconnect()
             activator?.cancel()
             activator = nil
+            InternetRelayHost.shared.stop()
         }
     }
 
@@ -393,7 +408,17 @@ final class VoiceControlController: UIViewController {
         capsule.accessibilityTraits = .button
         capsule.addGestureRecognizer(UITapGestureRecognizer(target: self,
                                                             action: #selector(robotPickerTapped)))
-        let capsuleRow = UIStackView(arrangedSubviews: [capsule])
+        // QR for the Remote Mic page on another phone (this phone's IP + relay port).
+        var qrConfig = UIButton.Configuration.gray()
+        qrConfig.image = UIImage(systemName: "qrcode")
+        qrConfig.cornerStyle = .capsule
+        let qrButton = UIButton(configuration: qrConfig)
+        qrButton.accessibilityLabel = L10n.string("voice_sharing_qr_title")
+        qrButton.setContentHuggingPriority(.required, for: .horizontal)
+        qrButton.addTarget(self, action: #selector(shareQrTapped), for: .touchUpInside)
+        let capsuleRow = UIStackView(arrangedSubviews: [capsule, qrButton])
+        capsuleRow.spacing = 8
+        capsuleRow.alignment = .center
         capsuleRow.axis = .horizontal
         stack.addArrangedSubview(capsuleRow)
 
@@ -753,6 +778,82 @@ final class VoiceControlController: UIViewController {
     private func showPairing(_ pairing: Bool) {
         pairingPanel.isHidden = !pairing
         contentStack.isHidden = pairing
+        pairingShown = pairing
+        faceBackWork?.cancel()
+        robotFace.isHidden = pairing // the pairing code must stay visible
+        faceQrButton.isHidden = pairing
+    }
+
+    // MARK: Face-only screen
+
+    private func installRobotFace() {
+        robotFace.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(robotFace)
+        NSLayoutConstraint.activate([
+            robotFace.topAnchor.constraint(equalTo: view.topAnchor),
+            robotFace.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            robotFace.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            robotFace.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+        ])
+        // Its own view above the face (so the face's double-tap never swallows the tap),
+        // shown and hidden together with the face.
+        faceQrButton.setImage(UIImage(systemName: "qrcode",
+                                      withConfiguration: UIImage.SymbolConfiguration(pointSize: 22, weight: .regular)),
+                              for: .normal)
+        faceQrButton.tintColor = RobotFaceView.accent.withAlphaComponent(0.6)
+        faceQrButton.accessibilityLabel = L10n.string("voice_internet_qr")
+        faceQrButton.addTarget(self, action: #selector(faceQrTapped), for: .touchUpInside)
+        faceQrButton.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(faceQrButton)
+        NSLayoutConstraint.activate([
+            faceQrButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -12),
+            faceQrButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12),
+            faceQrButton.widthAnchor.constraint(equalToConstant: 48),
+            faceQrButton.heightAnchor.constraint(equalToConstant: 48),
+        ])
+        robotFace.onLongPress = { [weak self] in self?.stopMoving() }
+        robotFace.onDoubleTap = { [weak self] in self?.showControlsForAWhile() }
+    }
+
+    /// Double-tap: show the page's controls (QR, settings, typing) for 30 s.
+    @objc private func faceQrTapped() {
+        showInternetQr()
+    }
+
+    private func showControlsForAWhile() {
+        robotFace.isHidden = true
+        faceQrButton.isHidden = true
+        faceBackWork?.cancel()
+        let work = DispatchWorkItem { [weak self] in
+            guard let self = self, !self.pairingShown else { return }
+            self.robotFace.isHidden = false
+            self.faceQrButton.isHidden = false
+        }
+        faceBackWork = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + 30, execute: work)
+    }
+
+    /// The face to draw: the exchange's emotion when there is one, else the voice state.
+    private func faceEmotion() -> RobotFaceView.Emotion {
+        if let emoji = turnEmoji { return Self.emojiEmotion(emoji) }
+        switch uiState {
+        case .listening: return .listening
+        case .thinking: return .thinking
+        default: return .neutral
+        }
+    }
+
+    private static func emojiEmotion(_ emoji: String) -> RobotFaceView.Emotion {
+        switch emoji {
+        case "😄", "🤩", "😍", "😆", "😂", "🥰", "😘", "😉", "😋": return .happy
+        case "😢", "😭", "😳": return .sad
+        case "😠", "😡": return .angry
+        case "😮", "😨", "😲": return .surprised
+        case "🤔": return .thinking
+        case "😕", "🙃", "🤪": return .confused
+        case "😴": return .sleepy
+        default: return .neutral // 😊 🙂 😐 😎 and anything else
+        }
     }
 
     private func startPairing() {
@@ -812,24 +913,30 @@ final class VoiceControlController: UIViewController {
                     self.setUiState(.ready)
                 }
                 self.updateConnection()
-                if self.listenHandsFree {
+                // A remote phone's mic (Remote Mic page) that opened before Xiaozhi was up,
+                // or across a reconnect, needs its listen start now or its voice is ignored.
+                if self.listenHandsFree || self.remoteMicActive {
                     // Hands-free default: the robot listens as soon as it is connected.
                     self.armListening()
                 }
+                self.relayServer.refreshMicAcks()
             case .connecting:
                 // No socket to stream to; the next connect sends a fresh listen start.
                 self.stopMicCapture()
                 self.setUiState(.connecting)
                 self.updateConnection()
+                self.relayServer.refreshMicAcks() // remote mics: not heard until reconnect
             case .idle:
                 self.stopMicCapture()
                 self.setUiState(.ready)
                 self.updateConnection()
+                self.relayServer.refreshMicAcks()
             }
         }
         session.onStt = { [weak self] text in
             guard let self = self else { return }
             self.utteranceTraffic = true
+            self.relayServer.sendProText("heard", text) // Pro remote pages show it
             let now = ProcessInfo.processInfo.systemUptime
             let echo = self.lastUserText == text
                 && now - self.lastUserTextAt < Self.userEchoWindowSeconds
@@ -849,6 +956,7 @@ final class VoiceControlController: UIViewController {
         session.onTtsSentence = { [weak self] text in
             guard let self = self else { return }
             self.utteranceTraffic = true
+            self.relayServer.sendProText("said", text)
             self.appendBotTurn(text)
             // v3: no local TTS - the server's binary opus stream is the voice output.
         }
@@ -1377,6 +1485,7 @@ final class VoiceControlController: UIViewController {
 
     private func updateFace() {
         faceView.show(emoji: turnEmoji ?? Self.stateDefaultEmoji(uiState))
+        robotFace.setFace(faceEmotion(), talking: uiState == .speaking)
     }
 
     /// State defaults when nothing else applies: Ready 😊 / Listening 🙂 / Thinking 🤔 / Speaking 😄.
@@ -1402,12 +1511,15 @@ final class VoiceControlController: UIViewController {
     /// happy → 😄, excited → 🤩, sad → 😢, angry → 😠, surprised → 😮, love → 😍, fear → 😨, …
     private static func tokenEmoji(_ token: String) -> String {
         if token.contains("excited") { return "🤩" }
-        if token.contains("happy") { return "😄" }
-        if token.contains("sad") { return "😢" }
+        if token.contains("happy") || token.contains("laugh") || token.contains("funny")
+            || token.contains("kiss") || token.contains("wink") || token.contains("delicious") { return "😄" }
+        if token.contains("sleep") { return "😴" }
+        if token.contains("confus") || token.contains("silly") || token.contains("puzzl") { return "😕" }
+        if token.contains("sad") || token.contains("cry") || token.contains("embarrass") { return "😢" }
         if token.contains("angry") { return "😠" }
         if token.contains("surpris") || token.contains("shock") { return "😮" }
         if token.contains("love") { return "😍" }
-        if token.contains("confus") || token.contains("think") || token.contains("puzzl") { return "🤔" }
+        if token.contains("think") { return "🤔" }
         if token.contains("fear") || token.contains("scared") || token.contains("afraid") { return "😨" }
         return "😊" // neutral + unknown tokens
     }
@@ -1997,6 +2109,8 @@ final class VoiceControlController: UIViewController {
         guard let data = data, let image = UIImage(data: data) else { return }
         cameraStill.image = image
         cameraStill.isHidden = false
+        // Face-only screen: the picture replaces the face for 3 s, then the face smiles.
+        robotFace.showPhoto(image, seconds: 3)
         cameraStillWork?.cancel()
         let work = DispatchWorkItem { [weak self] in self?.cameraStill.isHidden = true }
         cameraStillWork = work
@@ -2240,11 +2354,8 @@ final class VoiceControlController: UIViewController {
         } else {
             base = L10n.string("voice_not_connected")
         }
-        // While this page serves, always show the PIN other phones must type — the relay
-        // serves even before the robot link is up, and remotes need the PIN to join.
-        let sharing = relayServer.isRunning && !relayClient.isHostConnected
-            ? " · " + String(format: L10n.string("voice_sharing_pin"), relayServer.pin)
-            : ""
+        // No WiFi PIN any more: other phones join by discovery or the QR / IP address.
+        let sharing = ""
         let ws = session.isReady ? L10n.string("voice_ws_ready") : L10n.string("voice_ws_offline")
         connectionLabel.text = base + sharing + " · " + ws
     }
@@ -2258,10 +2369,7 @@ final class VoiceControlController: UIViewController {
             alert(L10n.string("voice_robot_none_found"))
             return
         }
-        // Show the share PIN here too: the picker is where users look when connecting.
-        let message = relayServer.isRunning
-            ? String(format: L10n.string("voice_picker_pin_message"), relayServer.pin)
-            : nil
+        let message: String? = nil // no WiFi PIN any more
         let sheet = UIAlertController(title: L10n.string("voice_robot_picker_title"),
                                      message: message, preferredStyle: .actionSheet)
         if isBluetoothConnected {
@@ -2285,6 +2393,52 @@ final class VoiceControlController: UIViewController {
             popover.sourceView = connectionCapsule
             popover.sourceRect = connectionCapsule.bounds
         }
+        present(sheet, animated: true)
+    }
+
+    /// QR button: the same-WiFi QR (Remote Mic) or the Internet QR (Internet Mic, 4G/5G).
+    @objc private func shareQrTapped() {
+        let sheet = UIAlertController(title: L10n.string("voice_sharing_qr_title"), message: nil,
+                                      preferredStyle: .actionSheet)
+        sheet.addAction(UIAlertAction(title: L10n.string("voice_wifi_qr"), style: .default) {
+            [weak self] _ in self?.showWifiQr()
+        })
+        sheet.addAction(UIAlertAction(title: L10n.string("voice_internet_qr"), style: .default) {
+            [weak self] _ in self?.showInternetQr()
+        })
+        sheet.addAction(UIAlertAction(title: L10n.string("voice_cancel"), style: .cancel))
+        if let popover = sheet.popoverPresentationController {
+            popover.sourceView = connectionCapsule
+            popover.sourceRect = connectionCapsule.bounds
+        }
+        present(sheet, animated: true)
+    }
+
+    /// The Internet QR (private room + key) for the Internet Mic page on a phone anywhere.
+    private func showInternetQr() {
+        let host = InternetRelayHost.shared
+        host.start()
+        let status = String(format: L10n.string("voice_internet_status"),
+                            L10n.string(host.isOnline ? "voice_internet_online" : "voice_internet_offline"),
+                            host.phoneCount)
+        let sheet = ShareQrController(qrText: host.qrText(),
+                                      detail: L10n.string("voice_internet_qr_message") + "\n\n" + status)
+        sheet.modalPresentationStyle = .pageSheet
+        present(sheet, animated: true)
+    }
+
+    /// Shows this phone's QR (IP + relay port) for the Remote Mic page on another phone.
+    private func showWifiQr() {
+        relayServer.start() // sharing is on whenever the app is open; make sure it serves
+        guard let ip = RelayQr.localIPv4() else {
+            alert(L10n.string("voice_sharing_qr_no_wifi"))
+            return
+        }
+        let port = relayServer.port ?? RelayQr.relayPort
+        let text = RelayQr.build(ip: ip, port: port, name: VoiceRelayServer.advertisedName, wifi: nil)
+        let detail = String(format: L10n.string("voice_sharing_ip"), ip)
+        let sheet = ShareQrController(qrText: text, detail: detail)
+        sheet.modalPresentationStyle = .pageSheet
         present(sheet, animated: true)
     }
 
@@ -2322,6 +2476,8 @@ extension VoiceControlController: RelayMicSink {
         }
     }
 
+    var isMicReady: Bool { session.isReady }
+
     func onRemoteMicFrame(opus: Data, rms: Float) {
         guard remoteMicActive, session.isReady else { return }
         guard uiState != .speaking else { return } // echo guard: the host is the one talking
@@ -2331,7 +2487,11 @@ extension VoiceControlController: RelayMicSink {
 
     private func onRemoteMicStarted() {
         remoteMicActive = true
-        guard session.isReady else { return }
+        appendLog(L10n.string("voice_log_remote_mic"))
+        guard session.isReady else {
+            appendLog(L10n.string("voice_ws_offline")) // heard once Xiaozhi connects
+            return
+        }
         if uiState == .speaking {
             // Barge-in: cut the assistant off at once, then take the floor.
             flushPlayback()

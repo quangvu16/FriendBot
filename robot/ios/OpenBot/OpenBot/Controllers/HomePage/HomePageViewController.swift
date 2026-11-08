@@ -331,6 +331,18 @@ class HomePageViewController: CameraController, UICollectionViewDataSource, UICo
             navigationController?.pushViewController(RemoteMicController(), animated: true)
             return
         }
+        if identifier == Strings.ScreenInternetMic {
+            navigationController?.pushViewController(RemoteMicController(internet: true), animated: true)
+            return
+        }
+        if identifier == Strings.ScreenWifiMicPro {
+            navigationController?.pushViewController(ProMicController(internet: false), animated: true)
+            return
+        }
+        if identifier == Strings.ScreenInternetMicPro {
+            navigationController?.pushViewController(ProMicController(internet: true), animated: true)
+            return
+        }
         // Vision modes and guides are built in code, not in the storyboard.
         switch identifier {
         case Strings.ScreenFollowColour:

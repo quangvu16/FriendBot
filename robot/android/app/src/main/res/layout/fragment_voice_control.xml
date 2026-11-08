@@ -85,6 +85,18 @@
         android:paddingBottom="10dp"
         android:visibility="gone">
 
+        <!-- QR for the Remote Mic page (IP + port + PIN): scan instead of typing. Tap to
+             enlarge. Hidden while this phone has no WiFi address. -->
+        <ImageView
+            android:id="@+id/sharingQr"
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:layout_marginEnd="12dp"
+            android:background="#FFFFFF"
+            android:contentDescription="@string/voice_sharing_qr_desc"
+            android:scaleType="fitCenter"
+            android:visibility="gone" />
+
         <!-- Digits first: the floating camera preview covers the card's right end. -->
         <TextView
             android:id="@+id/sharingPinDigits"
@@ -98,13 +110,23 @@
             tools:text="1234" />
 
         <TextView
+            android:id="@+id/sharingPinHint"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:maxLines="2"
+            android:maxLines="3"
             android:text="@string/voice_sharing_pin_hint"
             android:textColor="#1C1C1E"
             android:textSize="13sp" />
+
+        <!-- Internet Mic: a phone on another WiFi or 4G/5G scans this phone's Internet QR. -->
+        <Button
+            android:id="@+id/sharingInternetButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="44dp"
+            android:text="@string/voice_internet_qr"
+            android:textAllCaps="false" />
     </LinearLayout>
 
     <!-- First-time pairing panel: replaces the live UI until the device is bound -->
@@ -741,4 +763,29 @@
             android:src="@drawable/ic_camera_flip"
             app:tint="#FFFFFF" />
     </FrameLayout>
+
+    <!-- Face-only screen (design "FriendBot Face Voice Control"): the robot face covers the
+         whole page — two eyes and a mouth on black. Long-press = STOP; double-tap shows the
+         controls above for 30 s. Hidden while pairing (the code must be visible). -->
+    <org.openbot.app.robot.voice.RobotFaceView
+        android:id="@+id/robotFace"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Internet QR on the face screen: one tap shows the code the Internet Mic page scans
+         (any WiFi or 4G/5G). Shown and hidden together with the face. -->
+    <ImageButton
+        android:id="@+id/faceQrButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="16dp"
+        android:alpha="0.55"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/voice_internet_qr"
+        android:padding="10dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_qr_code"
+        app:tint="#7FE7FF" />
 </FrameLayout>

@@ -210,6 +210,11 @@ public class VoiceControlFragment extends ControlsFragment {
         }
 
         @Override
+        public boolean isMicReady() {
+          return session != null && wsReady;
+        }
+
+        @Override
         public void onRemoteMicFrame(byte[] opus, float rms) {
           if (!remoteMicActive || session == null || !wsReady) return;
           if (uiState == UiState.SPEAKING) return; // echo guard: the host is the one talking
@@ -290,9 +295,12 @@ public class VoiceControlFragment extends ControlsFragment {
             setUiState(UiState.IDLE);
           }
           updateConnectionText();
-          if (listenHandsFree) {
+          // A remote phone's mic (Remote Mic page) that opened before Xiaozhi was up, or
+          // across a reconnect, needs its listen start now or its voice is ignored.
+          if (listenHandsFree || remoteMicActive) {
             armListening(); // hands-free default: the robot listens as soon as it is connected
           }
+          VoiceRelayServer.get().refreshMicAcks();
         }
 
         @Override
@@ -302,11 +310,13 @@ public class VoiceControlFragment extends ControlsFragment {
           stopMicCapture();
           setUiState(reconnecting ? UiState.CONNECTING : UiState.IDLE);
           updateConnectionText();
+          VoiceRelayServer.get().refreshMicAcks(); // remote mics: not heard until reconnect
         }
 
         @Override
         public void onStt(String text) {
           utteranceTraffic = true;
+          VoiceRelayServer.get().sendProText("heard", text); // Pro remote pages show it
           long now = SystemClock.uptimeMillis();
           boolean echo = text.equals(lastUserText) && now - lastUserTextAtMs < USER_ECHO_WINDOW_MS;
           if (!echo) {
@@ -324,6 +334,7 @@ public class VoiceControlFragment extends ControlsFragment {
         @Override
         public void onAssistantText(String text) {
           utteranceTraffic = true;
+          VoiceRelayServer.get().sendProText("said", text);
           // The list row is the only trace of the reply here: the server's own TTS opus
           // frames (onAudio) are this screen's voice output, there is no local TTS anymore.
           appendBotTurn(text);
@@ -555,6 +566,8 @@ public class VoiceControlFragment extends ControlsFragment {
     }
     binding.cameraStill.setImageBitmap(still);
     binding.cameraStill.setVisibility(View.VISIBLE);
+    // Face-only screen: the picture replaces the face for 3 s, then the face smiles.
+    binding.robotFace.showPhoto(still, 3000);
     binding.cameraStill.postDelayed(
         () -> {
           if (binding != null) {
@@ -613,6 +626,9 @@ public class VoiceControlFragment extends ControlsFragment {
     binding.connectionText.setOnClickListener(v -> showRobotPicker());
     // A phone running the Remote Mic page speaks through this page's Xiaozhi session.
     VoiceRelayServer.get().setMicSink(remoteMicSink);
+    // Pro remote pages may watch the corner camera (small frames, only while asked for).
+    VoiceRelayServer.get()
+        .setProSource(() -> binding == null ? null : binding.cameraPreview.getBitmap());
 
     binding.micButton.setOnClickListener(v -> onMicTapped());
     binding.sendTypedButton.setOnClickListener(v -> submitTypedCommand());
@@ -626,6 +642,30 @@ public class VoiceControlFragment extends ControlsFragment {
         v -> executeCommand(VoiceCommand.of(VoiceCommand.Action.RIGHT, "tap", "tap"), ""));
     binding.stopButton.setOnClickListener(
         v -> executeCommand(VoiceCommand.of(VoiceCommand.Action.STOP, "tap", "tap"), ""));
+    // Internet Mic: phones on another WiFi or 4G/5G reach this page through the relay.
+    org.openbot.app.robot.voice.relay.InternetRelayHost.get()
+        .start(requireContext().getApplicationContext());
+    org.openbot.app.robot.voice.relay.InternetRelayHost.get()
+        .setListener(
+            (online, phones) -> {
+              if (binding != null) updateSharingPin();
+            });
+    binding.sharingInternetButton.setOnClickListener(v -> showInternetQr());
+    // The face screen's own QR button: one tap, no need to reveal the controls first.
+    binding.faceQrButton.setOnClickListener(v -> showInternetQr());
+    // Face-only screen: long-press = STOP, double-tap = the controls for a while.
+    binding.robotFace.setListener(
+        new RobotFaceView.Listener() {
+          @Override
+          public void onFaceLongPress() {
+            executeCommand(VoiceCommand.of(VoiceCommand.Action.STOP, "tap", "tap"), "");
+          }
+
+          @Override
+          public void onFaceDoubleTap() {
+            showControlsForAWhile();
+          }
+        });
     binding.lightsButton.setOnClickListener(
         v ->
             executeCommand(
@@ -798,11 +838,92 @@ public class VoiceControlFragment extends ControlsFragment {
   private void showPairingUi() {
     binding.pairingPanel.setVisibility(View.VISIBLE);
     binding.voiceUiPanel.setVisibility(View.GONE);
+    pairingShown = true;
+    faceHandler.removeCallbacks(faceBack);
+    binding.robotFace.setVisibility(View.GONE); // the pairing code must stay visible
+    binding.faceQrButton.setVisibility(View.GONE);
   }
 
   private void showVoiceUi() {
     binding.pairingPanel.setVisibility(View.GONE);
     binding.voiceUiPanel.setVisibility(View.VISIBLE);
+    pairingShown = false;
+    binding.robotFace.setVisibility(View.VISIBLE);
+    binding.faceQrButton.setVisibility(View.VISIBLE);
+  }
+
+  // ---------------------------------------------------------------- face-only screen
+
+  /** How long a double-tap shows the controls (QR, settings, typing) before the face returns. */
+  private static final long CONTROLS_SHOWN_MS = 30_000;
+
+  private final android.os.Handler faceHandler =
+      new android.os.Handler(android.os.Looper.getMainLooper());
+  private boolean pairingShown;
+  private final Runnable faceBack =
+      () -> {
+        if (binding != null && !pairingShown) {
+          binding.robotFace.setVisibility(View.VISIBLE);
+          binding.faceQrButton.setVisibility(View.VISIBLE);
+        }
+      };
+
+  private void showControlsForAWhile() {
+    if (binding == null) return;
+    binding.robotFace.setVisibility(View.GONE);
+    binding.faceQrButton.setVisibility(View.GONE);
+    faceHandler.removeCallbacks(faceBack);
+    faceHandler.postDelayed(faceBack, CONTROLS_SHOWN_MS);
+    Toast.makeText(requireContext(), R.string.voice_face_controls_shown, Toast.LENGTH_SHORT).show();
+  }
+
+  /** The face to draw: the exchange's emotion when there is one, else the voice state. */
+  private RobotFaceView.Emotion faceEmotion() {
+    if (turnEmoji != null) return emojiEmotion(turnEmoji);
+    switch (uiState) {
+      case LISTENING:
+        return RobotFaceView.Emotion.LISTENING;
+      case THINKING:
+        return RobotFaceView.Emotion.THINKING;
+      default:
+        return RobotFaceView.Emotion.NEUTRAL;
+    }
+  }
+
+  private static RobotFaceView.Emotion emojiEmotion(String emoji) {
+    switch (emoji) {
+      case "😄":
+      case "🤩":
+      case "😍":
+      case "😆":
+      case "😂":
+      case "🥰":
+      case "😘":
+      case "😉":
+      case "😋":
+        return RobotFaceView.Emotion.HAPPY;
+      case "😢":
+      case "😭":
+      case "😳":
+        return RobotFaceView.Emotion.SAD;
+      case "😠":
+      case "😡":
+        return RobotFaceView.Emotion.ANGRY;
+      case "😮":
+      case "😨":
+      case "😲":
+        return RobotFaceView.Emotion.SURPRISED;
+      case "🤔":
+        return RobotFaceView.Emotion.THINKING;
+      case "😕":
+      case "🙃":
+      case "🤪":
+        return RobotFaceView.Emotion.CONFUSED;
+      case "😴":
+        return RobotFaceView.Emotion.SLEEPY;
+      default:
+        return RobotFaceView.Emotion.NEUTRAL; // 😊 🙂 😐 😎 and anything else
+    }
   }
 
   // ---------------------------------------------------------------- mic uplink (hands-free / ptt)
@@ -896,7 +1017,11 @@ public class VoiceControlFragment extends ControlsFragment {
   /** A remote phone's microphone (its Remote Mic page) just became this page's uplink. */
   private void onRemoteMicStarted() {
     remoteMicActive = true;
-    if (session == null || !wsReady) return;
+    appendLog(getString(R.string.voice_log_remote_mic));
+    if (session == null || !wsReady) {
+      appendLog(getString(R.string.voice_ws_offline)); // heard once Xiaozhi connects
+      return;
+    }
     if (uiState == UiState.SPEAKING) {
       // Barge-in from the remote mic: cut the assistant off at once, then take the floor.
       if (opusPlayer != null) opusPlayer.flushAndReset();
@@ -1480,6 +1605,7 @@ public class VoiceControlFragment extends ControlsFragment {
   private void updateFace() {
     if (binding == null) return;
     showFaceEmoji(turnEmoji != null ? turnEmoji : stateDefaultEmoji(uiState));
+    binding.robotFace.setFace(faceEmotion(), uiState == UiState.SPEAKING);
   }
 
   /** State defaults when nothing else applies: Ready 😊 / Listening 🙂 / Thinking 🤔 / Speaking 😄. */
@@ -1510,12 +1636,19 @@ public class VoiceControlFragment extends ControlsFragment {
   /** happy → 😄, excited → 🤩, sad → 😢, angry → 😠, surprised → 😮, love → 😍, fear → 😨, … */
   private static String tokenEmoji(String token) {
     if (token.contains("excited")) return "🤩";
-    if (token.contains("happy")) return "😄";
-    if (token.contains("sad")) return "😢";
+    if (token.contains("happy")
+        || token.contains("laugh")
+        || token.contains("funny")
+        || token.contains("kiss")
+        || token.contains("wink")
+        || token.contains("delicious")) return "😄";
+    if (token.contains("sleep")) return "😴";
+    if (token.contains("confus") || token.contains("silly") || token.contains("puzzl")) return "😕";
+    if (token.contains("sad") || token.contains("cry") || token.contains("embarrass")) return "😢";
     if (token.contains("angry")) return "😠";
     if (token.contains("surpris") || token.contains("shock")) return "😮";
     if (token.contains("love")) return "😍";
-    if (token.contains("confus") || token.contains("think") || token.contains("puzzl")) return "🤔";
+    if (token.contains("think")) return "🤔";
     if (token.contains("fear") || token.contains("scared") || token.contains("afraid")) return "😨";
     return "😊"; // neutral + unknown tokens
   }
@@ -1688,8 +1821,104 @@ public class VoiceControlFragment extends ControlsFragment {
     boolean serving = VoiceRelayServer.get().isRunning();
     binding.sharingPinCard.setVisibility(serving ? View.VISIBLE : View.GONE);
     if (serving) {
-      binding.sharingPinDigits.setText(VoiceRelayServer.get().pin());
+      binding.sharingPinDigits.setVisibility(View.GONE); // no PIN any more: scan the QR
+      // The IP lets a Remote Mic phone connect by hand when WiFi discovery is blocked.
+      String ip = org.openbot.app.robot.voice.relay.WifiNet.localIpv4();
+      String wifi = org.openbot.app.robot.voice.relay.WifiNet.wifiName(requireContext());
+      String hint = getString(R.string.voice_sharing_pin_hint);
+      if (ip != null) {
+        hint += "\n" + getString(R.string.voice_sharing_ip, ip);
+      }
+      if (wifi != null) {
+        hint += "\n" + getString(R.string.voice_sharing_wifi_name, wifi);
+      }
+      org.openbot.app.robot.voice.relay.InternetRelayHost host =
+          org.openbot.app.robot.voice.relay.InternetRelayHost.get();
+      hint +=
+          "\n"
+              + getString(
+                  R.string.voice_internet_status,
+                  getString(
+                      host.isOnline() ? R.string.voice_internet_online : R.string.voice_internet_offline),
+                  host.phoneCount());
+      binding.sharingPinHint.setText(hint);
+      updateSharingQr(ip, wifi);
     }
+  }
+
+  /** The Remote Mic QR (IP + port + PIN) — re-drawn only when its content changes. */
+  private String sharingQrText;
+
+  private void updateSharingQr(String ip, String wifi) {
+    int port = VoiceRelayServer.get().port();
+    if (ip == null || port == 0) {
+      binding.sharingQr.setVisibility(View.GONE);
+      sharingQrText = null;
+      return;
+    }
+    String text =
+        org.openbot.app.robot.voice.relay.RelayQr.build(ip, port, android.os.Build.MODEL, wifi);
+    if (!text.equals(sharingQrText)) {
+      int px = Math.round(88 * getResources().getDisplayMetrics().density);
+      android.graphics.Bitmap qr = org.openbot.app.robot.voice.relay.RelayQr.render(text, px);
+      if (qr == null) {
+        binding.sharingQr.setVisibility(View.GONE);
+        return;
+      }
+      sharingQrText = text;
+      binding.sharingQr.setImageBitmap(qr);
+      binding.sharingQr.setOnClickListener(v -> showSharingQrLarge(text));
+    }
+    binding.sharingQr.setVisibility(View.VISIBLE);
+  }
+
+  /** The Internet QR (room + key) for the Internet Mic page on a phone anywhere. */
+  private void showInternetQr() {
+    if (!isAdded()) return;
+    org.openbot.app.robot.voice.relay.InternetRelayHost host =
+        org.openbot.app.robot.voice.relay.InternetRelayHost.get();
+    String text = host.qrText();
+    if (text == null) return;
+    int px = Math.round(280 * getResources().getDisplayMetrics().density);
+    android.graphics.Bitmap qr = org.openbot.app.robot.voice.relay.RelayQr.render(text, px);
+    if (qr == null) return;
+    android.widget.ImageView big = new android.widget.ImageView(requireContext());
+    big.setImageBitmap(qr);
+    big.setBackgroundColor(android.graphics.Color.WHITE);
+    int pad = Math.round(16 * getResources().getDisplayMetrics().density);
+    big.setPadding(pad, pad, pad, pad);
+    big.setAdjustViewBounds(true);
+    new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+        .setTitle(R.string.voice_internet_qr_title)
+        .setMessage(R.string.voice_internet_qr_message)
+        .setView(big)
+        .setPositiveButton(android.R.string.ok, null)
+        .setNeutralButton(
+            R.string.voice_internet_new_code,
+            (d, w) -> {
+              host.newCode();
+              showInternetQr();
+            })
+        .show();
+  }
+
+  /** Big QR, easy to scan from across the table. */
+  private void showSharingQrLarge(String text) {
+    int px = Math.round(280 * getResources().getDisplayMetrics().density);
+    android.graphics.Bitmap qr = org.openbot.app.robot.voice.relay.RelayQr.render(text, px);
+    if (qr == null || !isAdded()) return;
+    android.widget.ImageView big = new android.widget.ImageView(requireContext());
+    big.setImageBitmap(qr);
+    big.setBackgroundColor(android.graphics.Color.WHITE);
+    int pad = Math.round(16 * getResources().getDisplayMetrics().density);
+    big.setPadding(pad, pad, pad, pad);
+    big.setAdjustViewBounds(true);
+    new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+        .setTitle(R.string.voice_sharing_qr_title)
+        .setMessage(R.string.voice_sharing_qr_message)
+        .setView(big)
+        .setPositiveButton(android.R.string.ok, null)
+        .show();
   }
 
   /**
@@ -2064,13 +2293,6 @@ public class VoiceControlFragment extends ControlsFragment {
     androidx.appcompat.app.AlertDialog.Builder picker =
         new androidx.appcompat.app.AlertDialog.Builder(requireContext())
             .setTitle(R.string.voice_robot_picker_title);
-    if (VoiceRelayServer.get().isRunning()) {
-      // This phone is sharing: show the PIN remotes must type on the chooser itself.
-      picker.setMessage(
-          getString(
-              R.string.voice_picker_pin_message,
-              VoiceRelayServer.pinFor(requireContext().getApplicationContext())));
-    }
     picker
         .setSingleChoiceItems(
             labels.toArray(new String[0]),
@@ -2113,6 +2335,9 @@ public class VoiceControlFragment extends ControlsFragment {
 
   @Override
   public void onDestroyView() {
+    org.openbot.app.robot.voice.relay.InternetRelayHost.get().setListener(null);
+    org.openbot.app.robot.voice.relay.InternetRelayHost.get().stop();
+    faceHandler.removeCallbacks(faceBack);
     utteranceHandler.removeCallbacksAndMessages(null);
     thinkingHandler.removeCallbacksAndMessages(null);
     levelHandler.removeCallbacksAndMessages(null);
@@ -2141,8 +2366,9 @@ public class VoiceControlFragment extends ControlsFragment {
     photoExplainer.markStopped();
     binding = null;
     VoiceRelayServer.get().setMicSink(null);
-    // Share the robot only while this page is open.
-    VoiceRelayServer.get().stop();
+    VoiceRelayServer.get().setProSource(null);
+    // The relay server keeps sharing while the app is open (see MainActivity); only the
+    // microphone sink follows this page.
     if (relayClient != null) {
       relayClient.stop();
       relayClient = null;

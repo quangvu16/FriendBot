@@ -15,7 +15,7 @@ class BluetoothTable: UITableViewController {
         super.viewDidLoad()
         clearsSelectionOnViewWillAppear = false
         setupNavigationBarItem();
-        installPinHeader()
+        // No WiFi PIN header any more (other phones join without a PIN).
         NotificationCenter.default.addObserver(self, selector: #selector(updateConnect), name: .bluetoothConnected, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateConnect), name: .bluetoothDisconnected, object: nil)
     }

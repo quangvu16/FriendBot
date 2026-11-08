@@ -14,6 +14,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
@@ -26,6 +27,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import timber.log.Timber;
 
 /**
@@ -60,6 +62,22 @@ public final class VoiceRelayClient {
 
   private static final long MAX_LINE_CHARS = 4096;
   private static final long[] RECONNECT_DELAY_MS = {1000, 2000, 5000};
+  /** Android's NSD resolve sometimes never calls back: give up on it after this long. */
+  private static final long RESOLVE_TIMEOUT_MS = 6000;
+  /** Per-address TCP connect timeout (IPv4 is tried first, then the other addresses). */
+  private static final int CONNECT_TIMEOUT_MS = 3000;
+
+  /** What the link is doing while not connected (shown on the Remote Mic page). */
+  public enum Status {
+    /** No shared robot (or not the picked one) found on the WiFi yet. */
+    SEARCHING,
+    /** Found {@link #statusHost()}: resolving its address / opening the socket. */
+    CONNECTING,
+    /** {@link #statusHost()} needs its PIN: pick it again to type it. */
+    NEED_PIN,
+    /** {@link #statusHost()} was found but could not be reached; retrying. */
+    UNREACHABLE
+  }
 
   private static final VoiceRelayClient INSTANCE = new VoiceRelayClient();
 
@@ -83,11 +101,26 @@ public final class VoiceRelayClient {
     default void onMicAck(boolean live) {}
 
     /**
+     * Several phones are streaming to the same host: {@code speaker} holds the microphone
+     * floor ({@code you}: it is this phone), {@code phones} are streaming in all.
+     */
+    default void onMicFloor(String speaker, boolean you, int phones) {}
+
+    /**
      * {@code hostName} needs its PIN before this phone may drive through it ({@code wrong}: the
      * saved/typed one was refused). Show {@link RelayPinPrompt}; it calls {@link #setPin}.
      */
     default void onPinRequired(String hostName, boolean wrong) {}
   }
+
+  /** Sends lines in order, off the main thread. */
+  private static final java.util.concurrent.ExecutorService SENDER =
+      java.util.concurrent.Executors.newSingleThreadExecutor(
+          r -> {
+            Thread t = new Thread(r, "voice-relay-client-send");
+            t.setDaemon(true);
+            return t;
+          });
 
   private final Handler main = new Handler(Looper.getMainLooper());
   private final List<NsdServiceInfo> found = new ArrayList<>();
@@ -104,6 +137,23 @@ public final class VoiceRelayClient {
   private String hostName = "";
   private String choice = CHOICE_AUTO;
   private int reconnectAttempts;
+  private volatile Status status = Status.SEARCHING;
+  private volatile String statusHost = "";
+  /**
+   * Generation of the current connection attempt. A resolve answer or socket that belongs to an
+   * older attempt (the user picked another phone, or the resolve timed out) is ignored.
+   */
+  private final AtomicInteger attempt = new AtomicInteger();
+  /** Unsticks a resolve that never answered, so the page does not stay "searching" forever. */
+  private final Runnable resolveWatchdog =
+      () -> {
+        if (!connecting || socket != null) return;
+        Timber.w("Voice relay: resolving '%s' timed out", statusHost);
+        attempt.incrementAndGet();
+        connecting = false;
+        setStatus(Status.UNREACHABLE, statusHost);
+        scheduleRetry();
+      };
   /** Hosts the user was already asked about; not asked again until they pick the host. */
   private final Set<String> pinAsked = Collections.synchronizedSet(new HashSet<>());
 
@@ -174,6 +224,24 @@ public final class VoiceRelayClient {
     return hostName;
   }
 
+  /** What the link is doing while not connected; see {@link Status}. */
+  public Status status() {
+    return status;
+  }
+
+  /** The phone {@link #status()} is about (empty while searching). */
+  public String statusHost() {
+    return statusHost;
+  }
+
+  private void setStatus(Status newStatus, String host) {
+    String h = host == null ? "" : host;
+    if (status == newStatus && statusHost.equals(h)) return;
+    status = newStatus;
+    statusHost = h;
+    notifyHostsChanged();
+  }
+
   /** The current pick: a host name, {@code "local"} or {@code ""} (automatic). */
   public String currentChoice() {
     return choice;
@@ -206,9 +274,15 @@ public final class VoiceRelayClient {
 
   /** Drive the robot shared by {@code name} (from {@link #hostNames()}). */
   public void chooseHost(String name) {
-    pinAsked.remove(name); // an explicit pick may ask for the PIN again
+    pinAsked.remove(canonName(name)); // an explicit pick may ask for the PIN again
     setChoice(name);
-    if (hostConnected && !name.equals(hostName)) {
+    reconnectAttempts = 0;
+    if ((hostConnected && !canonName(name).equals(canonName(hostName)))
+        || (!hostConnected && connecting)) {
+      // Drop the old link, or an attempt that may be stuck (a resolve that never answered):
+      // the pick must start a fresh connection now.
+      attempt.incrementAndGet();
+      main.removeCallbacks(resolveWatchdog);
       disconnect();
     }
     maybeConnect();
@@ -230,15 +304,28 @@ public final class VoiceRelayClient {
   /** The user typed {@code pin} for {@code hostName}: remember it and connect. */
   public void setPin(String hostName, String pin) {
     if (prefs != null) {
-      prefs.edit().putString(PREF_PIN_PREFIX + hostName, pin.trim()).apply();
+      prefs.edit().putString(PREF_PIN_PREFIX + canonName(hostName), pin.trim()).apply();
     }
-    pinAsked.remove(hostName);
+    pinAsked.remove(canonName(hostName));
     reconnectAttempts = 0;
     maybeConnect();
   }
 
   private String savedPin(String hostName) {
-    return prefs == null ? "" : prefs.getString(PREF_PIN_PREFIX + hostName, "");
+    return prefs == null ? "" : prefs.getString(PREF_PIN_PREFIX + canonName(hostName), "");
+  }
+
+  /**
+   * NSD may re-register a phone as "Joy 4 (2)" after a restart. The same phone must keep
+   * matching the user's pick and its saved PIN, so compare and key without the suffix.
+   */
+  static String canonName(String name) {
+    return name == null ? "" : name.replaceAll(" \\(\\d+\\)$", "");
+  }
+
+  /** The host the user picked (null in auto mode or when this phone's own link is chosen). */
+  public String chosenHost() {
+    return choice.isEmpty() || CHOICE_LOCAL.equals(choice) ? null : choice;
   }
 
   private void setChoice(String newChoice) {
@@ -291,6 +378,11 @@ public final class VoiceRelayClient {
 
   /** Writes one line on the open socket, connected (PIN accepted) or not. */
   private void write(JsonObject message) {
+    if (Looper.myLooper() == Looper.getMainLooper()) {
+      // Android forbids network I/O on the main thread: hand the line to the sender thread.
+      SENDER.execute(() -> write(message));
+      return;
+    }
     BufferedWriter writer = out;
     if (writer == null) return;
     synchronized (this) {
@@ -315,6 +407,10 @@ public final class VoiceRelayClient {
       @Override
       public void onServiceFound(NsdServiceInfo serviceInfo) {
         synchronized (found) {
+          // One entry per phone: NSD reports a service again per network / address family,
+          // and a restarted phone may come back as "Name (2)".
+          String canon = canonName(serviceInfo.getServiceName());
+          found.removeIf(s -> canonName(s.getServiceName()).equals(canon));
           found.add(serviceInfo);
         }
         notifyHostsChanged();
@@ -359,78 +455,146 @@ public final class VoiceRelayClient {
     synchronized (found) {
       target = null;
       for (NsdServiceInfo info : found) {
-        if (choice.isEmpty() || info.getServiceName().equals(choice)) {
+        if (choice.isEmpty()
+            || canonName(info.getServiceName()).equals(canonName(choice))) {
           target = info;
           break;
         }
       }
     }
-    if (target == null) return;
-    String targetName = target.getServiceName();
-    if (savedPin(targetName).isEmpty()) {
-      // No PIN for this host yet: ask the user once instead of connecting.
-      if (pinAsked.add(targetName)) {
-        main.post(
-            () -> {
-              if (listener != null) {
-                listener.onPinRequired(targetName, false);
-              }
-            });
-      }
+    if (target == null) {
+      if (!connecting) setStatus(Status.SEARCHING, chosenHost());
       return;
     }
+    String targetName = target.getServiceName();
+    // No PIN needed: connect straight away. (A robot phone running an older FriendBot that
+    // still wants one answers "auth false", and onPinRequired asks for it then.)
     connecting = true;
-    nsdManager.resolveService(
-        target,
-        new NsdManager.ResolveListener() {
-          @Override
-          public void onServiceResolved(NsdServiceInfo serviceInfo) {
-            if (isLocalAddress(serviceInfo.getHost())) {
-              // Our own advertisement (the server on this phone): hide it and never
-              // self-connect. (Two phones sharing the same model name would hide both.)
-              synchronized (found) {
-                found.removeIf(s -> s.getServiceName().equals(serviceInfo.getServiceName()));
+    setStatus(Status.CONNECTING, targetName);
+    final int token = attempt.incrementAndGet();
+    main.removeCallbacks(resolveWatchdog);
+    main.postDelayed(resolveWatchdog, RESOLVE_TIMEOUT_MS);
+    try {
+      nsdManager.resolveService(
+          target,
+          new NsdManager.ResolveListener() {
+            @Override
+            public void onServiceResolved(NsdServiceInfo serviceInfo) {
+              if (attempt.get() != token) return; // an older attempt answered late
+              main.removeCallbacks(resolveWatchdog);
+              List<InetAddress> addresses = addressesOf(serviceInfo);
+              if (isOwnService(addresses)) {
+                // Our own advertisement (the server on this phone): hide it and never
+                // self-connect.
+                synchronized (found) {
+                  found.removeIf(s -> s.getServiceName().equals(serviceInfo.getServiceName()));
+                }
+                connecting = false;
+                notifyHostsChanged();
+                main.post(connectAttempt);
+                return;
               }
-              connecting = false;
-              notifyHostsChanged();
-              main.post(connectAttempt);
-              return;
+              connectTo(serviceInfo.getServiceName(), addresses, serviceInfo.getPort(), token);
             }
-            connectTo(
-                serviceInfo.getServiceName(),
-                serviceInfo.getHost(),
-                serviceInfo.getPort());
-          }
 
-          @Override
-          public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
-            connecting = false;
-            main.post(VoiceRelayClient.this::scheduleRetry);
-          }
-        });
+            @Override
+            public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
+              if (attempt.get() != token) return;
+              main.removeCallbacks(resolveWatchdog);
+              Timber.w("Voice relay: resolving '%s' failed (%d)", targetName, errorCode);
+              connecting = false;
+              setStatus(Status.UNREACHABLE, targetName);
+              main.post(VoiceRelayClient.this::scheduleRetry);
+            }
+          });
+    } catch (IllegalArgumentException e) {
+      // NSD refused the request (e.g. a resolve still in flight): retry instead of sticking.
+      main.removeCallbacks(resolveWatchdog);
+      connecting = false;
+      setStatus(Status.UNREACHABLE, targetName);
+      main.post(this::scheduleRetry);
+    }
   }
 
-  private void connectTo(String name, InetAddress host, int port) {
-    if (host == null) {
+  /**
+   * Every address the host advertised, IPv4 first. Newer Android versions may list an IPv6
+   * link-local address first, and a connect to it can fail where IPv4 works.
+   */
+  private static List<InetAddress> addressesOf(NsdServiceInfo info) {
+    List<InetAddress> list = new ArrayList<>();
+    if (Build.VERSION.SDK_INT >= 34) {
+      for (InetAddress a : info.getHostAddresses()) {
+        if (a != null && !list.contains(a)) list.add(a);
+      }
+    }
+    InetAddress host = info.getHost();
+    if (host != null && !list.contains(host)) list.add(host);
+    list.sort((a, b) -> Boolean.compare(a instanceof Inet6Address, b instanceof Inet6Address));
+    return list;
+  }
+
+  /** True when the resolved service is this phone's own server. */
+  private static boolean isOwnService(List<InetAddress> addresses) {
+    for (InetAddress a : addresses) {
+      if (isLocalAddress(a)) return true;
+    }
+    return false;
+  }
+
+  private void connectTo(String name, List<InetAddress> addresses, int port, int token) {
+    if (addresses.isEmpty()) {
       connecting = false;
-      scheduleRetry();
+      setStatus(Status.UNREACHABLE, name);
+      main.post(this::scheduleRetry);
       return;
     }
     Thread connector =
         new Thread(
             () -> {
-              Socket s = new Socket();
+              Socket s = null;
+              for (InetAddress address : addresses) {
+                if (attempt.get() != token) return; // the user picked another phone
+                Socket trial = new Socket();
+                try {
+                  trial.setTcpNoDelay(true);
+                  trial.connect(new InetSocketAddress(address, port), CONNECT_TIMEOUT_MS);
+                  s = trial;
+                  break;
+                } catch (IOException e) {
+                  Timber.w(
+                      "Voice relay: cannot reach '%s' at %s:%d (%s)",
+                      name, address.getHostAddress(), port, e.getMessage());
+                  try {
+                    trial.close();
+                  } catch (IOException ignored) {
+                    // Never opened.
+                  }
+                }
+              }
+              if (s == null) {
+                if (attempt.get() == token) {
+                  connecting = false;
+                  setStatus(Status.UNREACHABLE, name);
+                  main.post(VoiceRelayClient.this::scheduleRetry);
+                }
+                return;
+              }
+              final Socket open = s;
+              boolean ours = false;
               try {
-                s.setTcpNoDelay(true);
-                s.connect(new InetSocketAddress(host.getHostAddress(), port), 4000);
                 BufferedReader in =
                     new BufferedReader(
-                        new InputStreamReader(s.getInputStream(), StandardCharsets.UTF_8));
+                        new InputStreamReader(open.getInputStream(), StandardCharsets.UTF_8));
                 synchronized (VoiceRelayClient.this) {
-                  socket = s;
+                  if (attempt.get() != token) {
+                    open.close(); // superseded while connecting
+                    return;
+                  }
+                  socket = open;
                   out =
                       new BufferedWriter(
-                          new OutputStreamWriter(s.getOutputStream(), StandardCharsets.UTF_8));
+                          new OutputStreamWriter(open.getOutputStream(), StandardCharsets.UTF_8));
+                  ours = true;
                 }
                 JsonObject hello = new JsonObject();
                 hello.addProperty("t", "hello");
@@ -445,8 +609,20 @@ public final class VoiceRelayClient {
               } catch (IOException e) {
                 // Host went away; fall through to the retry path.
               } finally {
-                closeSocket();
-                main.post(VoiceRelayClient.this::scheduleRetry);
+                boolean stillOurs;
+                synchronized (VoiceRelayClient.this) {
+                  stillOurs = ours && socket == open;
+                }
+                if (stillOurs) {
+                  closeSocket();
+                  main.post(VoiceRelayClient.this::scheduleRetry);
+                } else {
+                  try {
+                    open.close();
+                  } catch (IOException ignored) {
+                    // Already gone.
+                  }
+                }
               }
             },
             "voice-relay-connect");
@@ -485,6 +661,16 @@ public final class VoiceRelayClient {
                 }
               });
         }
+      } else if ("floor".equals(type)) {
+        String speaker = root.has("name") ? root.get("name").getAsString() : "";
+        boolean you = root.has("you") && root.get("you").getAsBoolean();
+        int phones = root.has("phones") ? root.get("phones").getAsInt() : 1;
+        main.post(
+            () -> {
+              if (listener != null) {
+                listener.onMicFloor(speaker, you, phones);
+              }
+            });
       } else if ("micack".equals(type)) {
         boolean live = root.has("live") && root.get("live").getAsBoolean();
         main.post(
@@ -549,7 +735,8 @@ public final class VoiceRelayClient {
 
   /** True when the address belongs to this phone — i.e. the service is our own server. */
   private static boolean isLocalAddress(InetAddress address) {
-    if (address == null || address.isLoopbackAddress()) return true;
+    if (address == null) return false; // unknown is not "ours": never hide a real host
+    if (address.isLoopbackAddress()) return true;
     try {
       Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
       while (interfaces != null && interfaces.hasMoreElements()) {

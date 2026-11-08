@@ -128,6 +128,11 @@ public class MainActivity extends AppCompatActivity {
     //      vehicle = new Vehicle(this, baudRate);
     //      vehicle.connectUsb();
     viewModel.setVehicle(vehicle);
+    // Share this phone over WiFi for as long as the app is open — not just while the voice
+    // page is on screen. Remote Mic pages on other phones can then pick this phone and
+    // connect no matter what it is showing.
+    org.openbot.app.robot.voice.relay.VoiceRelayServer.get()
+        .start(getApplicationContext(), vehicle);
     //    }
     if (vehicle != null) {
       vehicle
@@ -341,6 +346,10 @@ public class MainActivity extends AppCompatActivity {
     unregisterReceiver(localBroadcastReceiver);
     if (localBroadcastReceiver != null) localBroadcastReceiver = null;
     if (!isChangingConfigurations()) vehicle.disconnectUsb();
+    // A real app exit ends the WiFi share; page changes and rotations keep it alive.
+    if (isFinishing()) {
+      org.openbot.app.robot.voice.relay.VoiceRelayServer.get().stop();
+    }
     super.onDestroy();
   }
 
