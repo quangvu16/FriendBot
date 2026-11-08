@@ -14,9 +14,11 @@ back, and tells the robot what to do.
 > **Example:** you say *"Go forward for 3 seconds"* → Xiaozhi answers *"OK, going forward!"*
 > → the robot drives forward for 3 seconds and stops by itself.
 
-It can also drive itself with the camera: **Autopilot**, **Object Tracking**, and five
-**Vision Modes** — follow a coloured object, a face or a black line, avoid an obstacle, or track
-any object you draw a box round ([§10](#10-ai-and-camera-features)).
+**What FriendBot can do**
+- 🗣️ **Talk and drive by voice** in English, Vietnamese or Chinese, with a full-screen robot face ([§7](#7-the-voice-control-page))
+- 📱 **Speak from another phone or a computer** — same Wi-Fi or over the internet, with Pro tools to drive and watch the robot ([§8](#8-talk-from-another-phone-or-computer))
+- 👀 **See and drive itself with the camera** — Autopilot, Object Tracking and five Vision Modes ([§11](#11-ai-and-camera-features))
+- 🛡️ **Stay safe** — sonar stops, timed moves and a STOP that always wins ([§12](#12-safety))
 
 Vietnamese quick guide: [HUONG_DAN_DIEU_KHIEN_GIONG_NOI.md](docs/HUONG_DAN_DIEU_KHIEN_GIONG_NOI.md)
 
@@ -30,14 +32,17 @@ Vietnamese quick guide: [HUONG_DAN_DIEU_KHIEN_GIONG_NOI.md](docs/HUONG_DAN_DIEU_
 4. [Flash the firmware](#4-flash-the-firmware)
 5. [Install the app and connect](#5-install-the-app-and-connect)
 6. [Pair with xiaozhi.me (first time only)](#6-pair-with-xiaozhime-first-time-only)
-7. [Using the Voice Control screen](#7-using-the-voice-control-screen)
-8. [Voice commands](#8-voice-commands)
-9. [Configuring Xiaozhi](#9-configuring-xiaozhi)
-10. [AI and camera features](#10-ai-and-camera-features) — Autopilot, Object Tracking, Follow a
+7. [The Voice Control page](#7-the-voice-control-page) — robot face, buttons, camera, QR codes
+8. [Talk from another phone or computer](#8-talk-from-another-phone-or-computer) — Remote Mic,
+   Internet Mic, Wi-Fi / Internet Mic Pro, macOS and Python apps
+9. [Voice commands](#9-voice-commands)
+10. [Configuring Xiaozhi](#10-configuring-xiaozhi)
+11. [AI and camera features](#11-ai-and-camera-features) — Autopilot, Object Tracking, Follow a
     Coloured Object, Follow a Face, Follow a Black Line, Object Avoidance, Target Tracking
-11. [Safety](#11-safety)
-12. [Troubleshooting](#12-troubleshooting)
-13. [Questions to go deeper](#13-questions-to-go-deeper)
+12. [Safety](#12-safety)
+13. [Troubleshooting](#13-troubleshooting)
+14. [Questions to go deeper](#14-questions-to-go-deeper)
+15. [Project folders](#15-project-folders)
 
 ---
 
@@ -81,7 +86,7 @@ Vietnamese quick guide: [HUONG_DAN_DIEU_KHIEN_GIONG_NOI.md](docs/HUONG_DAN_DIEU_
 Everything is also written in the on-screen chat, so you can see what was said and done.
 
 > **What if there is no internet?** Typed commands and the quick buttons still work. A
-> built-in keyword list (§8) understands simple words like "forward" or "dừng" without any
+> built-in keyword list (§9) understands simple words like "forward" or "dừng" without any
 > server.
 >
 > *Source: `robot/android/.../robot/voice/` (`XiaozhiSession`, `VoiceInterpreter`,
@@ -189,8 +194,8 @@ arduino-cli upload  --fqbn esp32:esp32:esp32 --port /dev/tty.usbserial-0001 firm
 2. **Turn on the robot.** The LCD shows `WAIT`.
 3. In the app, open the **Bluetooth** screen and pick **`OpenBot: MTV`**
    (Android can also use a **USB cable**). The LCD changes to `BLE` or `USB`.
-4. On the **Home** screen, open the **AI** section → **Voice Control**
-   (the **Remote Mic** tile is right next to it).
+4. On the **Home** screen, open the **AI** section → **Voice Control**. The other voice tiles
+   are next to it: **Remote Mic**, **Internet Mic**, **Wi-Fi Mic Pro**, **Internet Mic Pro** (§8).
 
 > **Example:** Home → AI → Voice Control → the status line reads **"Connected (BLE)"**.
 > You can talk to Xiaozhi before the robot is connected — it just won't move.
@@ -222,21 +227,41 @@ The keys are **saved on the phone**, so next time it connects by itself.
 
 ---
 
-## 7. Using the Voice Control screen
+## 7. The Voice Control page
 
 | Android | iOS |
 |---|---|
 | ![Android Voice Control screen](docs/images/voice-android.svg) | ![iOS Voice Control screen](docs/images/voice-ios.svg) |
 
+### The robot face
+
+The page is a **full-screen robot face**: two glowing eyes and a mouth on black. It shows how
+FriendBot feels and what it is doing:
+
+| Face | When |
+|---|---|
+| Listening / Thinking | while you speak / while Xiaozhi works on the answer |
+| Talking mouth | while Xiaozhi's voice plays |
+| Happy, sad, angry, surprised, confused… | Xiaozhi's own emotion for its answer |
+| Sleepy | after 60 s with nothing happening |
+| A photo, then a smile | right after the camera takes a picture |
+
+**Two gestures to remember:**
+- **Long-press anywhere = STOP.** *Why so big?* In a hurry you can't aim at a small button.
+- **Double-tap = show the controls** for 30 s; then the face comes back by itself.
+
+> **Example:** you ask *"Tell me a joke"* → the face thinks, then laughs while Xiaozhi talks.
+
+*Source: `voice/RobotFaceView.java`, iOS `VoiceRedesignViews.swift` (`RobotFaceView`)*
+
 ### Talking
 
-- **Hands-free (default):** just talk. The face shows **Ready → Listening… → Thinking… →
-  Speaking…**. The server notices when you finish a sentence.
+- **Hands-free (default):** just talk. The server notices when you finish a sentence.
 - **Push to speak:** tap the mic, speak, tap again.
 - **Interrupt:** tap the mic while Xiaozhi is speaking — it stops and listens again.
 - **Type:** write a command and tap **Send**. *Example: `go forward slowly`.*
 
-The chat shows **your words** on the right, **Xiaozhi's answers** on the left, and every robot
+With the controls shown, the chat lists **your words**, **Xiaozhi's answers**, and every robot
 action as a chip, e.g. `» Move forward`.
 
 ### Quick buttons (no talking needed)
@@ -251,36 +276,127 @@ The **Speed** slider (25–100 %, default 75 %) scales every move.
 
 ### The camera — "what do you see?"
 
-A small camera preview sits in the top-right corner. Ask *"What's in front of you?"* or
-*"Có gì phía trước?"*: the phone takes a photo, Xiaozhi's vision service describes it, and the
-answer is spoken. **Tap the preview** to take a photo yourself; the round button flips between
-front and back camera.
+Ask *"What's in front of you?"* or *"Có gì phía trước?"*: the phone takes a photo, Xiaozhi's
+vision service describes it, and the answer is spoken. The photo shows on the face for a few
+seconds. In the controls, **tap the camera preview** to take a photo yourself; the round button
+flips between front and back camera.
 
-### Several phones, one robot
+### The QR codes (for other phones and computers)
 
-- The phone connected to the robot **shares it over Wi-Fi** only while Voice Control is open,
-  and shows a **4-digit PIN** (status: *"Connected (BLE) · Sharing over WiFi · PIN 4821"*).
-- Another phone on the same Wi-Fi asks for that PIN once, then shows
-  *"Controlling via <phone> (WiFi)"* and can drive too. *Why a PIN? Without it, anyone on a
-  café or office Wi-Fi could drive your robot or talk into your Xiaozhi session.*
-- **Tap the status line** to choose which robot to control.
-- **Stop from any phone stops the robot for everyone.**
-
-### Remote Mic
-
-Open **Remote Mic** on a second phone to use it as a wireless microphone for the phone that
-holds the robot. It needs no Xiaozhi pairing, only the host's PIN; replies still play on the
-host phone.
-
-> **Example:** the host phone sits on the robot; you walk around with your own phone in
-> Remote Mic and say *"turn around"*.
->
-> *Source: `VoiceControlFragment.java`, `RemoteMicFragment.java`, `voice/relay/`,
-> `PhotoExplainer.java`*
+The controls also show the **Wi-Fi QR** (with this phone's IP address and Wi-Fi name) and a
+**QR button** for the **Internet QR**. Other phones and computers scan them to talk to this
+robot — see the next section. Tap a QR to make it bigger.
 
 ---
 
-## 8. Voice commands
+## 8. Talk from another phone or computer
+
+The phone on the robot is the **robot phone**. Its Voice Control page talks to Xiaozhi. Any other
+phone or computer can be a **wireless microphone** for it — your voice goes to the robot phone,
+and Xiaozhi's replies still play there. No Xiaozhi pairing is needed on the other device.
+
+| Page or app | Where it works | Extra |
+|---|---|---|
+| **Remote Mic** | same Wi-Fi | just the microphone |
+| **Internet Mic** | any Wi-Fi or 4G/5G | encrypted, through the internet |
+| **Wi-Fi Mic Pro** | same Wi-Fi | + STOP, drive pad, robot camera, heard/answered, delay & battery |
+| **Internet Mic Pro** | any Wi-Fi or 4G/5G | the same Pro tools, through the internet |
+| **FriendBot Mic** for macOS / Python | Mac, Windows, Linux | the same pages on a computer ([§8.5](#85-on-a-computer-macos-or-python)) |
+
+All four pages are on the phone's **Home → AI**, next to Voice Control.
+
+### 8.1 Remote Mic (same Wi-Fi)
+
+1. Put **both phones on the same Wi-Fi** (same name). Allow Location when Android asks — it only
+   shows the Wi-Fi name with it.
+2. Open FriendBot on the robot phone. It shares itself on the Wi-Fi **as long as the app is
+   open**, on any page.
+3. On the other phone open **Remote Mic** → **Scan the robot phone's QR code**. It connects at
+   once (the QR holds the IP address and port). Without scanning it still finds the robot phone
+   by itself (Wi-Fi broadcast + Bonjour/NSD).
+4. Tap the microphone and speak.
+
+The status line always says what is happening: *Looking for the robot phone on WiFi "Home"…* →
+*Connecting to Joy 4…* → *Live on Joy 4*. **Tap it** to pick another robot phone or to type its
+IP address by hand.
+
+> **Example:** the robot phone sits on the robot; you walk around with your own phone in Remote
+> Mic and say *"turn around"*.
+>
+> **Two phones at once:** both stay live, but the robot phone hears one voice at a time. Whoever
+> speaks holds the microphone; the other takes over after 1.5 s of silence and shows
+> *"<phone> is talking — speak when they finish"*.
+
+### 8.2 Internet Mic (any Wi-Fi or 4G/5G)
+
+The two phones don't need the same Wi-Fi: one can be at home, the other on 4G/5G.
+
+1. Robot phone: **Voice Control** → double-tap the face → **Internet QR**.
+2. Other phone: **Internet Mic** → **Scan the robot phone's Internet QR**. It remembers the
+   code and reconnects by itself.
+3. Tap the microphone and speak.
+
+**How it works:** both phones dial out to a free public **MQTT broker** (HiveMQ, with EMQX as
+backup) and meet in a private room. Every message is encrypted (**AES-256-GCM**) with the key
+inside the Internet QR, so other broker users see only noise. *Why dial out?* Home routers block
+calls coming in from the internet, but both phones may call out.
+
+**New code** (under the Internet QR) makes a new key and locks out every phone that had the old
+one. *Note:* public brokers are free and shared, not guaranteed; if one is down the apps switch
+to the other.
+
+### 8.3 Wi-Fi Mic Pro and Internet Mic Pro
+
+The same two links, plus tools to drive and watch the robot from far away:
+
+| Tool | How |
+|---|---|
+| **STOP** | red bar. The robot also stops by itself if the Pro page goes silent while it moves (1.5 s on Wi-Fi, 3 s over the internet) |
+| **Hold to talk** | the microphone is open only while you hold the orb |
+| **Drive pad** | hold an arrow to drive; let go to stop |
+| **Camera** | tap the window to see the robot phone's camera (5 pictures/s on Wi-Fi, 2 over the internet) |
+| **Heard / answered** | what Xiaozhi understood and what it said back |
+| **Delay and battery** | ping time in ms and the robot battery |
+
+*Why the auto-stop?* If your phone loses signal in the middle of "drive forward", the robot
+must not keep going on its own.
+
+### 8.4 Who can join? (security)
+
+Wi-Fi sharing has **no PIN**: **anyone with FriendBot on the same Wi-Fi can join and drive**.
+Use your **home Wi-Fi or a phone hotspot**, not a café, school or office Wi-Fi. Internet Mic is
+safer: only devices that scanned the current Internet QR can join, and **New code** removes
+them all. A phone that still asks for a PIN runs an older FriendBot — update it.
+
+*Tip:* guest and office Wi-Fi often block phone-to-phone traffic (*"Can't reach Joy 4…"*). Use
+one phone's hotspot instead.
+
+### 8.5 On a computer (macOS or Python)
+
+Your computer's microphone can speak to the robot phone too — the same Remote Mic / Internet Mic
+pages, plus the Pro version.
+
+| | macOS app | Python app (macOS, Windows, Linux) |
+|---|---|---|
+| Folder | [`desktop/macos`](desktop/macos/README.md) | [`desktop/python`](desktop/python/README.md) |
+| Install | `./build.sh` → `build/FriendBot Mic.app` and `FriendBot Mic Pro.app` | `pip install -r requirements.txt` (+ the Opus library, e.g. `brew install opus`) |
+| Start | open the app | `python3 friendbot_mic.py` · Pro: `python3 friendbot_mic_pro.py` |
+| Talk | click the mic or press **Space** | click the mic (terminal mode: **Enter**) |
+
+Connect with **SCAN QR** (webcam or a screenshot of the QR), by pasting the QR text, or by typing
+the robot phone's IP. In the Pro apps, **Esc** = STOP and the **arrow keys** drive.
+
+> **Example:** `python3 friendbot_mic.py --lan 192.168.1.23` → Remote Mic straight to that robot
+> phone; press **Enter**, say *"sing a song"*.
+
+*Source: Android `voice/RemoteMicFragment.java`, `InternetMicFragment.java`, `ProMicFragment.java`,
+`voice/relay/` (`VoiceRelayServer`, `RemoteMicLink`, `WifiNet`, `RelayQr`, `MqttWs`, `NetCrypto`,
+`InternetRelayHost`, `InternetMicLink`); iOS `RemoteMicController.swift` (`ProMicController`),
+`VoiceRelayClient.swift`, `VoiceRelayServer.swift`; `desktop/`*
+
+---
+
+## 9. Voice commands
 
 Say them, type them, or use them offline. With Xiaozhi online, natural sentences work too —
 *"drive backwards slowly for three seconds"*, *"quay phải rồi hát"*.
@@ -324,7 +440,7 @@ Say them, type them, or use them offline. With Xiaozhi online, natural sentences
 
 ---
 
-## 9. Configuring Xiaozhi
+## 10. Configuring Xiaozhi
 
 Tap the **gear** on the Voice Control screen.
 
@@ -352,19 +468,19 @@ The app asks the model for one JSON answer, for example:
 
 ---
 
-## 10. AI and camera features
+## 11. AI and camera features
 
 Besides voice, FriendBot can drive itself with the phone's camera. Open them from **Home**:
 
 | Where on Home | Feature | In one line |
 |---|---|---|
-| **AI** | [Autopilot](#101-autopilot) | A neural network looks at the road and steers |
-| **AI** | [Object Tracking](#102-object-tracking-follow-me) | Finds a person, dog, ball… and drives to it |
-| **Vision Modes** | [Follow a Coloured Object](#103-follow-a-coloured-object) | Tap a colour, the robot follows it |
-| **Vision Modes** | [Follow a Face](#104-follow-a-face) | Keeps your face in view |
-| **Vision Modes** | [Follow a Black Line](#105-follow-a-black-line) | Drives along a tape circuit on the floor |
-| **Vision Modes** | [Object Avoidance](#106-object-avoidance) | Drives on and turns away from an obstacle |
-| **Vision Modes** | [Target Tracking](#107-target-tracking) | Draw a box round anything, the robot follows it |
+| **AI** | [Autopilot](#111-autopilot) | A neural network looks at the road and steers |
+| **AI** | [Object Tracking](#112-object-tracking-follow-me) | Finds a person, dog, ball… and drives to it |
+| **Vision Modes** | [Follow a Coloured Object](#113-follow-a-coloured-object) | Tap a colour, the robot follows it |
+| **Vision Modes** | [Follow a Face](#114-follow-a-face) | Keeps your face in view |
+| **Vision Modes** | [Follow a Black Line](#115-follow-a-black-line) | Drives along a tape circuit on the floor |
+| **Vision Modes** | [Object Avoidance](#116-object-avoidance) | Drives on and turns away from an obstacle |
+| **Vision Modes** | [Target Tracking](#117-target-tracking) | Draw a box round anything, the robot follows it |
 
 **Rules for all of them**
 - **Mount the phone upright** on the robot, back camera facing forward (down at the floor for Black Line).
@@ -381,7 +497,7 @@ Besides voice, FriendBot can drive itself with the phone's camera. Open them fro
 > `objectNav/`, `tracking/MultiBoxTracker.java`, `vision/`), iOS
 > `robot/ios/OpenBot/OpenBot/Controllers/` (`Autopilot/`, `ObjectTracking/`, `Vision/`).
 
-### 10.1 Autopilot
+### 11.1 Autopilot
 
 ![Autopilot, Android and iOS](docs/images/autopilot.svg)
 
@@ -402,7 +518,7 @@ It drives, but not well. For good results, record your own driving with **Data C
 train with OpenBot's `policy` tools, and add the `.tflite` file in **Model Management**.
 *Why:* the network only knows places that look like its training pictures.
 
-### 10.2 Object Tracking ("follow me")
+### 11.2 Object Tracking ("follow me")
 
 ![Object Tracking, Android and iOS](docs/images/object-tracking.svg)
 
@@ -424,7 +540,7 @@ under 25 % of the picture = full speed, over 75 % = stop.
 
 *Tip:* it follows the most confident detection. If two people are in view, ask one to step aside.
 
-### 10.3 Follow a Coloured Object
+### 11.3 Follow a Coloured Object
 
 ![Follow a Coloured Object, Android and iOS](docs/images/follow-colour.svg)
 
@@ -442,7 +558,7 @@ under 25 % of the picture = full speed, over 75 % = stop.
 
 *Tip:* use a bright, solid colour (red, blue, green, yellow) that stands out from the room, in even light.
 
-### 10.4 Follow a Face
+### 11.4 Follow a Face
 
 **What it does.** The camera finds your face (Google ML Kit on Android, Apple Vision on iOS) and
 the robot keeps you in view.
@@ -459,7 +575,7 @@ and the robot follows.
 
 *Tips:* works up to about 2 m; keep your face well lit (no window behind you); one face at a time.
 
-### 10.5 Follow a Black Line
+### 11.5 Follow a Black Line
 
 ![Follow a Black Line, Android and iOS](docs/images/follow-line.svg)
 
@@ -481,7 +597,7 @@ Object Tracking; on iOS it turns on the spot.
 
 *Why 90:* it is the "black" value of the original project on a 0–255 grey scale.
 
-### 10.6 Object Avoidance
+### 11.6 Object Avoidance
 
 ![Object Avoidance, Android and iOS](docs/images/object-avoidance.svg)
 
@@ -499,7 +615,7 @@ fill before the robot turns.
 
 *Safety:* the sonars still stop the robot at 15 cm, even for an obstacle of **another colour**.
 
-### 10.7 Target Tracking
+### 11.7 Target Tracking
 
 ![Target Tracking, Android and iOS](docs/images/target-tracking.svg)
 
@@ -519,7 +635,7 @@ Vision's object tracker).
 
 ---
 
-## 11. Safety
+## 12. Safety
 
 The robot has **several independent layers**, so one failure does not cause a crash:
 
@@ -530,6 +646,8 @@ The robot has **several independent layers**, so one failure does not cause a cr
 | App — leave screen | Leaving Voice Control stops the motors |
 | App — unknown words | If the command is not understood, the robot stops |
 | App — bad tool calls | Unknown or broken MCP calls are rejected |
+| App — long-press the face | STOP from anywhere on the Voice Control page |
+| Pro pages — auto-stop | The robot stops if a Pro page goes silent while it moves (1.5 s Wi-Fi, 3 s internet) |
 | Firmware — sonar | Slows forward at 50 cm, stops at 15 cm; reversing and turning still work |
 | Firmware — escape | While driving and under 5 cm: backs away and turns to the open side (max 2 tries; STOP cancels it; never moves a parked robot) |
 | Firmware — link loss | Bluetooth disconnect → stop. USB heartbeat missing 750 ms → stop |
@@ -541,7 +659,7 @@ The robot has **several independent layers**, so one failure does not cause a cr
 
 ---
 
-## 12. Troubleshooting
+## 13. Troubleshooting
 
 | Problem | Likely cause → fix |
 |---|---|
@@ -558,11 +676,11 @@ The robot has **several independent layers**, so one failure does not cause a cr
 | Xiaozhi chats but robot doesn't move | Say a clear command ("go forward") or use the buttons |
 | Photo / vision fails | Allow camera; reconnect so the server sends the vision URL and token |
 | Move stops early | STOP latch is on, or the link dropped |
-| Second phone keeps asking for a PIN | Type the PIN shown on the robot phone's Voice Control status line |
+| Second phone asks for a PIN | The robot phone runs an older FriendBot — update it (the new version needs no PIN) |
 
 ---
 
-## 13. Questions to go deeper
+## 14. Questions to go deeper
 
 Ask yourself **"why?"** for each — it makes the design clear.
 
@@ -580,6 +698,26 @@ Ask yourself **"why?"** for each — it makes the design clear.
    data would you collect to fix it?*
 8. *Follow a Face on iOS stops when your face is centred, but Object Tracking drives towards you.
    Which is safer for a robot near people, and why?*
+9. *Why does Internet Mic go through a broker on the internet instead of calling the robot phone
+   directly — and why must the key travel in the QR, not through the broker?*
+10. *Wi-Fi sharing has no PIN. On which networks is that fine, and on which is it risky? Why?*
+
+---
+
+## 15. Project folders
+
+| Folder | What is inside |
+|---|---|
+| [`firmware/openbot-esp32-mtv`](firmware/openbot-esp32-mtv/) | Robot firmware (ESP32 WROOM-32 + L298N/MX1508, 3 sonars, LEDs, LCD) |
+| [`robot/android`](robot/android/) | FriendBot Android app (Android Studio) |
+| [`robot/ios`](robot/ios/) | FriendBot iOS app (Xcode) |
+| [`desktop/macos`](desktop/macos/README.md) | FriendBot Mic / Mic Pro for macOS |
+| [`desktop/python`](desktop/python/README.md) | FriendBot Mic / Mic Pro in Python (macOS, Windows, Linux) |
+| [`docs`](docs/) | Vietnamese guide, pictures, the OpenBot paper |
+| `body`, `controller`, `open-code`, `policy` | OpenBot parts: robot bodies, game controllers, Playground, training |
+
+*Why some files are missing:* build outputs, AI model files and the USB/Wi-Fi `.aar` libraries
+are not stored here — the Android build downloads the models and libraries by itself.
 
 ---
 

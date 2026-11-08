@@ -132,7 +132,7 @@ Nếu đã cấu hình trợ lý Xiaozhi, lời tự nhiên cũng được hiể
 ## 5. Trợ lý Xiaozhi và lệnh MCP
 
 Với máy chủ Xiaozhi đã cấu hình (mục 9 của
-[hướng dẫn tiếng Anh](../README.md#9-configuring-xiaozhi)), robot còn có
+[hướng dẫn tiếng Anh](../README.md#10-configuring-xiaozhi)), robot còn có
 thể gọi các công cụ MCP của chính nó:
 
 | Công cụ | Tham số | Tác dụng |
