@@ -67,6 +67,10 @@ public class VoiceCommand {
     TURN_AROUND,
     /** Swing left-right-left-right in place ("turn left and right"). */
     WIGGLE,
+    /** Close the gripper: hold / grab the object (firmware {@code g1}). */
+    GRIP,
+    /** Open the gripper: let the object go (firmware {@code g0}). */
+    RELEASE,
     UNKNOWN
   }
 

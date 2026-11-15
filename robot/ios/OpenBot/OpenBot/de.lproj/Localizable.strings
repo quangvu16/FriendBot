@@ -370,3 +370,20 @@
 "remote_mic_mic_unavailable" = "Mikrofon nicht verfügbar";
 "tool_take_photo" = "Foto aufnehmen";
 "voice_camera_switch" = "Kamera wechseln";
+
+/* Voice Grab */
+"tile_voice_grab" = "Voice Grab";
+"vgrab_ready" = "Say: \"pick up the cup\", \"bring me the ball\", \"put it down\", \"follow me\"";
+"vgrab_examples" = "Talk to the robot like a person. English: pick up the cup · bring me the bottle · bring it to me · put it down · follow me · find the ball · stop. Tiếng Việt: lấy cái cốc · mang chai lại đây · lại đây · thả ra · đi theo tôi · tìm quả bóng · dừng lại. Buttons: 🎤 listen on/off, EN/VI language, ✊ close claw, ✋ open claw, ⇄ reverse wheels.";
+"vgrab_no_speech" = "Speech recognition is not available. Allow Speech Recognition in Settings.";
+
+/* AI Pick */
+"tile_ai_pick" = "AI Pick";
+"aipick_ready" = "Talk to the Xiaozhi AI (🎤): \"go forward\", \"stop\", \"how far\", \"grab it\", \"release\". ✊ creeps in and grips at the set distance.";
+"aipick_picking" = "Creeping in to grab (≤ %1$d cm)…";
+"aipick_grabbed" = "Grabbed at %1$.0f cm ✊";
+"aipick_grabbed_blind" = "Grabbed ✊ (no sonar reading)";
+"aipick_too_far" = "Nothing came within %1$d cm — drive closer and try again";
+"aipick_released" = "Released ✋";
+"aipick_not_paired" = "Voice AI not paired — open the Voice Control page to pair first";
+"aipick_no_photo" = "Photos are not available on the AI Pick screen";

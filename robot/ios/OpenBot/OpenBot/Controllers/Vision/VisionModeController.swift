@@ -104,7 +104,7 @@ class VisionModeController: CameraController {
         statusLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(statusLabel)
 
-        controlPanel.backgroundColor = UIColor.black.withAlphaComponent(0.65)
+        controlPanel.backgroundColor = .systemBackground
         controlPanel.layer.cornerRadius = 16
         controlPanel.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         controlPanel.translatesAutoresizingMaskIntoConstraints = false
@@ -112,22 +112,22 @@ class VisionModeController: CameraController {
 
         let autoLabel = UILabel()
         autoLabel.text = Strings.visionAuto
-        autoLabel.textColor = .white
+        autoLabel.textColor = .label
         autoLabel.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
-        autoSwitch.onTintColor = .systemGreen
+        autoSwitch.onTintColor = .systemBlue
         autoSwitch.addTarget(self, action: #selector(autoToggled), for: .valueChanged)
 
         speedButton.setTitle(Strings.speed, for: .normal)
-        speedButton.setTitleColor(.white, for: .normal)
+        speedButton.setTitleColor(.systemBlue, for: .normal)
         speedButton.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
         speedButton.addTarget(self, action: #selector(speedTapped), for: .touchUpInside)
 
         cameraButton.setImage(UIImage(systemName: "camera.rotate"), for: .normal)
-        cameraButton.tintColor = .white
+        cameraButton.tintColor = .systemBlue
         cameraButton.addTarget(self, action: #selector(cameraTapped), for: .touchUpInside)
 
         helpButton.setTitle(Strings.visionHelp, for: .normal)
-        helpButton.setTitleColor(.white, for: .normal)
+        helpButton.setTitleColor(.systemBlue, for: .normal)
         helpButton.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
         helpButton.addTarget(self, action: #selector(helpTapped), for: .touchUpInside)
 
@@ -175,8 +175,10 @@ class VisionModeController: CameraController {
         setAutoMode(autoSwitch.isOn)
     }
 
-    private func setAutoMode(_ enabled: Bool) {
+    /// Turns Auto on or off (the switch follows, so a mode may also turn itself off).
+    func setAutoMode(_ enabled: Bool) {
         autoMode = enabled
+        if autoSwitch.isOn != enabled { autoSwitch.setOn(enabled, animated: true) }
         if !enabled {
             sendControl(Control())
             setStatus(Strings.visionStopped)
@@ -228,12 +230,12 @@ class VisionModeController: CameraController {
     ) -> UIView {
         let labelView = UILabel()
         labelView.text = label
-        labelView.textColor = .white
+        labelView.textColor = .label
         labelView.font = UIFont.systemFont(ofSize: 13)
 
         let valueLabel = UILabel()
         valueLabel.text = String(initial)
-        valueLabel.textColor = .white
+        valueLabel.textColor = .label
         valueLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 14, weight: .bold)
         valueLabel.widthAnchor.constraint(equalToConstant: 32).isActive = true
 
@@ -279,7 +281,7 @@ class VisionModeController: CameraController {
     ) -> UIView {
         let labelView = UILabel()
         labelView.text = label
-        labelView.textColor = .white
+        labelView.textColor = .label
         labelView.font = UIFont.systemFont(ofSize: 13)
 
         var selected = initial
@@ -293,7 +295,7 @@ class VisionModeController: CameraController {
             for (i, swatch) in swatches.enumerated() {
                 swatch.layer.borderWidth = i == selected ? 2.5 : 1
                 swatch.layer.borderColor =
-                    (i == selected ? UIColor.white : UIColor.gray).cgColor
+                    (i == selected ? UIColor.label : UIColor.separator).cgColor
             }
         }
 
@@ -326,9 +328,9 @@ class VisionModeController: CameraController {
     private func makePanelButton(title: String) -> UIButton {
         let button = UIButton(type: .system)
         button.setTitle(title, for: .normal)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.systemBlue, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
-        button.backgroundColor = UIColor.white.withAlphaComponent(0.18)
+        button.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.12)
         button.layer.cornerRadius = 8
         button.contentEdgeInsets = UIEdgeInsets(top: 6, left: 10, bottom: 6, right: 10)
         return button

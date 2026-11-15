@@ -4,7 +4,6 @@
 
 import Foundation
 import UIKit
-import GoogleSignIn
 /**
  class  to create alert
  */
@@ -29,7 +28,5 @@ class alertFragment : UIViewController {
     
     @IBAction func logOutBtn(_ sender: Any) {
         dismiss(animated: true);
-        GIDSignIn.sharedInstance.signOut()
-        NotificationCenter.default.post(name: .googleSignIn, object: nil);
     }
 }

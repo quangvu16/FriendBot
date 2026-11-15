@@ -19,7 +19,7 @@ class VehicleControl: UIView {
     var downSwipe: Bool = false
     let audioPlayer = AudioPlayer.shared;
     let mSocket = NativeWebSocket.shared;
-    let roomId: String = GoogleAccount.email ?? ""
+    let roomId = ""
     private var serverWebrtcDelegate: ServerWebrtcDelegate?
     var preferencesManager : SharedPreferencesManager = SharedPreferencesManager()
 

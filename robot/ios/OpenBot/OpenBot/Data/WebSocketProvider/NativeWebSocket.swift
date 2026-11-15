@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import GoogleSignIn
 
 @available(iOS 13.0, *)
 class NativeWebSocket: NSObject, WebSocketProvider {
@@ -13,9 +12,9 @@ class NativeWebSocket: NSObject, WebSocketProvider {
         return URL(string: urlString) ?? URL(string: "ws://192.168.1.40:8080/ws")!
     }
 
-    var roomId: String {
-        GoogleAccount.email ?? ""
-    }
+    /// Signaling room id. There is no account system anymore, so everyone shares
+    /// the default room (same as the old signed-out behavior).
+    var roomId: String { "" }
     static let shared: NativeWebSocket = NativeWebSocket();
     var delegate: WebSocketProviderDelegate?
     private var socket: URLSessionWebSocketTask?

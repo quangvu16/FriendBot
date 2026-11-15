@@ -356,10 +356,50 @@
 
             </LinearLayout>
 
+            <!-- Gripper: the claw control this template was missing. Same ✊/✋ buttons
+                 as Voice Grab, plus the firmware's live state (the digital gripper
+                 answers g0/g1 when the move finishes). -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingVertical="8dp"
+                android:weightSum="3">
+
+                <Button
+                    android:id="@+id/gripBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="2dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/spinner_bg"
+                    android:stateListAnimator="@null"
+                    android:text="@string/pro_grip"
+                    android:textAllCaps="false"
+                    android:textColor="@color/openBotBlue" />
+
+                <Button
+                    android:id="@+id/releaseBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="2dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/spinner_bg"
+                    android:stateListAnimator="@null"
+                    android:text="@string/pro_release"
+                    android:textAllCaps="false"
+                    android:textColor="@color/openBotBlue" />
+
+                <TextView
+                    android:id="@+id/gripperStateText"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="2dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/hardware_state_unknown"
+                    android:textColor="@android:color/black"
+                    android:textSize="13sp" />
 
             </LinearLayout>
 

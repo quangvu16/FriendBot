@@ -16,22 +16,16 @@ extension UIImageView {
         activityIndicator.startAnimating()
 
         DispatchQueue.global().async { [weak self] in
-             var data = try? Data(contentsOf: url);
-            if data == nil{
-                if let profileUrl = Authentication.googleAuthentication.googleSignIn.currentUser?.profile?.imageURL(withDimension: 100){
-                    data = try? Data(contentsOf:profileUrl );
+            let data = try? Data(contentsOf: url)
+            let image = data.flatMap { UIImage(data: $0) }
+            DispatchQueue.main.async {
+                if let image = image {
+                    self?.image = image
                 }
-
+                // Hide the activity indicator once the image is loaded (or failed)
+                activityIndicator.stopAnimating()
+                activityIndicator.removeFromSuperview()
             }
-                if let image = UIImage(data: data!) {
-                    DispatchQueue.main.async {
-                        self?.image = image
-                        // Hide the activity indicator once the image is loaded
-                        activityIndicator.stopAnimating()
-                        activityIndicator.removeFromSuperview()
-                    }
-                }
-
         }
     }
 }

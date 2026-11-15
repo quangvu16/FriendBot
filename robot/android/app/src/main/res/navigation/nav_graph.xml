@@ -41,6 +41,9 @@
             android:id="@+id/action_mainFragment_to_robotInfoFragment"
             app:destination="@id/robotInfoFragment" />
         <action
+            android:id="@+id/action_mainFragment_to_hardwareTestFragment"
+            app:destination="@id/hardwareTestFragment" />
+        <action
             android:id="@+id/action_mainFragment_to_voiceControlFragment"
             app:destination="@id/voiceControlFragment" />
         <action
@@ -70,6 +73,16 @@
         <action
             android:id="@+id/action_mainFragment_to_targetTrackingFragment"
             app:destination="@id/targetTrackingFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_grabObjectFragment"
+            app:destination="@id/grabObjectFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_voiceGrabFragment"
+            app:destination="@id/voiceGrabFragment" />
+
+        <action
+            android:id="@+id/action_mainFragment_to_aiPickFragment"
+            app:destination="@id/aiPickFragment" />
         <action
             android:id="@+id/action_mainFragment_to_guideFragment"
             app:destination="@id/guideFragment" />
@@ -173,6 +186,12 @@
         android:label="RobotInfoFragment" />
 
     <fragment
+        android:id="@+id/hardwareTestFragment"
+        android:name="org.openbot.app.robot.hardware.HardwareTestFragment"
+        android:label="@string/tile_hardware_test"
+        tools:layout="@layout/fragment_hardware_test" />
+
+    <fragment
         android:id="@+id/voiceControlFragment"
         android:name="org.openbot.app.robot.voice.VoiceControlFragment"
         android:label="@string/tile_voice_control"
@@ -231,6 +250,24 @@
         android:name="org.openbot.app.robot.vision.TargetTrackingFragment"
         android:label="@string/tile_target_tracking"
         tools:layout="@layout/fragment_vision_mode" />
+
+    <fragment
+        android:id="@+id/grabObjectFragment"
+        android:name="org.openbot.app.robot.vision.GrabObjectFragment"
+        android:label="@string/tile_grab_object"
+        tools:layout="@layout/fragment_vision_mode" />
+
+    <fragment
+        android:id="@+id/voiceGrabFragment"
+        android:name="org.openbot.app.robot.vision.VoiceGrabFragment"
+        android:label="@string/tile_voice_grab"
+        tools:layout="@layout/fragment_vision_mode" />
+
+    <fragment
+        android:id="@+id/aiPickFragment"
+        android:name="org.openbot.app.robot.vision.AiPickFragment"
+        android:label="@string/tile_ai_pick"
+        tools:layout="@layout/fragment_ai_pick" />
 
     <fragment
         android:id="@+id/guideFragment"

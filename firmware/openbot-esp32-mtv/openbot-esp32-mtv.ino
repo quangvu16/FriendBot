@@ -1,5 +1,5 @@
 // =============================================================================
-// OpenBot firmware - ESP32 WROOM-32 + 3 ultrasonic sonars + 16x2 I2C LCD
+// OpenBot firmware - ESP32 WROOM-32 + 1 ultrasonic sonar + 16x2 I2C LCD
 // Robot type reported to the apps: "MTV"   (OPENBOT == MTV)
 // =============================================================================
 //
@@ -24,8 +24,11 @@
 //   7. Message parser is overflow-safe and has a separate buffer for USB and
 //      BLE, so the two links cannot corrupt each other's messages.
 //   8. LCD auto-detects address 0x27 / 0x3F, updates only changed characters
-//      (no flicker), shows speed, link state and all 3 distances.
+//      (no flicker): "Phone not yet connected" until a phone talks to the
+//      robot, then the middle-sonar distance and the claw state.
 //   9. Builds on Arduino-ESP32 core 2.x AND 3.x.
+//  10. Gripper (claw motor on GPIO 32, on/off signal): g1 grip, g0 release, a<ms> approach
+//      mode (lets the robot creep to 4 cm of an object to pick it up).
 //
 // Libraries (Arduino IDE -> Tools -> Manage Libraries):
 //   - "LiquidCrystal I2C" by Frank de Brabander   (only if HAS_LCD 1)
@@ -51,7 +54,7 @@
 
 #define HAS_BLUETOOTH 1    // BLE link for Android / iOS
 #define HAS_LCD 1          // 16x2 I2C LCD
-#define HAS_SONAR 1        // 3 HC-SR04 sonars
+#define HAS_SONAR 1        // 1 HC-SR04 sonar (middle)
 #define HAS_INDICATORS 1   // LEDs on GPIO 14 / 27
 #define SONAR_SAFETY 1     // 1 = firmware slows/stops before obstacles
 #define NO_PHONE_MODE 0    // 1 = drive alone and avoid obstacles (no app)
@@ -80,9 +83,7 @@
 #define SONAR_MAX_CM 300        // readings above this = "free"
 #define FRONT_STOP_CM 15        // middle sonar: stop forward at this distance
 #define FRONT_SLOW_CM 50        // middle sonar: start slowing down here
-#define SIDE_STOP_CM 10         // left/right sonar: stop forward
-#define SIDE_SLOW_CM 25         // left/right sonar: start slowing down
-#define SONAR_PERIOD_MS 40      // time per sensor (3 sensors -> 120 ms cycle)
+#define SONAR_PERIOD_MS 40      // time per sensor (1 sensor -> 40 ms cycle)
 #define SONAR_FAULT_MS 2000     // no echo edges this long = sensor fault
 
 // ---- Escape reflex ------------------------------------------------------
@@ -105,6 +106,27 @@
 // Keep 0 unless your app re-sends drive commands continuously.
 #define CONTROL_TIMEOUT_MS 0
 
+// ---- Gripper (claw motor driver: signal + 5V + GND) -----------------------
+// Commands from the app: g1 = grip (close), g0 = release (open), g2 = report.
+// The robot answers g0 / g1 when the claw has finished moving.
+#define HAS_GRIPPER 1
+// The driver board takes a plain on/off signal on S+ (GPIO 32): HIGH runs the
+// motor (close), LOW lets go (open). The pin keeps that level, and boot leaves
+// it LOW so the motor starts off. This is how long the claw needs to travel
+// before the app is told the move finished.
+#define GRIPPER_MOVE_MS 700
+// Approach mode (a<ms>): while the app picks something up, the middle sonar
+// stops forward at this distance instead of FRONT_STOP_CM, forward speed is
+// capped, and the escape reflex is paused. It ends by itself after a<ms>.
+#define GRIPPER_APPROACH_STOP_CM 4
+#define GRIPPER_APPROACH_SLOW_CM 20
+#define GRIPPER_APPROACH_MAX_DUTY 140   // of 255
+#define GRIPPER_APPROACH_MAX_MS 5000
+// While the claw is closed the held object sits in front of the middle sonar.
+// Readings closer than this are that object, not an obstacle: the robot can
+// still drive forward with it (no other front sensor watches while held).
+#define GRIPPER_HELD_CM 13
+
 //------------------------------------------------------------------------------
 // PINS - same wiring as your old MTV sketch
 //------------------------------------------------------------------------------
@@ -117,19 +139,20 @@ const uint8_t PIN_L_IN1 = 15;
 const uint8_t PIN_L_IN2 = 2;
 const uint8_t PIN_L_EN = 5;
 
-// Sonars: trigger, echo
-// NOTE: your old sketch had two different left/right labels for 26/25 and
-// 32/33. Here 26/25 = LEFT and 32/33 = RIGHT. If the LCD shows them swapped,
-// swap the two lines below.
+// Sonar: trigger, echo (middle only — the left/right sonars are removed and
+// their pins 26/25 and 33 are free; 32 now carries the gripper signal)
 const uint8_t PIN_SONAR_MID_TRIG = 13, PIN_SONAR_MID_ECHO = 12;
-const uint8_t PIN_SONAR_LEFT_TRIG = 26, PIN_SONAR_LEFT_ECHO = 25;
-const uint8_t PIN_SONAR_RIGHT_TRIG = 32, PIN_SONAR_RIGHT_ECHO = 33;
 
 const uint8_t PIN_LED_LEFT = 14;
 const uint8_t PIN_LED_RIGHT = 27;
 
 const uint8_t PIN_I2C_SDA = 21;  // ESP32 default I2C pins
 const uint8_t PIN_I2C_SCL = 22;
+
+// Gripper motor-driver signal (board S+). GPIO 32 (was the right sonar's
+// trigger pin — the right and left sonars are removed, so 32 is free; not a
+// strapping pin, boot/flash are not affected). Board + = 5 V, board GND = GND.
+const uint8_t PIN_GRIPPER = 32;
 
 //------------------------------------------------------------------------------
 // INCLUDES that depend on settings
@@ -337,12 +360,10 @@ struct Sonar {
   bool fault;
 };
 
-enum { SONAR_MID = 0, SONAR_LEFT = 1, SONAR_RIGHT = 2, SONAR_NUM = 3 };
+enum { SONAR_MID = 0, SONAR_NUM = 1 };
 
 Sonar sonars[SONAR_NUM] = {
   { PIN_SONAR_MID_TRIG, PIN_SONAR_MID_ECHO, 0, 0, false, 0, { SONAR_MAX_CM, SONAR_MAX_CM, SONAR_MAX_CM }, 0, SONAR_MAX_CM, false },
-  { PIN_SONAR_LEFT_TRIG, PIN_SONAR_LEFT_ECHO, 0, 0, false, 0, { SONAR_MAX_CM, SONAR_MAX_CM, SONAR_MAX_CM }, 0, SONAR_MAX_CM, false },
-  { PIN_SONAR_RIGHT_TRIG, PIN_SONAR_RIGHT_ECHO, 0, 0, false, 0, { SONAR_MAX_CM, SONAR_MAX_CM, SONAR_MAX_CM }, 0, SONAR_MAX_CM, false },
 };
 
 uint8_t sonar_active = 0;
@@ -411,10 +432,69 @@ static void sonar_update() {
 }
 
 static uint16_t front_clearance_cm() {
-  uint16_t d = sonars[SONAR_MID].cm;
-  d = min(d, sonars[SONAR_LEFT].cm);
-  d = min(d, sonars[SONAR_RIGHT].cm);
-  return d;
+  return sonars[SONAR_MID].cm;
+}
+#endif
+
+//------------------------------------------------------------------------------
+// GRIPPER (claw motor driver: plain on/off signal on S+, no PWM)
+//------------------------------------------------------------------------------
+#if HAS_GRIPPER
+enum GripState : uint8_t { GRIP_OPEN = 0, GRIP_CLOSED = 1, GRIP_MOVING = 2 };
+uint8_t grip_state = GRIP_OPEN;   // what the claw is doing now
+uint8_t grip_target = GRIP_OPEN;  // where it is going
+unsigned long grip_time = 0;
+bool grip_report = false;         // tell the app when a move finishes
+unsigned long approach_until = 0; // approach mode active until this millis()
+
+static void gripper_begin() {
+  pinMode(PIN_GRIPPER, OUTPUT);
+  digitalWrite(PIN_GRIPPER, LOW);  // start with the motor off: claw open
+  grip_state = GRIP_OPEN;
+  grip_target = GRIP_OPEN;
+}
+
+static void gripper_set(bool close) {
+  uint8_t target = close ? GRIP_CLOSED : GRIP_OPEN;
+  if (target == grip_target && grip_state != GRIP_MOVING) {
+    grip_report = true;  // already there: just confirm
+    return;
+  }
+  digitalWrite(PIN_GRIPPER, close ? HIGH : LOW);  // motor on (close) / off (open)
+  grip_target = target;
+  grip_state = GRIP_MOVING;
+  grip_time = millis();
+  if (close) approach_until = 0;  // grabbing ends the approach
+}
+
+static void gripper_update() {
+  if (grip_state != GRIP_MOVING) return;
+  // The level is already held on the pin; this only times the physical travel
+  // before the app is told g0 / g1.
+  if (millis() - grip_time >= GRIPPER_MOVE_MS) {
+    grip_state = grip_target;
+    grip_report = true;
+  }
+}
+
+static bool approach_active() {
+  return approach_until != 0 && (long)(approach_until - millis()) > 0;
+}
+
+// True when the middle sonar is only seeing the object held in the closed claw.
+static bool mid_is_held_object() {
+#if HAS_SONAR
+  return grip_state == GRIP_CLOSED && !sonars[SONAR_MID].fault && sonars[SONAR_MID].cm < GRIPPER_HELD_CM;
+#else
+  return false;
+#endif
+}
+#else
+static bool approach_active() {
+  return false;
+}
+static bool mid_is_held_object() {
+  return false;
 }
 #endif
 
@@ -437,12 +517,17 @@ static void apply_safety() {
   float v = (l + r) / 2.0f;
   float w = (l - r) / 2.0f;
   if (v > 0) {
-    float f_mid = sonars[SONAR_MID].fault ? 1.0f : zone_factor(sonars[SONAR_MID].cm, FRONT_STOP_CM, FRONT_SLOW_CM);
-    float f_l = sonars[SONAR_LEFT].fault ? 1.0f : zone_factor(sonars[SONAR_LEFT].cm, SIDE_STOP_CM, SIDE_SLOW_CM);
-    float f_r = sonars[SONAR_RIGHT].fault ? 1.0f : zone_factor(sonars[SONAR_RIGHT].cm, SIDE_STOP_CM, SIDE_SLOW_CM);
-    obstacle_factor = min(f_mid, min(f_l, f_r));
+    // Approach mode (picking something up): the middle sonar lets the robot get close.
+    bool near_ok = approach_active();
+    uint16_t mid_stop = near_ok ? GRIPPER_APPROACH_STOP_CM : FRONT_STOP_CM;
+    uint16_t mid_slow = near_ok ? GRIPPER_APPROACH_SLOW_CM : FRONT_SLOW_CM;
+    bool mid_ignored = sonars[SONAR_MID].fault || mid_is_held_object();
+    obstacle_factor = mid_ignored ? 1.0f : zone_factor(sonars[SONAR_MID].cm, mid_stop, mid_slow);
     obstacle_block = obstacle_factor <= 0.0f;
     v *= obstacle_factor;
+#if HAS_GRIPPER
+    if (near_ok && v > GRIPPER_APPROACH_MAX_DUTY) v = GRIPPER_APPROACH_MAX_DUTY;  // creep
+#endif
     l = (int)lroundf(v + w);
     r = (int)lroundf(v - w);
   }
@@ -452,7 +537,7 @@ static void apply_safety() {
 }
 
 #if HAS_SONAR
-// ESCAPE REFLEX - while driving, any working sonar closer than ESCAPE_CM:
+// ESCAPE REFLEX - while driving, the working sonar closer than ESCAPE_CM:
 // back away, then turn toward the more open side.
 //   - only starts while the app is commanding motion (never on a parked robot)
 //   - STOP (c0,0), heartbeat loss or BLE disconnect cancels it immediately
@@ -468,8 +553,8 @@ static bool sonar_too_close(const Sonar &s) {
 }
 
 static bool escape_triggered() {
-  return sonar_too_close(sonars[SONAR_MID]) || sonar_too_close(sonars[SONAR_LEFT]) ||
-         sonar_too_close(sonars[SONAR_RIGHT]);
+  if (approach_active()) return false;  // picking something up: being close is the point
+  return !mid_is_held_object() && sonar_too_close(sonars[SONAR_MID]);
 }
 
 // True while somebody is actually asking the robot to move.
@@ -523,38 +608,33 @@ static bool apply_escape() {
     safe_left = -ESCAPE_BACK_DUTY;
     safe_right = -ESCAPE_BACK_DUTY;
   } else {
-    // turn toward the side with more room (left open -> turn left)
-    bool left_open = sonars[SONAR_LEFT].cm >= sonars[SONAR_RIGHT].cm;
-    safe_left = left_open ? -ESCAPE_TURN_DUTY : ESCAPE_TURN_DUTY;
-    safe_right = left_open ? ESCAPE_TURN_DUTY : -ESCAPE_TURN_DUTY;
+    // one sonar only: no side information, so always turn left (a fixed, safe choice)
+    safe_left = -ESCAPE_TURN_DUTY;
+    safe_right = ESCAPE_TURN_DUTY;
   }
   return true;
 }
 #endif
 
 //------------------------------------------------------------------------------
-// NO PHONE MODE - simple 3-sonar wander
+// NO PHONE MODE - simple sonar wander
 //------------------------------------------------------------------------------
 #if (NO_PHONE_MODE && HAS_SONAR)
 static void no_phone_drive() {
   const int CRUISE = 170, SLOW = 110, SPIN = 150;
   uint16_t m = sonars[SONAR_MID].cm;
-  uint16_t dl = sonars[SONAR_LEFT].cm;
-  uint16_t dr = sonars[SONAR_RIGHT].cm;
-  bool left_open = dl >= dr;  // turn toward the side with more room
-  if (m < 12) {               // very close: back up while turning
-    cmd_left = left_open ? -SLOW : -SLOW / 2;
-    cmd_right = left_open ? -SLOW / 2 : -SLOW;
-  } else if (m < 30 || dl < 15 || dr < 15) {  // blocked: spin on the spot
-    cmd_left = left_open ? -SPIN : SPIN;
-    cmd_right = left_open ? SPIN : -SPIN;
-  } else if (m < 70) {  // getting close: slow and steer away
-    cmd_left = left_open ? SLOW / 2 : SLOW;
-    cmd_right = left_open ? SLOW : SLOW / 2;
-  } else {  // free: cruise, steer gently away from the closer wall
-    int steer = constrain(((int)dr - (int)dl) / 4, -40, 40);
-    cmd_left = CRUISE - steer;
-    cmd_right = CRUISE + steer;
+  if (m < 12) {         // very close: back up
+    cmd_left = -SLOW;
+    cmd_right = -SLOW;
+  } else if (m < 30) {  // blocked: spin on the spot
+    cmd_left = -SPIN;
+    cmd_right = SPIN;
+  } else if (m < 70) {  // getting close: slow down
+    cmd_left = SLOW;
+    cmd_right = SLOW;
+  } else {              // free: cruise
+    cmd_left = CRUISE;
+    cmd_right = CRUISE;
   }
 }
 #endif
@@ -607,6 +687,9 @@ static void send_features() {
 #if HAS_SONAR
   msg += "s:";
 #endif
+#if HAS_GRIPPER
+  msg += "g:";
+#endif
   send_data(msg);
 }
 
@@ -646,7 +729,7 @@ static void handle_message(char *msg, LinkSource src) {
 #if HAS_SONAR
     case 's': {  // sonar report interval: s<ms>
       unsigned long v = strtoul(body, nullptr, 10);
-      sonar_report_interval = v < 50 ? 50 : v;
+      sonar_report_interval = v == 0 ? 0 : (v < 50 ? 50 : v);  // s0 = reports off
       break;
     }
 #endif
@@ -657,6 +740,20 @@ static void handle_message(char *msg, LinkSource src) {
         led_mode_left = (l >= LED_OFF && l <= LED_BLINK) ? (uint8_t)l : LED_AUTO;
         led_mode_right = (r >= LED_OFF && r <= LED_BLINK) ? (uint8_t)r : LED_AUTO;
       }
+      break;
+    }
+#endif
+#if HAS_GRIPPER
+    case 'g':  // gripper: g1 grip (close), g0 release (open), g2 report
+      if (body[0] == '1') gripper_set(true);
+      else if (body[0] == '0') gripper_set(false);
+      else grip_report = true;
+      break;
+    case 'a': {  // approach mode for <ms> (0 = end now), see GRIPPER_APPROACH_*
+      unsigned long ms = strtoul(body, nullptr, 10);
+      if (ms > GRIPPER_APPROACH_MAX_MS) ms = GRIPPER_APPROACH_MAX_MS;
+      approach_until = ms == 0 ? 0 : millis() + ms;
+      if (approach_until == 0 && ms != 0) approach_until = 1;
       break;
     }
 #endif
@@ -850,25 +947,25 @@ static void lcd_begin() {
   lcd = new LiquidCrystal_I2C(addr, 16, 2);
   lcd->init();
   lcd->backlight();
+  // Boot straight into the waiting state; lcd_update keeps it until a phone talks.
   lcd->setCursor(0, 0);
-  lcd->print("OpenBot " ROBOT_TYPE);
+  lcd->print("Phone not yet");
   lcd->setCursor(0, 1);
-  lcd->print("Ready  BLE+USB");
-  snprintf(lcd_shown[0], 17, "%-16s", "OpenBot " ROBOT_TYPE);
-  snprintf(lcd_shown[1], 17, "%-16s", "Ready  BLE+USB");
+  lcd->print("connected");
+  snprintf(lcd_shown[0], 17, "%-16s", "Phone not yet");
+  snprintf(lcd_shown[1], 17, "%-16s", "connected");
 }
 
-static void fmt_dist(char *out, uint8_t idx) {  // out: 4 chars + '\0' 
+static void fmt_dist(char *out) {  // out: 3 chars + '\0'
 #if HAS_SONAR
-  if (sonars[idx].fault) {
+  if (sonars[SONAR_MID].fault) {
     strcpy(out, "---");
-  } else if (sonars[idx].cm >= SONAR_MAX_CM) {
+  } else if (sonars[SONAR_MID].cm >= SONAR_MAX_CM) {
     strcpy(out, "max");
   } else {
-    snprintf(out, 6, "%3u", (unsigned)(sonars[idx].cm % 1000));
+    snprintf(out, 6, "%3u", (unsigned)(sonars[SONAR_MID].cm % 1000));
   }
 #else
-  (void)idx;
   strcpy(out, "n/a");
 #endif
 }
@@ -884,6 +981,21 @@ static const char *link_text() {
   return "AUTO";
 #else
   return "WAIT";
+#endif
+}
+
+// True while a phone is actually talking to the robot: BLE link up, or USB
+// traffic in the last 2 s with the heartbeat still alive. NO_PHONE_MODE never
+// waits for one, so it always shows the data view.
+static bool phone_connected() {
+#if NO_PHONE_MODE
+  return true;
+#else
+#if HAS_BLUETOOTH
+  if (ble_connected) return true;  // the BLE link is the truth on BLE
+#endif
+  if (heartbeat_expired) return false;  // USB app went silent
+  return last_usb_rx_ms != 0 && millis() - last_usb_rx_ms < 2000;
 #endif
 }
 
@@ -910,16 +1022,23 @@ static void lcd_update() {
   if (millis() - lcd_time < 125) return;  // one row every 125 ms
   lcd_time = millis();
   char text[24];
-  if (lcd_row == 0) {
-    // "L-255 R 255 BLE "  -> motor outputs and link state
-    snprintf(text, sizeof(text), "L%4d R%4d %s", out_left, out_right, link_text());
+  if (!phone_connected()) {
+    // "Phone not yet" / "connected"  -> no phone is talking to the robot yet
+    snprintf(text, sizeof(text), "%s", lcd_row == 0 ? "Phone not yet" : "connected");
+  } else if (lcd_row == 0) {
+    // "Dist:120 cm BLE"  -> middle-sonar distance + link state
+    char dm[6];
+    fmt_dist(dm);
+    snprintf(text, sizeof(text), "Dist:%s cm%s", dm, link_text());
   } else {
-    // "L 25 M120 R max"   -> left / middle / right distance in cm
-    char dl[6], dm[6], dr[6];
-    fmt_dist(dl, 1);
-    fmt_dist(dm, 0);
-    fmt_dist(dr, 2);
-    snprintf(text, sizeof(text), "L%s M%s R%s", dl, dm, dr);
+    // "Claw: OPEN" / "Claw: CLOSED" / "Claw: MOVING"  -> gripper state
+#if HAS_GRIPPER
+    const char *st =
+        grip_state == GRIP_CLOSED ? "CLOSED" : grip_state == GRIP_OPEN ? "OPEN" : "MOVING";
+    snprintf(text, sizeof(text), "Claw: %s", st);
+#else
+    text[0] = '\0';  // no gripper on this build: leave the row blank
+#endif
   }
   lcd_write_row(lcd_row, text);
   lcd_row ^= 1;
@@ -930,10 +1049,16 @@ static void lcd_update() {
 // SENSOR REPORTS TO THE APP
 //------------------------------------------------------------------------------
 static void report_sensors() {
+#if HAS_GRIPPER
+  if (grip_report && grip_state != GRIP_MOVING) {
+    grip_report = false;
+    send_data(String("g") + String(grip_state));  // g0 open / g1 closed
+  }
+#endif
 #if HAS_SONAR
-  // Stock OpenBot apps read "s<cm>" as the front distance. Send the closest
-  // of the three front sensors (your current apps simply ignore it).
-  if (millis() - sonar_report_time >= sonar_report_interval) {
+  // Stock OpenBot apps read "s<cm>" as the front distance. Send the middle
+  // sonar's reading (your current apps simply ignore it).
+  if (sonar_report_interval != 0 && millis() - sonar_report_time >= sonar_report_interval) {
     sonar_report_time = millis();
     send_data(String("s") + String(front_clearance_cm()));
   }
@@ -947,7 +1072,7 @@ static void debug_print() {
   t = millis();
   Serial.printf("# cmd %d,%d safe %d,%d out %d,%d", cmd_left, cmd_right, safe_left, safe_right, out_left, out_right);
 #if HAS_SONAR
-  Serial.printf(" | L%u M%u R%u f%.2f", sonars[1].cm, sonars[0].cm, sonars[2].cm, obstacle_factor);
+  Serial.printf(" | M%u f%.2f", sonars[0].cm, obstacle_factor);
 #endif
   Serial.println();
 }
@@ -979,6 +1104,10 @@ void setup() {
   ble_begin();
 #endif
 
+#if HAS_GRIPPER
+  gripper_begin();
+#endif
+
   Serial.println("r");  // tells the app the robot is ready
 }
 
@@ -1008,6 +1137,9 @@ void loop() {
   apply_escape();
 #endif
   update_motors();
+#if HAS_GRIPPER
+  gripper_update();
+#endif
 
 #if HAS_INDICATORS
   update_indicators();

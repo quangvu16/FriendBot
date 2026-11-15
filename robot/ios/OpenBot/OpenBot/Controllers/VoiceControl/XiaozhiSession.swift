@@ -70,6 +70,9 @@ final class XiaozhiSession {
     /// Answers `self.camera.take_photo` (phone camera + vision explain); nil = not supported.
     /// The completion takes (photoJson, errorMessage) and is called exactly once per request.
     var photoHandler: ((String, @escaping (String?, String?) -> Void) -> Void)?
+    /// Answers `self.robot.fetch` (find the object, drive to it, grip it); nil = not supported.
+    /// The completion takes (resultText, errorMessage) and is called exactly once.
+    var fetchHandler: ((String, @escaping (String?, String?) -> Void) -> Void)?
 
     // MARK: State
 
@@ -373,6 +376,10 @@ final class XiaozhiSession {
                 handlePhotoCall(id: id, question: args["question"] as? String ?? "")
                 return
             }
+            if name == Self.fetchToolName {
+                handleFetchCall(id: id, object: args["object"] as? String ?? "")
+                return
+            }
             if toolHandler?(name, args) ?? false {
                 sendMcp([
                     "jsonrpc": "2.0",
@@ -454,6 +461,28 @@ final class XiaozhiSession {
             ],
         ],
         [
+            "name": "self.robot.gripper",
+            "description": "Open or close the robot's gripper (claw). 'grab' closes it to hold an object (the user says hold it, grab it, keep it, take it). 'release' opens it to let the object go (drop it, let go, put it down, give it). Use after moving to the place the user wants the object.",
+            "inputSchema": [
+                "type": "object",
+                "properties": [
+                    "action": ["type": "string", "enum": ["grab", "release"]],
+                ],
+                "required": ["action"],
+            ],
+        ],
+        [
+            "name": fetchToolName,
+            "description": "Find an object with the robot's camera, drive to it and pick it up with the gripper. Use when the user asks the robot to pick up, fetch, get or take an object (for example: pick up the red ball). It takes photos and moves step by step, so it can take up to a minute. When it returns, ask the user where to take the object; move there with self.robot.move, then call self.robot.gripper with release.",
+            "inputSchema": [
+                "type": "object",
+                "properties": [
+                    "object": ["type": "string", "description": "The object to pick up, in English, with its colour (e.g. 'the red cup')."],
+                ],
+                "required": ["object"],
+            ],
+        ],
+        [
             "name": photoToolName,
             "description": "Take a photo with the phone camera and explain it. Use this tool after the user asks you to see something or asks about the environment. `question`: The question that you want to ask about the photo. Return: A JSON object that provides the photo information.",
             "inputSchema": [
@@ -466,6 +495,40 @@ final class XiaozhiSession {
     ]
 
     private static let photoToolName = "self.camera.take_photo"
+    private static let fetchToolName = "self.robot.fetch"
+
+    /// Async tools/call for a fetch: answered once when the robot holds the object or gives up
+    /// (a 180 s guard covers a stuck fetch).
+    private func handleFetchCall(id: Any, object: String) {
+        var answered = false
+        let done: (String?, String?) -> Void = { [weak self] text, error in
+            DispatchQueue.main.async {
+                guard let self = self, !answered else { return }
+                answered = true
+                if let text = text, !text.isEmpty {
+                    self.sendMcp([
+                        "jsonrpc": "2.0",
+                        "id": id,
+                        "result": ["content": [["type": "text", "text": text]], "isError": false],
+                    ])
+                } else {
+                    self.sendMcp([
+                        "jsonrpc": "2.0",
+                        "id": id,
+                        "error": ["code": -32000, "message": (error?.isEmpty == false) ? error! : "Fetch failed"],
+                    ])
+                }
+            }
+        }
+        if let handler = fetchHandler {
+            handler(object, done)
+        } else {
+            done(nil, "Fetching is not available on this screen")
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 180) {
+            done(nil, "Fetch took too long")
+        }
+    }
 
     /// Async tools/call: answers the photo JSON-RPC exactly once, when the camera and the
     /// vision model are done (a 60 s guard covers a stuck camera).

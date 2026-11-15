@@ -24,7 +24,7 @@ class FreeRoamController: CameraController, UIGestureRecognizerDelegate {
     var audioPlayer = AudioPlayer.shared
     private let mainView = UIView()
     let mSocket = NativeWebSocket.shared;
-    let roomId: String = GoogleAccount.email ?? ""
+    let roomId = ""
     private var serverWebrtcDelegate: ServerWebrtcDelegate?
     let webSocketMsgHandler = WebSocketMessageHandler();
     let fragmentType = FragmentType.shared

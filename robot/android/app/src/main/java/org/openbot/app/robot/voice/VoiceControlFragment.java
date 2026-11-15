@@ -168,6 +168,11 @@ public class VoiceControlFragment extends ControlsFragment {
   private boolean micStreaming;
 
   private VoiceRelayClient relayClient;
+
+  /** Offline mic fallback: one on-device recognition while the Xiaozhi socket is down. */
+  private LocalStt offlineStt;
+
+  private boolean localVoiceActive;
   /** Relay status (a robot shared over WiFi by another phone); feeds the connection text. */
   private final VoiceRelayClient.Listener relayListener =
       new VoiceRelayClient.Listener() {
@@ -322,6 +327,13 @@ public class VoiceControlFragment extends ControlsFragment {
           if (!echo) {
             beginExchange(text);
             appendUserTurn(text);
+            // Spoken words reached the server: arm the typed path's safety window. When no
+            // robot tool answers in time — the assistant only chats about "go forward" —
+            // the local vocabulary still moves the robot.
+            utteranceToolCall = false;
+            final long seq = ++utteranceSeq;
+            utteranceHandler.postDelayed(
+                () -> onUtteranceWindowClosed(seq, text), UTTERANCE_WAIT_MS);
           }
           if (!listenHandsFree && micStreaming) {
             stopMicSession(true); // push-to-talk: the utterance is over
@@ -378,6 +390,17 @@ public class VoiceControlFragment extends ControlsFragment {
         }
 
         @Override
+        public void onFetch(String object, XiaozhiSession.PhotoCallback callback) {
+          if (!isAdded()) {
+            callback.onPhotoResult(null, "screen closed");
+            return;
+          }
+          utteranceTraffic = true;
+          utteranceToolCall = true;
+          startFetch(object, callback);
+        }
+
+        @Override
         public void onTakePhoto(String question, XiaozhiSession.PhotoCallback callback) {
           if (!isAdded()) {
             callback.onPhotoResult(null, "screen closed");
@@ -430,7 +453,9 @@ public class VoiceControlFragment extends ControlsFragment {
           result -> {
             Boolean granted = result.get(Manifest.permission.RECORD_AUDIO);
             if (granted != null && granted) {
-              armListening();
+              // Online: arm the uplink. Offline: retry the on-device fallback the tap wanted.
+              if (session != null && wsReady) armListening();
+              else startOfflineVoice();
             } else {
               Toast.makeText(
                       requireContext(), R.string.voice_mic_permission_denied, Toast.LENGTH_LONG)
@@ -466,6 +491,132 @@ public class VoiceControlFragment extends ControlsFragment {
   /** The corner camera: live preview of the chosen lens plus capture for the vision tool. */
   private final PhotoExplainer photoExplainer = new PhotoExplainer();
 
+  /** "Pick up the red cup": camera + vision steering to an object, then the gripper. */
+  private final ObjectFetcher fetcher =
+      new ObjectFetcher(
+          new ObjectFetcher.Robot() {
+            @Override
+            public void look(String question, ObjectFetcher.Answer answer) {
+              if (getView() == null) {
+                answer.onAnswer(null);
+                return;
+              }
+              XiaozhiSession active = session;
+              photoExplainer.captureAndExplain(
+                  requireContext().getApplicationContext(),
+                  getViewLifecycleOwner(),
+                  question,
+                  active == null ? "" : active.visionExplainUrl(),
+                  active == null ? "" : active.visionExplainToken(),
+                  new PhotoExplainer.Callback() {
+                    @Override
+                    public void onCaptured(@Nullable byte[] jpeg) {
+                      showCameraStill(jpeg);
+                    }
+
+                    @Override
+                    public void onExplained(@Nullable String photoJson, @NonNull String error) {
+                      answer.onAnswer(photoJson == null ? null : extractPhotoAnswer(photoJson));
+                    }
+                  });
+            }
+
+            @Override
+            public void drive(float left, float right, int ms, Runnable done) {
+              fetchDrive(left, right, ms, done);
+            }
+
+            @Override
+            public void gripper(boolean close) {
+              if (localLinkUp()) vehicle.sendGripper(close);
+            }
+
+            @Override
+            public void approach(int ms) {
+              if (localLinkUp()) vehicle.sendApproach(ms);
+            }
+
+            @Override
+            public float sonarCm() {
+              return vehicle == null ? -1f : vehicle.getSonarDistanceCm();
+            }
+
+            @Override
+            public void progress(String text) {
+              appendConversation("» " + text, RowKind.ACTION);
+            }
+          },
+          new Handler(Looper.getMainLooper()));
+
+  /**
+   * One timed move of a fetch: the same driveTick resend and auto-stop as a voice move, without
+   * the speed slider (the fetch turns by calibrated times). {@code done} runs after the stop.
+   */
+  private void fetchDrive(float left, float right, int ms, Runnable done) {
+    if (!localLinkUp()) {
+      fetcher.cancel();
+      return;
+    }
+    scriptQueue.clear();
+    driveLeft = clampUnit(left);
+    driveRight = clampUnit(right);
+    moveEndsAtMs = SystemClock.uptimeMillis() + ms;
+    VoiceRelayServer.get().noteLocalMove(moveEndsAtMs);
+    vehicle.setControl(driveLeft, driveRight);
+    driveHandler.removeCallbacks(driveTick);
+    driveHandler.postDelayed(driveTick, Math.min(DRIVE_TICK_MS, ms));
+    driveHandler.postDelayed(
+        () -> {
+          if (fetcher.isRunning()) done.run();
+        },
+        ms + 120L);
+  }
+
+  /** Starts a fetch (voice tool or the long-press on the camera corner). */
+  private void startFetch(String object, @Nullable XiaozhiSession.PhotoCallback toolCallback) {
+    if (!localLinkUp()) {
+      String why = getString(R.string.voice_fetch_needs_robot);
+      if (toolCallback != null) toolCallback.onPhotoResult(null, why);
+      else Toast.makeText(requireContext(), why, Toast.LENGTH_LONG).show();
+      return;
+    }
+    if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
+        != PackageManager.PERMISSION_GRANTED) {
+      String why = "Camera permission denied";
+      cameraPermissionLauncher.launch(Manifest.permission.CAMERA);
+      if (toolCallback != null) toolCallback.onPhotoResult(null, why);
+      return;
+    }
+    vehicle.setSonarFrequency(200); // live distance for the final approach
+    fetcher.start(
+        object,
+        (ok, message) -> {
+          if (vehicle != null) vehicle.setSonarFrequency(0);
+          stopMoving();
+          if (toolCallback != null) {
+            // The assistant speaks the result and asks where to take the object.
+            toolCallback.onPhotoResult(ok ? message : null, message);
+          } else {
+            appendBotTurn(message);
+          }
+        });
+  }
+
+  /** Long-press on the camera corner: ask what to pick up, then fetch it. */
+  private void askWhatToFetch() {
+    EditText input = new EditText(requireContext());
+    input.setHint(R.string.voice_fetch_hint);
+    input.setSingleLine(true);
+    new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+        .setTitle(R.string.voice_fetch_title)
+        .setView(input)
+        .setPositiveButton(
+            R.string.voice_fetch_go,
+            (d, which) -> startFetch(input.getText().toString().trim(), null))
+        .setNegativeButton(R.string.voice_cancel, null)
+        .show();
+  }
+
   /** Persisted lens choice for the corner preview (back camera by default). */
   private boolean cameraFront;
 
@@ -474,6 +625,11 @@ public class VoiceControlFragment extends ControlsFragment {
     cameraFront = prefs().getBoolean("voice_camera_front", false);
     binding.cameraFlipButton.setOnClickListener(v -> flipCamera());
     binding.cameraCorner.setOnClickListener(v -> manualLookAround());
+    binding.cameraCorner.setOnLongClickListener(
+        v -> {
+          askWhatToFetch();
+          return true;
+        });
     if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
         == PackageManager.PERMISSION_GRANTED) {
       startCameraPreview();
@@ -688,6 +844,10 @@ public class VoiceControlFragment extends ControlsFragment {
         v -> executeCommand(VoiceCommand.of(VoiceCommand.Action.WIGGLE, "tap", "tap"), ""));
     binding.turnButton.setOnClickListener(
         v -> executeCommand(VoiceCommand.of(VoiceCommand.Action.TURN_AROUND, "tap", "tap"), ""));
+    binding.gripBtn.setOnClickListener(
+        v -> executeCommand(VoiceCommand.of(VoiceCommand.Action.GRIP, "tap", "tap"), ""));
+    binding.releaseBtn.setOnClickListener(
+        v -> executeCommand(VoiceCommand.of(VoiceCommand.Action.RELEASE, "tap", "tap"), ""));
     binding.settingsButton.setOnClickListener(v -> showXiaozhiSettings());
     binding.pairRetryButton.setOnClickListener(v -> startPairing());
     binding.pairSkipButton.setOnClickListener(v -> skipPairing());
@@ -752,7 +912,38 @@ public class VoiceControlFragment extends ControlsFragment {
 
   @Override
   protected void processUSBData(String data) {
-    // Telemetry is not shown here; the screen only drives.
+    // Telemetry is not shown here; the screen only drives. The claw state is the one
+    // reading that matters: the digital firmware answers g0/g1 after every move.
+    if (!data.isEmpty() && data.charAt(0) == 'g') {
+      refreshGripperState();
+    }
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    if (vehicle != null && vehicle.isConnected()) {
+      vehicle.requestGripperState(); // ask the firmware for the claw state
+    }
+    refreshGripperState();
+  }
+
+  /** Mirror the firmware's claw report on the line under the grip tiles. */
+  private void refreshGripperState() {
+    if (binding == null || vehicle == null) {
+      return;
+    }
+    switch (vehicle.getGripperState()) {
+      case Vehicle.GRIP_OPEN:
+        binding.gripperStateText.setText(R.string.hardware_state_open);
+        break;
+      case Vehicle.GRIP_CLOSED:
+        binding.gripperStateText.setText(R.string.hardware_state_closed);
+        break;
+      default:
+        binding.gripperStateText.setText(R.string.hardware_state_unknown);
+        break;
+    }
   }
 
   // ---------------------------------------------------------------- pairing
@@ -935,6 +1126,9 @@ public class VoiceControlFragment extends ControlsFragment {
    * mode=manual} (tap to start/stop, v3 behavior).
    */
   private void armListening() {
+    if (localVoiceActive) {
+      return; // an offline utterance owns the mic until it finishes
+    }
     if (session == null || !wsReady) {
       return; // permission callbacks can arrive after the session is gone
     }
@@ -968,12 +1162,21 @@ public class VoiceControlFragment extends ControlsFragment {
   /**
    * Mic tap. While the uplink streams: end the utterance now (push-to-talk stop, or hands-free
    * "send") and wait for the reply. While the assistant speaks: barge in. Otherwise: start
-   * listening. When the socket is not ready the tap only logs {@code voice_ws_offline} — the
-   * platform speech recognizers are Google voice and are banned on this screen.
+   * listening. When the socket is not ready the tap no longer dead-ends: one on-device
+   * recognition runs through the normal text pipeline (REST brain, then the offline keywords),
+   * so the robot stays drivable by voice with Xiaozhi down.
    */
   private void onMicTapped() {
     if (session == null || !wsReady) {
+      if (localVoiceActive) {
+        // Second tap cancels the offline utterance.
+        localVoiceActive = false;
+        if (offlineStt != null) offlineStt.stop();
+        setUiState(UiState.IDLE);
+        return;
+      }
       appendLog(getString(R.string.voice_ws_offline));
+      startOfflineVoice();
       return;
     }
     if (micStreaming) {
@@ -983,6 +1186,42 @@ public class VoiceControlFragment extends ControlsFragment {
       return;
     }
     armListening();
+  }
+
+  /**
+   * Offline mic: one on-device recognition into {@link #onTranscript(String)} — the same text
+   * pipeline typed input uses (session text-in when it is up, REST brain, then the offline
+   * keywords), so "go forward", "turn left" and "grip" still drive the robot without Xiaozhi.
+   */
+  private void startOfflineVoice() {
+    if (!isAdded() || binding == null || localVoiceActive) return;
+    if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO)
+        != PackageManager.PERMISSION_GRANTED) {
+      micPermissionLauncher.launch(new String[] {Manifest.permission.RECORD_AUDIO});
+      return;
+    }
+    if (offlineStt == null) offlineStt = new LocalStt();
+    localVoiceActive = true;
+    setUiState(UiState.LISTENING);
+    offlineStt.start(
+        requireContext(),
+        new LocalStt.Callback() {
+          @Override
+          public void onText(String text) {
+            if (!isAdded()) return;
+            localVoiceActive = false;
+            onTranscript(text);
+          }
+
+          @Override
+          public void onError(String message) {
+            if (!isAdded()) return;
+            localVoiceActive = false;
+            setUiState(UiState.IDLE);
+            appendLog(message);
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+          }
+        });
   }
 
   /** Ends the uplink (mic tap again, server tts start, or screen exit). */
@@ -1170,8 +1409,20 @@ public class VoiceControlFragment extends ControlsFragment {
     // When a tool did run, the assistant's tts reply is on its way: THINKING rides into SPEAKING.
   }
 
-  /** REST brain fallback with the recent conversation as context; keywords when it errors out. */
+  /**
+   * REST brain fallback with the recent conversation as context; keywords when it errors out.
+   *
+   * <p>A clear order in the words ("go forward", "grip", "stop") runs through the local
+   * vocabulary straight away. The chat brain does not get to answer "none" — or hedge into
+   * "stop" — and leave the robot standing after the driver clearly commanded it; it only
+   * handles what the keywords do not understand (conversation, nuanced asks).
+   */
   private void restOrKeywords(String text) {
+    VoiceCommand local = VoiceInterpreter.interpret(text);
+    if (local.getAction() != VoiceCommand.Action.UNKNOWN) {
+      executeCommand(local, "");
+      return;
+    }
     XiaozhiClient client = XiaozhiClient.fromPreferences(requireContext());
     if (client.isConfigured()) {
       client.interpret(
@@ -1250,8 +1501,25 @@ public class VoiceControlFragment extends ControlsFragment {
         if (spoken) sayToUser(getString(R.string.voice_no_match));
         return;
       case STOP:
+        fetcher.cancel();
         stopMoving();
         if (spoken) sayToUser(say.isEmpty() ? getString(R.string.voice_stop) : say);
+        return;
+      case GRIP:
+      case RELEASE:
+        {
+          boolean close = command.getAction() == VoiceCommand.Action.GRIP;
+          if (relayClient != null && relayClient.isConnected()) {
+            relayClient.sendGrip(close); // a robot another phone shares over WiFi
+          } else if (localLinkUp()) {
+            vehicle.sendGripper(close);
+          } else {
+            Toast.makeText(requireContext(), R.string.voice_not_connected, Toast.LENGTH_SHORT)
+                .show();
+            return;
+          }
+          if (spoken) sayToUser(say.isEmpty() ? summary : say);
+        }
         return;
       case LIGHTS_ON:
         if (localLinkUp()) {
@@ -1470,6 +1738,10 @@ public class VoiceControlFragment extends ControlsFragment {
         return getString(R.string.voice_turn_around);
       case WIGGLE:
         return getString(R.string.voice_wiggle);
+      case GRIP:
+        return getString(R.string.voice_grip);
+      case RELEASE:
+        return getString(R.string.voice_release);
       default:
         return getString(R.string.voice_no_match);
     }
@@ -2335,6 +2607,12 @@ public class VoiceControlFragment extends ControlsFragment {
 
   @Override
   public void onDestroyView() {
+    fetcher.cancel();
+    if (offlineStt != null) {
+      offlineStt.stop();
+      offlineStt = null;
+    }
+    localVoiceActive = false;
     org.openbot.app.robot.voice.relay.InternetRelayHost.get().setListener(null);
     org.openbot.app.robot.voice.relay.InternetRelayHost.get().stop();
     faceHandler.removeCallbacks(faceBack);

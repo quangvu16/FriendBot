@@ -669,7 +669,7 @@ class expandSetting: UIView, UITextFieldDelegate, UIScrollViewDelegate {
         dd.heightAnchor.constraint(equalToConstant: 40).isActive = true
         saveAsDropdownLabel.frame = CGRect(x: 10, y: 0, width: 180, height: 40)
         dd.addSubview(saveAsDropdownLabel);
-        saveAsDropdown.dataSource = ["Server", "Drive", "Local"]
+        saveAsDropdown.dataSource = ["Server", "Local"]
         saveAsDropdown.selectionAction = { [unowned self] (index: Int, item: String) in
             saveAsDropdownLabel.text = item;
             NotificationCenter.default.post(name: .saveAs, object: item);

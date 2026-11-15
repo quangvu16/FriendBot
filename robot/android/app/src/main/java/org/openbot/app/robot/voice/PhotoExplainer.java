@@ -3,6 +3,8 @@ package org.openbot.app.robot.voice;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.os.Handler;
 import android.os.Looper;
 import androidx.annotation.NonNull;
@@ -16,6 +18,7 @@ import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 import com.google.common.util.concurrent.ListenableFuture;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -177,6 +180,29 @@ public final class PhotoExplainer {
         ContextCompat.getMainExecutor(app));
   }
 
+  /**
+   * Explains an already-captured JPEG (e.g. a frame grabbed by another camera pipeline such as
+   * Voice Grab's detector). Same upload and callbacks as {@link #captureAndExplain}, minus the
+   * shutter: {@link Callback#onCaptured} gets the given bytes so callers can still show a still.
+   */
+  public void explainJpeg(
+      Context app,
+      @Nullable String question,
+      @NonNull String explainUrl,
+      @NonNull String explainToken,
+      @NonNull byte[] jpeg,
+      @NonNull Callback callback) {
+    this.explainUrl = explainUrl;
+    this.explainToken = explainToken;
+    callback.onCaptured(jpeg);
+    byte[] shrunk = shrink(jpeg);
+    if (shrunk == null) {
+      callback.onExplained(null, "Failed to capture photo");
+      return;
+    }
+    explain(app, shrunk, question, callback);
+  }
+
   private void takePicture(
       Context app, ImageCapture capture, String question, Callback callback) {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -254,6 +280,63 @@ public final class PhotoExplainer {
             });
   }
 
+  /**
+   * Applies the capture's EXIF orientation to a decoded bitmap. {@link BitmapFactory} ignores
+   * the tag, so a raw decode is the sensor-native image (sideways on a phone held in portrait
+   * — it looks rotated 270°). Rotating it upright fixes the corner still, the robot-face photo
+   * and the vision upload alike; for the back camera this is the +90° turn.
+   */
+  @Nullable
+  private static Bitmap applyExifOrientation(byte[] jpeg, @Nullable Bitmap bitmap) {
+    if (bitmap == null) {
+      return null;
+    }
+    try {
+      ExifInterface exif = new ExifInterface(new ByteArrayInputStream(jpeg));
+      int orientation =
+          exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+      Matrix matrix = new Matrix();
+      switch (orientation) {
+        case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
+          matrix.setScale(-1f, 1f);
+          break;
+        case ExifInterface.ORIENTATION_ROTATE_180:
+          matrix.setRotate(180);
+          break;
+        case ExifInterface.ORIENTATION_FLIP_VERTICAL:
+          matrix.setRotate(180);
+          matrix.postScale(-1f, 1f);
+          break;
+        case ExifInterface.ORIENTATION_TRANSPOSE:
+          matrix.setRotate(90);
+          matrix.postScale(-1f, 1f);
+          break;
+        case ExifInterface.ORIENTATION_ROTATE_90:
+          matrix.setRotate(90);
+          break;
+        case ExifInterface.ORIENTATION_TRANSVERSE:
+          matrix.setRotate(-90);
+          matrix.postScale(-1f, 1f);
+          break;
+        case ExifInterface.ORIENTATION_ROTATE_270:
+          matrix.setRotate(-90);
+          break;
+        default:
+          return bitmap; // already upright (or no tag) — nothing to turn
+      }
+      Bitmap rotated =
+          Bitmap.createBitmap(
+              bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+      if (rotated != bitmap) {
+        bitmap.recycle();
+      }
+      return rotated;
+    } catch (IOException e) {
+      Timber.w(e, "EXIF orientation unreadable; keeping the capture as decoded");
+      return bitmap;
+    }
+  }
+
   /** Downscales the capture to {@link #MAX_EDGE} and re-encodes it; null when not decodable. */
   @Nullable
   private static byte[] shrink(byte[] jpeg) {
@@ -276,6 +359,9 @@ public final class PhotoExplainer {
     if (bitmap == null) {
       return jpeg;
     }
+    // Turn the sensor-native decode upright before scaling, so the vision service also gets
+    // a correctly oriented picture.
+    bitmap = applyExifOrientation(jpeg, bitmap);
     float scale = (float) MAX_EDGE / Math.max(bitmap.getWidth(), bitmap.getHeight());
     if (scale < 1f) {
       bitmap =
@@ -308,6 +394,6 @@ public final class PhotoExplainer {
     }
     BitmapFactory.Options opts = new BitmapFactory.Options();
     opts.inSampleSize = sample;
-    return BitmapFactory.decodeByteArray(jpeg, 0, jpeg.length, opts);
+    return applyExifOrientation(jpeg, BitmapFactory.decodeByteArray(jpeg, 0, jpeg.length, opts));
   }
 }

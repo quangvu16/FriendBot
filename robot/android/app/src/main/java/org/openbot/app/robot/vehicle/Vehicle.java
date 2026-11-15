@@ -499,6 +499,40 @@ public class Vehicle {
     sendStringToDevice(String.format(Locale.US, "s%d\n", interval_ms));
   }
 
+  // ---- Gripper (FriendBot firmware: g1 grip, g0 release, a<ms> approach) ----
+
+  public static final int GRIP_OPEN = 0;
+  public static final int GRIP_CLOSED = 1;
+
+  /** Last claw state the robot reported ({@code g0}/{@code g1}), or -1 before the first report. */
+  private volatile int gripperState = -1;
+
+  /** Close ({@code true}: grip / hold) or open ({@code false}: release) the gripper. */
+  public void sendGripper(boolean close) {
+    sendStringToDevice(close ? "g1\n" : "g0\n");
+  }
+
+  /** Ask the firmware to reply with the current claw state ({@code g2} → {@code g0}/{@code g1}). */
+  public void requestGripperState() {
+    sendStringToDevice("g2\n");
+  }
+
+  /**
+   * Approach mode for {@code ms} (0 ends it): the firmware lets the robot creep to 4 cm of an
+   * object (instead of stopping at 15 cm), caps the speed and pauses its escape reflex.
+   */
+  public void sendApproach(int ms) {
+    sendStringToDevice(String.format(Locale.US, "a%d\n", Math.max(0, Math.min(5000, ms))));
+  }
+
+  public int getGripperState() {
+    return gripperState;
+  }
+
+  public void setGripperState(int state) {
+    gripperState = state;
+  }
+
   /** Last mid-sonar distance in cm, or -1 when no report has arrived yet. */
   public float getSonarDistanceCm() {
     return sonarDistanceCm;

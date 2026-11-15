@@ -197,6 +197,12 @@ public abstract class ControlsFragment extends Fragment implements ServerListene
                     vehicle.setSonarDistanceCm(Float.parseFloat(body));
                   }
                   break;
+                case 'g':
+                  // Gripper finished moving: g0 open, g1 closed.
+                  if (FormatUtils.isNumeric(body)) {
+                    vehicle.setGripperState((int) Float.parseFloat(body));
+                  }
+                  break;
                 case 'b':
                   // do nothing
                   break;
@@ -615,7 +621,7 @@ public abstract class ControlsFragment extends Fragment implements ServerListene
             String selected = parent.getItemAtPosition(position).toString();
             try {
               masterList.stream()
-                  .filter(f -> f.name.contains(selected))
+                  .filter(f -> FileUtils.nameWithoutExtension(f.name).equals(selected))
                   .findFirst()
                   .ifPresent(value -> setModel(value));
 

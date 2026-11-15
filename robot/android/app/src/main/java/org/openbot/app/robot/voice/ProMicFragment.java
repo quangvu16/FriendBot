@@ -146,6 +146,7 @@ public abstract class ProMicFragment extends ControlsFragment {
         break;
       case "status":
         showBattery(o);
+        if (o.has("grip")) showGrip(o.get("grip").getAsInt());
         break;
       case "cam":
         showCamera(str(o, "b"));
@@ -257,6 +258,8 @@ public abstract class ProMicFragment extends ControlsFragment {
     binding.scanQrButton.setOnClickListener(v -> scanQr());
     binding.camBox.setOnClickListener(v -> toggleCamera());
     binding.stopButton.setOnClickListener(v -> stopRobot());
+    binding.gripButton.setOnClickListener(v -> sendGrip(true));
+    binding.releaseButton.setOnClickListener(v -> sendGrip(false));
     binding.micButton.setOnTouchListener(
         (v, e) -> {
           switch (e.getActionMasked()) {
@@ -489,6 +492,23 @@ public abstract class ProMicFragment extends ControlsFragment {
     // Twice, a moment apart: a single lost packet on 4G must not leave the robot driving.
     ui.postDelayed(() -> sendRaw("{\"t\":\"stop\"}"), 150);
     Toast.makeText(requireContext(), R.string.pro_stop_sent, Toast.LENGTH_SHORT).show();
+  }
+
+  /** Gripper on the robot: grip (close) or release (open). */
+  private void sendGrip(boolean close) {
+    if (!isConnected()) {
+      Toast.makeText(requireContext(), statusText(), Toast.LENGTH_SHORT).show();
+      return;
+    }
+    sendRaw("{\"t\":\"grip\",\"on\":" + close + "}");
+    showGrip(close ? 1 : 0);
+  }
+
+  /** Highlights the claw button that matches the robot's state (0 open, 1 closed). */
+  private void showGrip(int state) {
+    if (binding == null) return;
+    binding.gripButton.setAlpha(state == 1 ? 1f : 0.55f);
+    binding.releaseButton.setAlpha(state == 0 ? 1f : 0.55f);
   }
 
   // ------------------------------------------------------------------ camera

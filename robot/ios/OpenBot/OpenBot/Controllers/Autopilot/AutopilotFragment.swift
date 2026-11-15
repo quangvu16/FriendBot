@@ -35,11 +35,17 @@ class AutopilotFragment: CameraController {
         expandedAutoPilotView!.backgroundColor = Colors.freeRoamButtonsColor
         expandedAutoPilotView!.layer.cornerRadius = 15
         createCameraView()
-        let modelItems = Common.loadAllModelItemsFromBundle()
+        // The model list is the Model Management catalog (documents config.json
+        // when present, otherwise the bundled one). Only models whose file exists
+        // are considered, so the autopilot can actually be created.
+        var modelItems = Common.loadAllModelItems().filter { Common.isModelItemRunnable($0) }
+        if modelItems.isEmpty {
+            modelItems = Common.loadAllModelItemsFromBundle()
+        }
         if (modelItems.count > 0) {
             models = Model.fromModelItems(list: modelItems);
-            currentModel = modelItems[0]
-            autopilot = Autopilot(model: models[0], device: RuntimeDevice.CPU, numThreads: numberOfThreads);
+            currentModel = modelItems.first(where: { $0.type == TYPE.AUTOPILOT.rawValue }) ?? modelItems[0]
+            autopilot = Autopilot(model: Model.fromModelItem(item: currentModel), device: RuntimeDevice.CPU, numThreads: numberOfThreads);
         }
         if let threads = preferencesManager.getThreads(){
             numberOfThreads = Int(threads) ?? 1
@@ -50,12 +56,12 @@ class AutopilotFragment: CameraController {
             autopilot = Autopilot(model: Model.fromModelItem(item: currentModel), device: currentDevice, numThreads: numberOfThreads);
             autopilot?.tfliteOptions.threadCount = numberOfThreads
         }
-        if let models = preferencesManager.getAutopilotModel(){
-            if Common.isModelItemAvailableInDocument(modelName: models) == true {
-                let selectedModelName = models;
-                currentModel = Common.returnModelItem(modelName: selectedModelName)
-                autopilot = Autopilot(model: Model.fromModelItem(item: currentModel), device: currentDevice, numThreads: numberOfThreads)
-            }
+        if let models = preferencesManager.getAutopilotModel(), !models.isEmpty,
+           let restored = Common.loadAllModelItems().first(where: { Common.baseName($0.name) == Common.baseName(models) }),
+           Common.isModelItemRunnable(restored) {
+            // The last choice may be a bundled model just as well as a downloaded one.
+            currentModel = restored
+            autopilot = Autopilot(model: Model.fromModelItem(item: restored), device: currentDevice, numThreads: numberOfThreads)
         }
         view.addSubview(expandedAutoPilotView!)
         expandedAutoPilotView!.translatesAutoresizingMaskIntoConstraints = false
@@ -138,9 +144,14 @@ class AutopilotFragment: CameraController {
     ///function to change the autopilot models, called after model from models dropdown is selected.
     @objc func updateModel(_ notification: Notification) {
         let selectedModelName = notification.object as! String
-        currentModel = Common.returnModelItem(modelName: selectedModelName)
-        autopilot = Autopilot(model: Model.fromModelItem(item: currentModel), device: currentDevice, numThreads: numberOfThreads)
-        preferencesManager.setAutopilotModel(value: notification.object as! String);
+        // Only switch to a model from the Model Management list whose file exists.
+        guard let item = Common.loadAllModelItems().first(where: { Common.baseName($0.name) == Common.baseName(selectedModelName) }),
+              Common.isModelItemRunnable(item) else {
+            return
+        }
+        currentModel = item
+        autopilot = Autopilot(model: Model.fromModelItem(item: item), device: currentDevice, numThreads: numberOfThreads)
+        preferencesManager.setAutopilotModel(value: selectedModelName);
     }
 
     /// function to turn on and off autopilot

@@ -652,6 +652,60 @@
                 app:shapeAppearanceOverlay="@style/VoiceTileShape" />
         </LinearLayout>
 
+        <!-- Gripper: manual claw tiles. The digital firmware answers g0/g1 when the
+             move finishes, so the line under the tiles mirrors the live claw state
+             (the same report the Hardware Test page shows). -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/gripBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:layout_weight="1"
+                android:minHeight="64dp"
+                android:minWidth="0dp"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:text="@string/pro_grip"
+                android:textColor="#3A3A3C"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                app:backgroundTint="@android:color/white"
+                app:shapeAppearanceOverlay="@style/VoiceTileShape" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/releaseBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:layout_weight="1"
+                android:minHeight="64dp"
+                android:minWidth="0dp"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:text="@string/pro_release"
+                android:textColor="#3A3A3C"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                app:backgroundTint="@android:color/white"
+                app:shapeAppearanceOverlay="@style/VoiceTileShape" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/gripperStateText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingBottom="4dp"
+            android:text="@string/hardware_state_unknown"
+            android:textColor="#8E8E93"
+            android:textSize="12sp" />
+
         <!-- Speed card -->
         <LinearLayout
             android:layout_width="match_parent"

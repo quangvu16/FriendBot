@@ -144,8 +144,6 @@ class DataCollectionController: CameraController {
                     switch selectedSaveAsDropdown {
                     case "Server":
                         uploadFile(saveZipFilesName: last)
-                    case "Drive":
-                        uploadFilToDrive(saveZipFilesName: last);
                     default:
                         print();
                     }
@@ -493,26 +491,6 @@ class DataCollectionController: CameraController {
             selectedSaveAsDropdown = notification.object as! String
         }
     }
-
-    /**
-     Function to upload collected data on the google drive
-     - Parameter saveZipFilesName:
-     */
-    func uploadFilToDrive(saveZipFilesName: URL) {
-        if Authentication.googleAuthentication.googleSignIn.currentUser == nil {
-            return
-        }
-        Authentication.googleAuthentication.checkFolderExistsInDrive { folderId in
-            if folderId == String() {
-                Authentication.googleAuthentication.createOpenBotFolder { folderId in
-                    Authentication.googleAuthentication.uploadZipFileToDrive(saveZipFilesName: saveZipFilesName, folderId: folderId)
-                }
-            } else {
-                Authentication.googleAuthentication.uploadZipFileToDrive(saveZipFilesName: saveZipFilesName, folderId: folderId)
-            }
-        }
-    }
-
 
 }
 

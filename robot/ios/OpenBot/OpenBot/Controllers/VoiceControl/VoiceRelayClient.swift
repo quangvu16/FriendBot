@@ -291,6 +291,11 @@ final class VoiceRelayClient {
         send(["t": "stop"])
     }
 
+    /// Gripper on the shared robot: true grip (close), false release (open).
+    func sendGrip(_ close: Bool) {
+        send(["t": "grip", "on": close])
+    }
+
     /// Streams one 60 ms opus frame of this phone's microphone to the host voice control
     /// page (Remote Mic page); rms is the frame's level (0..1) for its waveform display.
     func sendMicFrame(base64: String, rms: Float) {

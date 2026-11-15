@@ -105,6 +105,8 @@ struct Strings {
     static let ScreenModelManagement: String = "ScreenModelManagement"
     static let ScreenBottomSheet: String = "ScreenBottomSheet"
     static let ScreenRobotInfo: String = "ScreenRobotInfo"
+    /// Built in code (HardwareTestController), not in the storyboard.
+    static let ScreenHardwareTest: String = "ScreenHardwareTest"
     static let ScreenNavigation: String = "ScreenNavigation"
     static let ScreenGpsMission: String = "ScreenGpsMission"
     /// Built in code (VoiceControlController), not in the storyboard.
@@ -254,6 +256,29 @@ struct Strings {
     static var tileGuideLine: String { L10n.string("tile_guide_line") }
     static var tileGuideAvoidance: String { L10n.string("tile_guide_avoidance") }
 
+    // Hardware Test (General tab): gripper / LEDs / sonar
+    static var tileHardwareTest: String { L10n.string("tile_hardware_test") }
+    static var hwGripper: String { L10n.string("hw_gripper") }
+    static var hwGripperClose: String { L10n.string("hw_gripper_close") }
+    static var hwStateOpen: String { L10n.string("hw_state_open") }
+    static var hwStateClosed: String { L10n.string("hw_state_closed") }
+    static var hwStateUnknown: String { L10n.string("hw_state_unknown") }
+    static var hwLeds: String { L10n.string("hw_leds") }
+    static var hwLeftLed: String { L10n.string("hw_left_led") }
+    static var hwRightLed: String { L10n.string("hw_right_led") }
+    static var hwSonar: String { L10n.string("hw_sonar") }
+    static var hwSonarValue: String { L10n.string("hw_sonar_value") }
+    static var hwSonarNone: String { L10n.string("hw_sonar_none") }
+    static var hwConnected: String { L10n.string("hw_connected") }
+    static var hwDisconnected: String { L10n.string("hw_disconnected") }
+    static var hwGripperHint: String { L10n.string("hw_gripper_close_hint") }
+    static var hwLedHint: String { L10n.string("hw_led_hint") }
+    static var hwSonarHint: String { L10n.string("hw_sonar_hint") }
+    static var hwInfo: String { L10n.string("hw_info") }
+    static var hwMotors: String { L10n.string("hw_motors") }
+    static var hwMotorsHint: String { L10n.string("hw_motors_hint") }
+    static var hwMotorStop: String { L10n.string("hw_motor_stop") }
+
     static var visionAuto: String { L10n.string("vision_auto") }
     static var visionHelp: String { L10n.string("vision_help") }
     static var visionRunning: String { L10n.string("vision_running") }
@@ -295,6 +320,9 @@ struct Strings {
     static let ScreenFollowLine: String = "FollowLineScreen"
     static let ScreenAvoidObject: String = "AvoidObjectScreen"
     static let ScreenTargetTracking: String = "TargetTrackingScreen"
+    static let ScreenGrabObject: String = "GrabObjectScreen"
+    static let ScreenVoiceGrab: String = "VoiceGrabScreen"
+    static let ScreenAiPick: String = "AiPickScreen"
     static let ScreenGuideColour: String = "GuideColourScreen"
     static let ScreenGuideFace: String = "GuideFaceScreen"
     static let ScreenGuideLine: String = "GuideLineScreen"

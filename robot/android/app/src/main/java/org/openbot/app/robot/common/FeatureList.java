@@ -17,6 +17,7 @@ public class FeatureList {
   public static final String CONTROLLER = "Controller";
   public static final String CONTROLLER_MAPPING = "Controller Mapping";
   public static final String ROBOT_INFO = "Robot Info";
+  public static final String HARDWARE_TEST = "Hardware Test";
   public static final String VOICE_CONTROL = "Voice Control";
   public static final String REMOTE_MIC = "Remote Mic";
   public static final String INTERNET_MIC = "Internet Mic";
@@ -36,6 +37,9 @@ public class FeatureList {
   public static final String FOLLOW_LINE = "Follow a Black Line";
   public static final String OBJECT_AVOIDANCE = "Object Avoidance";
   public static final String TARGET_TRACKING = "Target Tracking";
+  public static final String GRAB_OBJECT = "Grab Object";
+  public static final String VOICE_GRAB = "Voice Grab";
+  public static final String AI_PICK = "AI Pick";
 
   // Guides
   public static final String GUIDES = "Guides";
@@ -113,6 +117,9 @@ public class FeatureList {
     subCategories.add(
         new SubCategory(
             ROBOT_INFO, R.string.tile_robot_info, R.drawable.ic_openbot_space, "#4B7BFF"));
+    subCategories.add(
+        new SubCategory(
+            HARDWARE_TEST, R.string.tile_hardware_test, R.drawable.ic_btn_sensors, "#FF8A65"));
     categories.add(new Category(GENERAL, R.string.tile_general, subCategories));
 
     subCategories = new ArrayList<>();
@@ -121,6 +128,11 @@ public class FeatureList {
     subCategories.add(
         new SubCategory(
             OBJECT_NAV, R.string.tile_object_nav, R.drawable.ic_person_search, "#E7CE88"));
+    subCategories.add(
+        new SubCategory(VOICE_GRAB, R.string.tile_voice_grab, R.drawable.ic_voice_over, "#2E7D32"));
+    subCategories.add(
+        new SubCategory(
+            AI_PICK, R.string.tile_ai_pick, R.drawable.ic_btn_center_focus_strong, "#C2410C"));
     subCategories.add(
         new SubCategory(
             POINT_GOAL_NAVIGATION,
@@ -166,6 +178,9 @@ public class FeatureList {
     subCategories.add(
         new SubCategory(
             TARGET_TRACKING, R.string.tile_target_tracking, R.drawable.ic_btn_track_changes, "#FFB300"));
+    subCategories.add(
+        new SubCategory(
+            GRAB_OBJECT, R.string.tile_grab_object, R.drawable.ic_person_search, "#3DDC97"));
     categories.add(new Category(VISION_MODES, R.string.tile_vision_modes, subCategories));
 
     subCategories = new ArrayList<>();

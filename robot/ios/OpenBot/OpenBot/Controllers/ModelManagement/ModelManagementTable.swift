@@ -5,7 +5,6 @@
 import Foundation
 import UIKit
 import DropDown
-import GoogleSignIn
 
 class ModelManagementTable: UITableViewController {
     var blankScreen = UIView()
@@ -29,9 +28,6 @@ class ModelManagementTable: UITableViewController {
     var popupWindowTopAnchor: NSLayoutConstraint?
     var dropDown = UIView()
     let alert = UIAlertController(title: nil, message: Strings.pleaseWaitMessage, preferredStyle: .alert)
-    var timer = Timer()
-    let autoSyncIcon = currentOrientation == .portrait ? UIImageView(frame: CGRect(x: width - 60, y: 15, width: 25, height: 20)) :
-            UIImageView(frame: CGRect(x: height - 100, y: 15, width: 25, height: 20))
     let dropDownView = currentOrientation == .portrait ? UIView(frame: CGRect(x: width / 2, y: 70, width: width / 2 - 80, height: 200)) :
             UIView(frame: CGRect(x: height / 2, y: 70, width: width / 2 - 80, height: 200));
 
@@ -45,8 +41,6 @@ class ModelManagementTable: UITableViewController {
         createAddModelButton()
         NotificationCenter.default.addObserver(self, selector: #selector(fileDownloaded), name: .fileDownloaded, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(removeBlankScreen), name: .removeBlankScreen, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(stopRotatingImageView), name: .autoSynced, object: nil);
-        autoSync()
     }
 
     /// Initialization routine
@@ -66,8 +60,6 @@ class ModelManagementTable: UITableViewController {
         modelLabel.topAnchor.constraint(equalTo: headerView.topAnchor, constant: 5).isActive = true;
         dropDown = createDropDown();
         headerView.addSubview(dropDown);
-        let autoSync = createAutoSync();
-        headerView.addSubview(autoSync);
         return headerView
     }
 
@@ -82,7 +74,6 @@ class ModelManagementTable: UITableViewController {
         if currentOrientation == .portrait {
             dropDown.frame.origin.x = width / 2;
             dropDownView.frame.origin = CGPoint(x: width / 2, y: 70);
-            autoSyncIcon.frame.origin = CGPoint(x: width - 60, y: 15);
             blankScreen.frame.size = CGSize(width: width, height: CGFloat(60 * models.count) + 80);
             popupWindowLeadingAnchor?.constant = 10;
             popupWindowHeight?.constant = 400;
@@ -92,7 +83,6 @@ class ModelManagementTable: UITableViewController {
         } else {
             dropDown.frame.origin.x = height / 2;
             dropDownView.frame.origin = CGPoint(x: height / 2, y: 70);
-            autoSyncIcon.frame.origin = CGPoint(x: height - 100, y: 15);
             blankScreen.frame.size = CGSize(width: height, height: CGFloat(60 * models.count) + 80);
             popupWindowLeadingAnchor?.constant = height / 2 - width / 2
             popupWindowHeight?.constant = 400;
@@ -283,19 +273,6 @@ class ModelManagementTable: UITableViewController {
 
     }
 
-    /**
-     Function to create auto sync button
-     - Returns:
-     */
-    func createAutoSync() -> UIImageView {
-        autoSyncIcon.image = UIImage(systemName: "arrow.triangle.2.circlepath")
-        autoSyncIcon.tintColor = traitCollection.userInterfaceStyle == .dark ? UIColor.white : UIColor.black
-        autoSyncIcon.isUserInteractionEnabled = true;
-        let tap = UITapGestureRecognizer(target: self, action: #selector(autoSyncAction(_:)))
-        autoSyncIcon.addGestureRecognizer(tap)
-        return autoSyncIcon;
-    }
-
     /// download function to download the model from URL
     @objc func download(_ sender: UITapGestureRecognizer) {
         let indexOfSelectedModel = sender.view?.tag ?? 0
@@ -342,7 +319,6 @@ class ModelManagementTable: UITableViewController {
                 print("File downloaded to : \(s!)")
                 do {
                     try Common.saveConfigFileToDocument(modelItems: Common.modifyModel(model: model, isDelete: false))
-                    try Authentication.googleAuthentication.saveConfigJsonToDrive();
                 } catch {
                     print("unable to save config file to document");
                 }
@@ -391,7 +367,6 @@ class ModelManagementTable: UITableViewController {
         let model = Common.returnModelItem(modelName: modelName);
         do {
             try Common.saveConfigFileToDocument(modelItems: Common.modifyModel(model: model, isDelete: true))
-            try Authentication.googleAuthentication.saveConfigJsonToDrive();
         } catch {
             print("unable to save config file to document");
         }
@@ -443,41 +418,6 @@ class ModelManagementTable: UITableViewController {
         updateModelItemList(type: "All")
     }
 
-    /**
-     Function to start the auto sync timer
-     */
-    @objc func autoSync() {
-        timer = Timer.scheduledTimer(timeInterval: 300, target: self, selector: #selector(autoSyncAction), userInfo: nil, repeats: true);
-    }
-
-    /**
-     Action performed after auto sync button tapped
-     */
-    @objc func autoSyncAction(_: UIButton) {
-        Authentication.googleAuthentication.downloadConfigFile();
-        startRotatingImageView();
-    }
-
-    /**
-     Function  to start the rotation of sync icon
-     */
-    func startRotatingImageView() {
-        // Create a CABasicAnimation for continuous rotation
-        let rotationAnimation = CABasicAnimation(keyPath: "transform.rotation.z")
-        rotationAnimation.toValue = NSNumber(value: Double.pi * 2) // Full circle
-        rotationAnimation.duration = 2.0 // Duration for one rotation
-        rotationAnimation.isCumulative = true // Allows cumulative rotations
-        rotationAnimation.repeatCount = .infinity // Infinite rotation
-        // Add the animation to the image view's layer
-        autoSyncIcon.layer.add(rotationAnimation, forKey: "rotationAnimation")
-    }
-
-    /// Stop the rotation if needed
-    @objc func stopRotatingImageView() {
-        autoSyncIcon.layer.removeAnimation(forKey: "rotationAnimation");
-        viewWillAppear(true)
-    }
-    
 }
 
 class modelManagementCell: UITableViewCell {

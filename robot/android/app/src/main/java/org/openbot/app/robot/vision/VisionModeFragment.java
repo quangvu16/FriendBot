@@ -158,7 +158,7 @@ public abstract class VisionModeFragment extends CameraFragment {
 
     android.widget.TextView valueView = new android.widget.TextView(requireContext());
     valueView.setText(String.valueOf(initial));
-    valueView.setTextColor(android.graphics.Color.BLACK);
+    valueView.setTextColor(android.graphics.Color.parseColor("#202124"));
     valueView.setGravity(android.view.Gravity.CENTER);
     int pad = (int) (4 * density());
     valueView.setPadding(pad, pad, pad, pad);
@@ -291,7 +291,7 @@ public abstract class VisionModeFragment extends CameraFragment {
   private android.widget.TextView newRowLabel(String text) {
     android.widget.TextView tv = new android.widget.TextView(requireContext());
     tv.setText(text);
-    tv.setTextColor(android.graphics.Color.BLACK);
+    tv.setTextColor(android.graphics.Color.parseColor("#202124"));
     tv.setGravity(android.view.Gravity.CENTER_VERTICAL);
     int v = (int) (12 * density());
     tv.setPadding((int) (16 * density()), v, 0, v);

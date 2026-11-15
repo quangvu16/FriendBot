@@ -21,6 +21,8 @@ public class SharedPreferencesManager {
 
   private static final String DEFAULT_MODEL = "DEFAULT_MODEL_NAME";
   private static final String OBJECT_NAV_MODEL = "OBJECT_NAV_MODEL_NAME";
+  private static final String VOICE_GRAB_MODEL = "VOICE_GRAB_MODEL_NAME";
+  private static final String AI_PICK_MODEL = "AI_PICK_MODEL_NAME";
   private static final String AUTOPILOT_MODEL = "AUTOPILOT_MODEL_NAME";
   private static final String SERVER_NAME = "SERVER_NAME";
 
@@ -115,6 +117,22 @@ public class SharedPreferencesManager {
 
   public String getObjectNavModel() {
     return preferences.getString(OBJECT_NAV_MODEL, "");
+  }
+
+  public void setVoiceGrabModel(String model) {
+    preferences.edit().putString(VOICE_GRAB_MODEL, model).apply();
+  }
+
+  public String getVoiceGrabModel() {
+    return preferences.getString(VOICE_GRAB_MODEL, "");
+  }
+
+  public void setAiPickModel(String model) {
+    preferences.edit().putString(AI_PICK_MODEL, model).apply();
+  }
+
+  public String getAiPickModel() {
+    return preferences.getString(AI_PICK_MODEL, "");
   }
 
   public void setAutopilotModel(String model) {

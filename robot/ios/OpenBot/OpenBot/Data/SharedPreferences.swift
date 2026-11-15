@@ -18,6 +18,8 @@ public class SharedPreferencesManager {
     public var speed_mode : String = "speed_mode";
     
     public var object_tracking_model : String = "object_tracking_model";
+
+    public var ai_pick_model : String = "ai_pick_model";
     
     public var object_type : String = "object_type";
     
@@ -75,6 +77,14 @@ public class SharedPreferencesManager {
     
     public func getObjectTrackModel() -> String? {
         return userDefaults.string(forKey: object_tracking_model)
+    }
+
+    public func setAiPickModel(value:String){
+        userDefaults.set(value, forKey: ai_pick_model);
+    }
+
+    public func getAiPickModel() -> String? {
+        return userDefaults.string(forKey: ai_pick_model)
     }
     
     public func setObjectTrackingObject(value:String){

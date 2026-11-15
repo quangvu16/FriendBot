@@ -17,7 +17,7 @@ import timber.log.Timber;
  * #flushAndReset()} which drops the queue and restarts the track instantly. Created at the server
  * hello's playback sample rate and released with the screen.
  */
-final class OpusPlayer {
+public final class OpusPlayer {
 
   /** Longest possible opus frame: 120 ms. */
   private static final int MAX_FRAME_MS = 120;
@@ -29,7 +29,7 @@ final class OpusPlayer {
   private static final long DRAIN_QUIET_MS = 350;
 
   /** Playback feedback for the Voice Control UI (level waveform + post-TTS re-arm). */
-  interface Listener {
+  public interface Listener {
     /** One decoded frame's RMS level, normalized 0..1. Called on the playback thread. */
     void onPlaybackLevel(float rms);
 
@@ -48,7 +48,7 @@ final class OpusPlayer {
   private AudioTrack track;
   private Thread thread;
 
-  OpusPlayer(OpusCodec codec, int sampleRate, Listener listener) {
+  public OpusPlayer(OpusCodec codec, int sampleRate, Listener listener) {
     this.codec = codec;
     this.sampleRate = sampleRate;
     this.listener = listener;
@@ -87,12 +87,12 @@ final class OpusPlayer {
     thread.start();
   }
 
-  int getSampleRate() {
+  public int getSampleRate() {
     return sampleRate;
   }
 
   /** Queues one raw opus packet for playback, in order. */
-  void play(byte[] opus) {
+  public void play(byte[] opus) {
     if (released || opus == null || opus.length == 0) {
       return;
     }
@@ -105,12 +105,12 @@ final class OpusPlayer {
    * after {@link Listener#onPlaybackDrained()} — the UI uses it to tell "tts with no audio" from
    * "wait for the drain callback".
    */
-  boolean hasPendingAudio() {
+  public boolean hasPendingAudio() {
     return busy;
   }
 
   /** Barge-in: drop everything queued and restart the track immediately. */
-  void flushAndReset() {
+  public void flushAndReset() {
     queue.clear();
     busy = false; // the cancelled segment never drains; no drain callback for it
     AudioTrack current = track;
@@ -126,7 +126,7 @@ final class OpusPlayer {
   }
 
   /** Stops playback and frees the speaker. Safe to call repeatedly. */
-  void release() {
+  public void release() {
     released = true;
     queue.clear();
     busy = false;

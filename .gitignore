@@ -67,3 +67,7 @@ desktop/macos/build/
 __pycache__/
 *.pyc
 desktop/python/.venv/
+
+# macOS AppleDouble files (external drives / non-native copies)
+._*
+__MACOSX/

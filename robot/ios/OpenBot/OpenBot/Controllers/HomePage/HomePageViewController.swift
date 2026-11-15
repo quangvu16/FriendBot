@@ -16,7 +16,6 @@ let fragmentType = FragmentType.shared
 var leadingConstraint = NSLayoutConstraint()
 var isClientConnected: Bool = false
 let bottomSheet = UIView();
-let whiteSheet = UIView(frame: UIScreen.main.bounds)
 
 class HeaderView: UICollectionReusableView {
     var label: UILabel!
@@ -87,7 +86,6 @@ class HomePageViewController: CameraController, UICollectionViewDataSource, UICo
         NotificationCenter.default.addObserver(self, selector: #selector(updateConnect), name: .bluetoothDisconnected, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(clientConnected), name: .clientConnected, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(clientDisconnected), name: .clientDisConnected, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(googleSignIn), name: .googleSignIn, object: nil)
         DataLogger.shared.deleteZipFileFromDocument();
         gameController.resetControl = true
         fragmentType.currentFragment = "Home";
@@ -252,10 +250,6 @@ class HomePageViewController: CameraController, UICollectionViewDataSource, UICo
         stopSession()
     }
 
-    @objc func googleSignIn(_ notification: Notification) {
-        whiteSheet.removeFromSuperview()
-    }
-
     // Number of sections
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return showMore ? sectionHeaders.count : 0
@@ -359,6 +353,18 @@ class HomePageViewController: CameraController, UICollectionViewDataSource, UICo
             return
         case Strings.ScreenTargetTracking:
             navigationController?.pushViewController(TargetTrackingController(), animated: true)
+            return
+        case Strings.ScreenGrabObject:
+            navigationController?.pushViewController(GrabObjectController(), animated: true)
+            return
+        case Strings.ScreenVoiceGrab:
+            navigationController?.pushViewController(VoiceGrabController(), animated: true)
+            return
+        case Strings.ScreenAiPick:
+            navigationController?.pushViewController(AiPickController(), animated: true)
+            return
+        case Strings.ScreenHardwareTest:
+            navigationController?.pushViewController(HardwareTestController(), animated: true)
             return
         case Strings.ScreenGuideColour:
             navigationController?.pushViewController(GuideController(guideId: GuideController.guideColour), animated: true)

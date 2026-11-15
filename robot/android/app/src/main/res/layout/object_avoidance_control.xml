@@ -19,7 +19,7 @@
         android:minHeight="48dp"
         android:padding="4dp"
         android:text="@string/objectAvoidance"
-        android:textColor="@android:color/black" />
+        android:textColor="#202124" />
 
     <TextView
         android:id="@+id/avoid_info"
@@ -30,7 +30,7 @@
         android:paddingStart="4dp"
         android:paddingEnd="4dp"
         android:text="@string/objectAvoidanceIdle"
-        android:textColor="@android:color/black"
+        android:textColor="#202124"
         android:textSize="13sp"
         tools:text="Object avoidance on — clear" />
 </LinearLayout>

@@ -11,9 +11,9 @@ import timber.log.Timber;
  * hands the raw packet to a callback, which sends it as a binary WebSocket message. Started and
  * stopped from the main thread; the callback runs on the capture thread.
  */
-final class MicStreamer {
+public final class MicStreamer {
 
-  interface Callback {
+  public interface Callback {
     /**
      * One captured frame (60 ms of 16 kHz mono audio), produced on the capture thread.
      *
@@ -31,17 +31,17 @@ final class MicStreamer {
   private Thread thread;
   private AudioRecord recorder;
 
-  MicStreamer(OpusCodec codec, Callback callback) {
+  public MicStreamer(OpusCodec codec, Callback callback) {
     this.codec = codec;
     this.callback = callback;
   }
 
-  synchronized boolean isRunning() {
+  public synchronized boolean isRunning() {
     return running;
   }
 
   /** Opens the microphone and starts streaming frames. No-op when already running. */
-  synchronized void start() {
+  public synchronized void start() {
     if (running) {
       return;
     }
@@ -77,7 +77,7 @@ final class MicStreamer {
   }
 
   /** Stops capture and releases the microphone. Safe to call repeatedly. */
-  synchronized void stop() {
+  public synchronized void stop() {
     running = false;
     AudioRecord record = recorder;
     recorder = null;

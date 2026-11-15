@@ -49,6 +49,7 @@ import timber.log.Timber;
  *   {"t":"hello","name":"Pixel 8","pin":"1234"}  remote greeting + the host's PIN (required)
  *   {"t":"move","l":0.75,"r":0.75,"ms":1200}
  *   {"t":"stop"}
+ *   {"t":"grip","on":true}               gripper: true grip (close), false release (open)
  *   {"t":"ping"}
  *   {"t":"mic","on":true}                 remote microphone opens (Remote Mic page)
  *   {"t":"mic","b":"<base64 opus>","r":0.4}  one 60 ms mic frame + its level
@@ -590,6 +591,9 @@ public final class VoiceRelayServer {
       s.addProperty("rp", Math.max(0, Math.min(100, v.getBatteryPercentage())));
     }
     s.addProperty("moving", robotMoving(now));
+    if (v != null && v.getGripperState() >= 0) {
+      s.addProperty("grip", v.getGripperState()); // 0 open, 1 closed (Pro pages)
+    }
     return s.toString();
   }
 
@@ -744,6 +748,11 @@ public final class VoiceRelayServer {
           break;
         case "stop":
           handleStop();
+          break;
+        case "grip":
+          if (root.has("on") && vehicle != null) {
+            vehicle.sendGripper(root.get("on").getAsBoolean());
+          }
           break;
         case "ping":
           if (root.has("id")) {

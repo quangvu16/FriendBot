@@ -67,6 +67,7 @@ class ProMixin:
         self.cam_jpeg: Optional[bytes] = None
         self.cam_at = 0.0
         self.safety_at = 0.0
+        self.grip_state: Optional[int] = None  # 0 open, 1 closed (robot status)
         self._pro_stop = threading.Event()
 
     def _pro_start(self) -> None:
@@ -97,6 +98,8 @@ class ProMixin:
             self.said = m.get("text", "")
         elif t == "status":
             self.battery = m
+            if "grip" in m:
+                self.grip_state = int(m["grip"])
         elif t == "cam":
             try:
                 self.cam_jpeg = base64.b64decode(m.get("b", ""))
@@ -129,6 +132,12 @@ class ProMixin:
     def move(self, left: float, right: float) -> None:
         if self.connected:
             self.send_line(_dumps({"t": "move", "l": round(left, 2), "r": round(right, 2), "ms": DRIVE_MS}))
+
+    def grip(self, close: bool) -> None:
+        """Gripper: close (hold the object) or open (let it go)."""
+        if self.connected:
+            self.send_line(_dumps({"t": "grip", "on": close}))
+            self.grip_state = 1 if close else 0
 
     def stop_robot(self) -> None:
         self.send_line('{"t":"stop"}')
@@ -179,8 +188,8 @@ class ProApp:
         self.root = tk.Tk()
         self.root.title(APP_NAME)
         self.root.configure(bg=INK)
-        self.root.geometry("420x880")
-        self.root.minsize(400, 820)
+        self.root.geometry("420x930")
+        self.root.minsize(400, 870)
         families = set(tkfont.families())
         self.mono = next((f for f in MONO if f in families), "Courier")
         self.events: "queue.Queue[str]" = queue.Queue()
@@ -298,6 +307,17 @@ class ProApp:
         self.state_label = self._label(right, 10, True)
         self.state_label.pack()
 
+        claw = tk.Frame(r, bg=INK)
+        claw.pack(fill="x", pady=(8, 0), **pad)
+        self.grip_btn = tk.Label(claw, text="✊ GRIP  (G)", font=(self.mono, 11, "bold"), fg=GREEN, bg=INK,
+                                 highlightbackground=GREEN, highlightthickness=1, pady=9, cursor="hand2")
+        self.grip_btn.pack(side="left", fill="x", expand=True, padx=(0, 5))
+        self.release_btn = tk.Label(claw, text="✋ RELEASE  (R)", font=(self.mono, 11, "bold"), fg=AMBER, bg=INK,
+                                    highlightbackground=AMBER, highlightthickness=1, pady=9, cursor="hand2")
+        self.release_btn.pack(side="left", fill="x", expand=True, padx=(5, 0))
+        self.grip_btn.bind("<Button-1>", lambda e: self._grip(True))
+        self.release_btn.bind("<Button-1>", lambda e: self._grip(False))
+
         self.stop_btn = tk.Label(r, text="■  STOP   (Esc)", font=(self.mono, 15, "bold"), fg="white",
                                  bg=RED, pady=12, cursor="hand2")
         self.stop_btn.pack(fill="x", pady=(10, 0), **pad)
@@ -317,7 +337,7 @@ class ProApp:
         self._button(btns, "CONNECT", self._use_entry).pack(side="left", fill="x", expand=True, padx=(0, 6))
         self.scan_btn = self._button(btns, "SCAN QR", self._scan)
         self.scan_btn.pack(side="left", fill="x", expand=True, padx=(6, 0))
-        self._label(r, 8, fg=MUTED, text="HOLD SPACE = TALK · ARROWS = DRIVE · ESC = STOP").pack(side="bottom", pady=(0, 6))
+        self._label(r, 8, fg=MUTED, text="SPACE TALK · ARROWS DRIVE · G/R CLAW · ESC STOP").pack(side="bottom", pady=(0, 6))
 
     # ---- keyboard (key repeat safe: a release followed at once by a press is ignored)
     def _bind_keys(self) -> None:
@@ -326,6 +346,8 @@ class ProApp:
             self.root.bind(f"<KeyPress-{sym}>", lambda e, w=what: self._key(w, True))
             self.root.bind(f"<KeyRelease-{sym}>", lambda e, w=what: self._key(w, False))
         self.root.bind("<Escape>", lambda e: self._stop_robot())
+        for key, close in (("g", True), ("G", True), ("r", False), ("R", False)):
+            self.root.bind(f"<KeyPress-{key}>", lambda e, c=close: self.root.focus_get() is not self.entry and self._grip(c))
 
     def _key(self, what: str, down: bool) -> None:
         if self.root.focus_get() is self.entry:
@@ -495,6 +517,13 @@ class ProApp:
         self.link.move(*PAD[self.driving])
         self._drive_job = self.root.after(DRIVE_REPEAT_MS, self._drive_tick)
 
+    def _grip(self, close: bool) -> None:
+        if self.link and self.link.connected:
+            self.link.grip(close)
+            self._flash("GRIP SENT" if close else "RELEASE SENT", 1.5)
+        else:
+            self._flash(status_line(self.link, self.internet)[0])
+
     def _stop_robot(self) -> None:
         self._drive(None)
         if self.link and self.link.connected:
@@ -557,6 +586,9 @@ class ProApp:
             self.state_label.configure(text=st, fg=CYAN)
         else:
             self.state_label.configure(text="HOLD TO TALK", fg=TEXT)
+        state = link.grip_state if link else None
+        self.grip_btn.configure(bg=GREEN if state == 1 else INK, fg=INK if state == 1 else GREEN)
+        self.release_btn.configure(bg=AMBER if state == 0 else INK, fg=INK if state == 0 else AMBER)
         filled = link is None or not link.connected
         self.scan_btn.configure(bg=CYAN if filled else INK, fg=INK if filled else CYAN)
         self.root.after(60, self._tick)

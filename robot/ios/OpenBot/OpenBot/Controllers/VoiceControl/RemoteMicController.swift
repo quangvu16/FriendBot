@@ -916,6 +916,8 @@ final class ProMicController: UIViewController {
     private let levelBars = MicLevelBarsView()
     private let stateLabel = UILabel()
     private let stopButton = UIButton(type: .system)
+    private let gripButton = UIButton(type: .system)
+    private let releaseButton = UIButton(type: .system)
     private let scanButton = UIButton(type: .system)
 
     // MARK: State
@@ -1195,6 +1197,20 @@ final class ProMicController: UIViewController {
         stopButton.layer.cornerRadius = 16
         stopButton.heightAnchor.constraint(equalToConstant: 58).isActive = true
         stopButton.addTarget(self, action: #selector(stopTapped), for: .touchUpInside)
+        for (b, key, color) in [(gripButton, "pro_grip", Self.green), (releaseButton, "pro_release", Self.amber)] {
+            b.setTitle(L10n.string(key), for: .normal)
+            b.titleLabel?.font = Self.mono(13, .bold)
+            b.setTitleColor(color, for: .normal)
+            b.layer.cornerRadius = 14
+            b.layer.borderWidth = 1.5
+            b.layer.borderColor = color.cgColor
+            b.heightAnchor.constraint(equalToConstant: 46).isActive = true
+        }
+        gripButton.addTarget(self, action: #selector(gripTapped), for: .touchUpInside)
+        releaseButton.addTarget(self, action: #selector(releaseTapped), for: .touchUpInside)
+        let gripRow = UIStackView(arrangedSubviews: [gripButton, releaseButton])
+        gripRow.spacing = 10
+        gripRow.distribution = .fillEqually
         scanButton.setTitle(L10n.string(internet ? "internet_mic_scan_qr" : "remote_mic_scan_qr").uppercased(), for: .normal)
         scanButton.setImage(UIImage(systemName: "qrcode.viewfinder"), for: .normal)
         scanButton.titleLabel?.font = Self.mono(13, .bold)
@@ -1204,7 +1220,7 @@ final class ProMicController: UIViewController {
         scanButton.heightAnchor.constraint(equalToConstant: 46).isActive = true
         scanButton.addTarget(self, action: #selector(scanTapped), for: .touchUpInside)
 
-        let stack = UIStackView(arrangedSubviews: [kicker, heading, topRow, camBox, words, controls, stopButton, scanButton])
+        let stack = UIStackView(arrangedSubviews: [kicker, heading, topRow, camBox, words, controls, gripRow, stopButton, scanButton])
         stack.axis = .vertical
         stack.spacing = 10
         stack.setCustomSpacing(2, after: kicker)
@@ -1257,6 +1273,7 @@ final class ProMicController: UIViewController {
             saidLabel.text = String(format: L10n.string("pro_said"), msg["text"] as? String ?? "")
         case "status":
             showBattery(msg)
+            if let grip = (msg["grip"] as? NSNumber)?.intValue { showGrip(grip) }
         case "cam":
             guard camOn, let b = msg["b"] as? String, let data = Data(base64Encoded: b),
                   let image = UIImage(data: data) else { return }
@@ -1347,6 +1364,25 @@ final class ProMicController: UIViewController {
         driveTimer = Timer.scheduledTimer(withTimeInterval: Self.driveRepeat, repeats: true) {
             [weak self] _ in self?.sendRaw(line)
         }
+    }
+
+    @objc private func gripTapped() { sendGrip(true) }
+    @objc private func releaseTapped() { sendGrip(false) }
+
+    /// Gripper on the robot: grip (close) or release (open).
+    private func sendGrip(_ close: Bool) {
+        guard linkConnected else {
+            alert(pillLabel.text ?? "")
+            return
+        }
+        sendRaw("{\"t\":\"grip\",\"on\":\(close)}")
+        showGrip(close ? 1 : 0)
+    }
+
+    /// Highlights the claw button that matches the robot's state (0 open, 1 closed).
+    private func showGrip(_ state: Int) {
+        gripButton.alpha = state == 1 ? 1 : 0.55
+        releaseButton.alpha = state == 0 ? 1 : 0.55
     }
 
     @objc private func stopTapped() {

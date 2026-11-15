@@ -17,6 +17,9 @@ class ObjectTrackingFragment: CameraController {
     let gameController = GameController.shared
     var vehicleControl: Control = Control()
     let bluetooth = bluetoothDataController.shared
+    // Gripper: manual claw buttons over the camera, with the firmware's live state.
+    let gripperButtonsRow = UIStackView()
+    let gripperStateLabel = UILabel()
     var currentModel: ModelItem!
     var currentDevice: RuntimeDevice = RuntimeDevice.CPU
     var currentObject: String = "person"
@@ -42,11 +45,16 @@ class ObjectTrackingFragment: CameraController {
 
     /// Called after the view fragment has loaded.
     override func viewDidLoad() {
-        let modelItems = Common.loadAllModelItemsFromBundle()
+        // The model list is the Model Management catalog (documents config.json
+        // when present, otherwise the bundled one). Only models whose file exists
+        // are considered, so the detector can actually be created.
+        var modelItems = Common.loadAllModelItems().filter { Common.isModelItemRunnable($0) }
+        if modelItems.isEmpty {
+            modelItems = Common.loadAllModelItemsFromBundle()
+        }
         if (modelItems.count > 0) {
-            let model = modelItems.first(where: { $0.type == TYPE.DETECTOR.rawValue })
-            currentModel = model
-            detector = try! Detector.create(model: Model.fromModelItem(item: model ?? modelItems[0]), device: RuntimeDevice.CPU, numThreads: numberOfThreads) as? Detector
+            currentModel = modelItems.first(where: { $0.type == TYPE.DETECTOR.rawValue }) ?? modelItems[0]
+            detector = try! Detector.create(model: Model.fromModelItem(item: currentModel), device: RuntimeDevice.CPU, numThreads: numberOfThreads) as? Detector
         }
         if let threads = preferencesManager.getThreads(){
             numberOfThreads = Int(threads) ?? 4
@@ -60,11 +68,12 @@ class ObjectTrackingFragment: CameraController {
             detector = try! Detector.create(model: Model.fromModelItem(item: currentModel), device: currentDevice, numThreads: numberOfThreads) as? Detector
             detector?.tfliteOptions.threadCount = numberOfThreads
         }
-        if let lastModel = preferencesManager.getObjectTrackModel(){
-            if Common.isModelItemAvailableInDocument(modelName: lastModel) == true {
-                currentModel = Common.returnModelItem(modelName: lastModel)
-                detector = try! Detector.create(model: Model.fromModelItem(item: currentModel), device: currentDevice, numThreads: numberOfThreads) as? Detector
-            }
+        if let lastModel = preferencesManager.getObjectTrackModel(), !lastModel.isEmpty,
+           let restored = Common.loadAllModelItems().first(where: { Common.baseName($0.name) == Common.baseName(lastModel) }),
+           Common.isModelItemRunnable(restored) {
+            // The last choice may be a bundled model just as well as a downloaded one.
+            currentModel = restored
+            detector = try! Detector.create(model: Model.fromModelItem(item: restored), device: currentDevice, numThreads: numberOfThreads) as? Detector
         }
         if let object = preferencesManager.getObjectTrackingObject(){
             currentObject = object;
@@ -87,6 +96,27 @@ class ObjectTrackingFragment: CameraController {
         NotificationCenter.default.addObserver(self, selector: #selector(updateSelectedObject), name: .updateObject, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateDataFromControllerApp), name: .updateStringFromControllerApp, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateLightsCommandFromControllerApp), name: .updateLightsCommandFromControllerApp, object: nil)
+
+        // Gripper: ✊/✋ over the camera — this template had no claw control. The
+        // digital firmware answers g0/g1 after every move, so the chip stays live.
+        gripperButtonsRow.axis = .horizontal
+        gripperButtonsRow.spacing = 6
+        gripperButtonsRow.distribution = .fillEqually
+        gripperButtonsRow.addArrangedSubview(makeGripperButton("✊", action: #selector(gripTapped)))
+        gripperButtonsRow.addArrangedSubview(makeGripperButton("✋", action: #selector(releaseTapped)))
+        view.addSubview(gripperButtonsRow)
+
+        gripperStateLabel.font = .systemFont(ofSize: 12, weight: .medium)
+        gripperStateLabel.textColor = .white
+        gripperStateLabel.backgroundColor = UIColor.black.withAlphaComponent(0.55)
+        gripperStateLabel.layer.cornerRadius = 8
+        gripperStateLabel.clipsToBounds = true
+        gripperStateLabel.textAlignment = .center
+        view.addSubview(gripperStateLabel)
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshGripperState),
+                                               name: .updateLabel, object: nil)
+        refreshGripperState()
+
         setupNavigationBarItem()
         gameController.resetControl = false
         fragmentType.currentFragment = "ObjectDetection";
@@ -106,10 +136,52 @@ class ObjectTrackingFragment: CameraController {
         if currentOrientation == .portrait || currentOrientation == .portraitUpsideDown {
             objectTrackingSettings?.frame.origin.x = 0
             objectTrackingSettings?.frame.origin.y = height - 375
+            // Gripper controls float over the camera, just above the settings panel.
+            gripperButtonsRow.frame = CGRect(x: 8, y: height - 375 - 52, width: width - 16, height: 44)
+            gripperStateLabel.frame = CGRect(x: 12, y: height - 375 - 82, width: width - 24, height: 24)
         } else {
             objectTrackingSettings?.frame.origin.x = height - 375
             objectTrackingSettings?.frame.origin.y = 30
+            gripperButtonsRow.frame = CGRect(x: 8, y: 40, width: height - 375 - 16, height: 44)
+            gripperStateLabel.frame = CGRect(x: 12, y: 90, width: height - 375 - 16, height: 24)
         }
+    }
+
+    // MARK: - Gripper (manual claw control + live state)
+
+    private func makeGripperButton(_ title: String, action: Selector) -> UIButton {
+        let b = UIButton(type: .system)
+        b.setTitle(title, for: .normal)
+        b.setTitleColor(UIColor(red: 0.13, green: 0.55, blue: 1.0, alpha: 1), for: .normal)
+        b.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
+        b.backgroundColor = UIColor.white.withAlphaComponent(0.92)
+        b.layer.cornerRadius = 8
+        b.addTarget(self, action: action, for: .touchUpInside)
+        return b
+    }
+
+    @objc private func gripTapped() {
+        guard isBluetoothConnected else { return }
+        bluetooth.sendData(payload: "g1\n")
+    }
+
+    @objc private func releaseTapped() {
+        guard isBluetoothConnected else { return }
+        bluetooth.sendData(payload: "g0\n")
+    }
+
+    /// The chip above the buttons: what the firmware last reported (g0/g1).
+    @objc private func refreshGripperState() {
+        let text: String
+        switch bluetooth.gripperState {
+        case 0:
+            text = Strings.hwStateOpen
+        case 1:
+            text = Strings.hwStateClosed
+        default:
+            text = Strings.hwStateUnknown
+        }
+        gripperStateLabel.text = "  " + text + "  "
     }
 
     @objc func openBluetoothSettings() {
@@ -131,6 +203,10 @@ class ObjectTrackingFragment: CameraController {
             autoMode = false
         case .some(_):
             autoMode = false
+        }
+        // The claw state: ask the firmware whenever the page comes up on a live link.
+        if isBluetoothConnected {
+            bluetooth.sendData(payload: "g2\n")
         }
     }
 
@@ -181,8 +257,19 @@ class ObjectTrackingFragment: CameraController {
     /// function to update the model
     @objc func updateModel(_ notification: Notification) throws {
         let selectedModelName = notification.object as! String
-        currentModel = Common.returnModelItem(modelName: selectedModelName)
-        detector = try! Detector.create(model: Model.fromModelItem(item: currentModel), device: currentDevice, numThreads: numberOfThreads) as? Detector
+        // Only switch to a model from the Model Management list whose file exists;
+        // an unknown name must not fabricate an empty item and crash the detector.
+        guard let item = Common.loadAllModelItems().first(where: { Common.baseName($0.name) == Common.baseName(selectedModelName) }),
+              Common.isModelItemRunnable(item) else {
+            return
+        }
+        currentModel = item
+        do {
+            detector = try Detector.create(model: Model.fromModelItem(item: item), device: currentDevice, numThreads: numberOfThreads) as? Detector
+        } catch {
+            // Keep the previous detector if the new model fails to load.
+            return
+        }
         NotificationCenter.default.post(name: .updateObjectList, object: detector?.getLabels())
         NotificationCenter.default.post(name: .updateObject, object: currentObject)
     }

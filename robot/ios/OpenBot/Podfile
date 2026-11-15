@@ -1,6 +1,10 @@
 # Uncomment the next line to define a global platform for your project
 # platform :ios, '9.0'
 
+# Name the project: on the external drive macOS adds a hidden "._OpenBot.xcodeproj"
+# file, and CocoaPods would otherwise see two projects and stop.
+project 'OpenBot.xcodeproj'
+
 target 'OpenBot' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
@@ -8,10 +12,6 @@ target 'OpenBot' do
   pod 'DropDown'
   pod 'Starscream', '~> 3.0.1'
   pod 'GoogleWebRTC'
-  # No Firebase: Google sign-in (for Google Drive projects) works on its own.
-  pod 'GoogleSignIn'
-  pod 'GoogleSignInSwiftSupport'
-  pod 'GoogleAPIClientForREST/Drive'
   pod 'ZIPFoundation', '~> 0.9'
   # Opus codec for the Xiaozhi voice channel (Voice Control v3): raw opus both
   # directions over the websocket (mic uplink 16 kHz / 60 ms, TTS downlink).
@@ -33,6 +33,20 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+    end
+  end
+
+  # Xcode's module verifier rejects quoted includes in framework headers
+  # ("expected angle-bracketed instead"). libopus ships such headers
+  # ("opus.h" etc.); rewrite them to angle brackets every install.
+  [
+    File.join(__dir__, 'Pods', 'libopus', '**', '*.h'),
+    File.join(__dir__, 'Pods', 'Target Support Files', 'libopus', '**', '*.h'),
+  ].each do |glob|
+    Dir.glob(glob).each do |path|
+      source = File.read(path)
+      fixed = source.gsub(/(#(?:include|import)[[:space:]]*)"([^"]+)"/, '\1<\2>')
+      File.write(path, fixed) if fixed != source
     end
   end
 end

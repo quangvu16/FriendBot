@@ -315,6 +315,42 @@
         </LinearLayout>
     </LinearLayout>
 
+    <!-- Gripper: hold / let go of an object. -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/gripButton"
+            android:layout_width="0dp"
+            android:layout_height="46dp"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/mic_scan_outline"
+            android:fontFamily="monospace"
+            android:letterSpacing="0.16"
+            android:text="@string/pro_grip"
+            android:textColor="#3DDC97"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/releaseButton"
+            android:layout_width="0dp"
+            android:layout_height="46dp"
+            android:layout_marginStart="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/mic_scan_outline"
+            android:fontFamily="monospace"
+            android:letterSpacing="0.16"
+            android:text="@string/pro_release"
+            android:textColor="#FFB547"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
     <Button
         android:id="@+id/stopButton"
         android:layout_width="match_parent"

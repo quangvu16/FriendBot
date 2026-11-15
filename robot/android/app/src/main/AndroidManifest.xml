@@ -36,6 +36,16 @@
     <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
     <uses-feature android:name="android.hardware.location.gps" android:required="true"/>
 
+    <!-- Android 11+: let the app find the phone's speech recognizer and text-to-speech (Voice Grab). -->
+    <queries>
+        <intent>
+            <action android:name="android.speech.RecognitionService" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+    </queries>
+
     <application
         android:name=".OpenBotApplication"
         android:allowBackup="false"

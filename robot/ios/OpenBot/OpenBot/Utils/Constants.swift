@@ -54,6 +54,8 @@ struct Images {
     static let followLineIcon = UIImage(systemName: "line.diagonal")?.withTintColor(.white, renderingMode: .alwaysOriginal) ?? UIImage()
     static let avoidObjectIcon = UIImage(systemName: "exclamationmark.triangle")?.withTintColor(.white, renderingMode: .alwaysOriginal) ?? UIImage()
     static let targetTrackingIcon = UIImage(systemName: "scope")?.withTintColor(.white, renderingMode: .alwaysOriginal) ?? UIImage()
+    static let voiceGrabIcon = UIImage(systemName: "person.wave.2.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal) ?? UIImage()
+    static let grabObjectIcon = UIImage(systemName: "hand.raised.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal) ?? UIImage()
     static let guideIcon = UIImage(systemName: "book.closed")?.withTintColor(.white, renderingMode: .alwaysOriginal) ?? UIImage()
 }
 
@@ -111,12 +113,22 @@ struct Constants {
                 ModeItem(label: Strings.dataCollection, icon: Images.dataCollection!, identifier: Strings.ScreenDataCollection, color: Colors.dataCollectionColor),
                 ModeItem(label: Strings.controllerMapping, icon: Images.controllerMapping!, identifier: Strings.ScreenControllerMapping, color: Colors.controllerMappingColor),
                 ModeItem(label: Strings.robotInfo, icon: Images.robotInfoIcon!, identifier: Strings.ScreenRobotInfo, color: Colors.robotInfoColor),
+                ModeItem(label: Strings.tileHardwareTest,
+                         icon: UIImage(systemName: "wrench.and.screwdriver")?.withTintColor(.white, renderingMode: .alwaysOriginal) ?? UIImage(),
+                         identifier: Strings.ScreenHardwareTest,
+                         color: UIColor(red: 0.93, green: 0.57, blue: 0.22, alpha: 1)),
                 ModeItem(label: Strings.gpsMission, icon: Images.gpsMissionIcon, identifier: Strings.ScreenGpsMission, color: Colors.gpsMissionColor),
             ],
             // AI
             [
                 ModeItem(label: Strings.Autopilot, icon: Images.autopilotIcon!, identifier: Strings.AutopilotFragment, color: Colors.autopilotColor),
                 ModeItem(label: Strings.ObjectTracking, icon: Images.objectTrackingIcon!, identifier: Strings.ObjectTrackingFragment, color: Colors.objectTrackingColor),
+                ModeItem(label: L10n.string("tile_voice_grab"), icon: Images.voiceGrabIcon, identifier: Strings.ScreenVoiceGrab,
+                         color: UIColor(red: 0.18, green: 0.49, blue: 0.20, alpha: 1)),
+                ModeItem(label: L10n.string("tile_ai_pick"),
+                         icon: UIImage(systemName: "scope")?.withTintColor(.white, renderingMode: .alwaysOriginal) ?? UIImage(),
+                         identifier: Strings.ScreenAiPick,
+                         color: UIColor(red: 0.76, green: 0.25, blue: 0.05, alpha: 1)),
                 ModeItem(label: Strings.navigation, icon: Images.pointGoalIcon!, identifier: Strings.ScreenNavigation, color: Colors.pointGoalColor),
                 ModeItem(label: Strings.modelManagement, icon: Images.modelManagementIcon!, identifier: Strings.ScreenModelManagement, color: Colors.modelColor),
                 ModeItem(label: L10n.string("tile_voice_control"),
@@ -146,7 +158,9 @@ struct Constants {
                 ModeItem(label: Strings.tileFollowFace, icon: Images.followFaceIcon, identifier: Strings.ScreenFollowFace, color: Colors.followFaceColor),
                 ModeItem(label: Strings.tileFollowLine, icon: Images.followLineIcon, identifier: Strings.ScreenFollowLine, color: Colors.followLineColor),
                 ModeItem(label: Strings.tileObjectAvoidance, icon: Images.avoidObjectIcon, identifier: Strings.ScreenAvoidObject, color: Colors.avoidObjectColor),
-                ModeItem(label: Strings.tileTargetTracking, icon: Images.targetTrackingIcon, identifier: Strings.ScreenTargetTracking, color: Colors.targetTrackingColor)
+                ModeItem(label: Strings.tileTargetTracking, icon: Images.targetTrackingIcon, identifier: Strings.ScreenTargetTracking, color: Colors.targetTrackingColor),
+                ModeItem(label: L10n.string("tile_grab_object"), icon: Images.grabObjectIcon, identifier: Strings.ScreenGrabObject,
+                         color: UIColor(red: 0.24, green: 0.86, blue: 0.59, alpha: 1))
             ],
         ]
     }

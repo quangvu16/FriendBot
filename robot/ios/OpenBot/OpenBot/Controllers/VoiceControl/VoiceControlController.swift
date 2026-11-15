@@ -45,6 +45,9 @@ final class VoiceControlController: UIViewController {
     private let relayServer = VoiceRelayServer.shared
     private let relayClient = VoiceRelayClient.shared
 
+    /// Offline mic fallback: one on-device recognition while the Xiaozhi socket is down.
+    private var localVoiceActive = false
+
     private static let driveTickSeconds = 0.25
     /// How long to wait for the first "s<cm>" report after asking for sonar readings.
     private static let sonarSettleSeconds = 0.9
@@ -94,6 +97,8 @@ final class VoiceControlController: UIViewController {
     private let pairStatusLabel = UILabel()
     private let pairRetryButton = UIButton(type: .system)
     private let contentStack = UIStackView()
+    private let gripperRow = UIStackView()
+    private let gripperStateLabel = UILabel()
     private let faceView = VoiceFaceView()
     /// Face-only screen: the robot face covers the whole page (long-press = STOP,
     /// double-tap = the controls for 30 s; hidden while pairing).
@@ -227,6 +232,11 @@ final class VoiceControlController: UIViewController {
                                                name: .bluetoothConnected, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateConnection),
                                                name: .bluetoothDisconnected, object: nil)
+        // The claw state: refresh on every firmware line and re-ask when the link comes up.
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshGripperState),
+                                               name: .updateLabel, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(requestGripperState),
+                                               name: .bluetoothConnected, object: nil)
         wireSession()
         relayClient.onStateChange = { [weak self] in self?.updateConnection() }
         appendLog(L10n.string("voice_log_ready"))
@@ -248,13 +258,22 @@ final class VoiceControlController: UIViewController {
             VoiceRelayClient.promptForPin(from: self, host: host, wrong: wrong)
         }
 
+        // The claw state: ask the firmware whenever the page comes up on a live link.
+        if isBluetoothConnected {
+            bluetooth.sendData(payload: "g2\n")
+        }
+        refreshGripperState()
+
         maybeStartCamera()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         // Never leave the car driving itself off screen.
+        fetcher.cancel()
         stopMoving()
+        localVoiceActive = false
+        LocalStt.stop()
         stopMicSession(notify: session.isReady)
         remoteMicActive = false
         relayServer.setMicSink(nil)
@@ -278,6 +297,7 @@ final class VoiceControlController: UIViewController {
     }
 
     deinit {
+        LocalStt.stop()
         driveTimer?.invalidate()
         assistantWait?.invalidate()
         thinkingTimer?.invalidate()
@@ -334,6 +354,9 @@ final class VoiceControlController: UIViewController {
         cameraCorner.addSubview(cameraFlipButton)
         cameraCorner.addGestureRecognizer(
             UITapGestureRecognizer(target: self, action: #selector(manualLookAround)))
+        // Long-press the corner camera: "what should I pick up?" → fetch it.
+        cameraCorner.addGestureRecognizer(
+            UILongPressGestureRecognizer(target: self, action: #selector(cameraLongPressed(_:))))
         NSLayoutConstraint.activate([
             cameraCorner.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 112),
             cameraCorner.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
@@ -661,6 +684,21 @@ final class VoiceControlController: UIViewController {
         pathRow.distribution = .fillEqually
         contentStack.addArrangedSubview(pathRow)
 
+        // Gripper: manual claw tiles with the firmware's live state (the digital
+        // gripper answers g0/g1 after every move, like the Hardware Test page).
+        gripperRow.axis = .horizontal
+        gripperRow.spacing = 4
+        gripperRow.distribution = .fillEqually
+        gripperRow.addArrangedSubview(emojiTile(title: L10n.string("pro_grip"), action: #selector(tapGrip)))
+        gripperRow.addArrangedSubview(emojiTile(title: L10n.string("pro_release"), action: #selector(tapRelease)))
+        contentStack.addArrangedSubview(gripperRow)
+
+        gripperStateLabel.text = Strings.hwStateUnknown
+        gripperStateLabel.font = .systemFont(ofSize: 12, weight: .medium)
+        gripperStateLabel.textColor = .secondaryLabel
+        gripperStateLabel.textAlignment = .center
+        contentStack.addArrangedSubview(gripperStateLabel)
+
         // Speed slider, compact single row.
         let speedIcon = UIImageView(image: UIImage(systemName: "gauge"))
         speedIcon.tintColor = .secondaryLabel
@@ -758,6 +796,33 @@ final class VoiceControlController: UIViewController {
         button.clipsToBounds = true
         button.addTarget(self, action: action, for: .touchUpInside)
         button.accessibilityLabel = label
+        return button
+    }
+
+    /// A trick-tile button whose title carries its own emoji and label on one line
+    /// (the gripper tiles: ✊ GRIP / ✋ RELEASE — no SF Symbol fits a claw).
+    private func emojiTile(title: String,
+                           tint: UIColor = UIColor(red: 0.23, green: 0.23, blue: 0.24, alpha: 1),
+                           background: UIColor = .secondarySystemGroupedBackground,
+                           action: Selector) -> UIButton {
+        let button = UIButton(type: .system)
+        var config = UIButton.Configuration.filled()
+        config.title = title
+        config.titleAlignment = .center
+        config.cornerStyle = .large
+        config.baseBackgroundColor = background
+        config.baseForegroundColor = tint
+        config.titleLineBreakMode = .byTruncatingTail
+        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = .systemFont(ofSize: 11, weight: .semibold)
+            return outgoing
+        }
+        button.configuration = config
+        button.layer.cornerRadius = 16
+        button.clipsToBounds = true
+        button.addTarget(self, action: action, for: .touchUpInside)
+        button.accessibilityLabel = title
         return button
     }
 
@@ -945,6 +1010,18 @@ final class VoiceControlController: UIViewController {
                 // path already added its bubble, so skip the echo of the text-in.
                 self.beginExchange(text)
                 self.appendUserTurn(text)
+                // Spoken words reached the server: arm the typed path's safety window.
+                // When no robot tool answers in time — the assistant only chats about
+                // "go forward" — the local vocabulary still moves the robot.
+                self.utteranceToolCall = false
+                self.utteranceSeq += 1
+                let seq = self.utteranceSeq
+                self.assistantWait?.invalidate()
+                self.assistantWait = Timer.scheduledTimer(
+                    withTimeInterval: Self.assistantWaitSeconds, repeats: false
+                ) { [weak self] _ in
+                    self?.onUtteranceWindowClosed(seq: seq, text: text)
+                }
             }
             if !self.listenHandsFree && self.micStreaming {
                 self.stopMicSession(notify: true) // push-to-talk: the utterance is over
@@ -988,6 +1065,15 @@ final class VoiceControlController: UIViewController {
         }
         session.photoHandler = { [weak self] question, done in
             self?.takePhoto(question: question, done: done)
+        }
+        session.fetchHandler = { [weak self] object, done in
+            guard let self = self else {
+                done(nil, "screen closed")
+                return
+            }
+            self.utteranceTraffic = true
+            self.utteranceToolCall = true
+            self.startFetch(object, done: done)
         }
     }
 
@@ -1089,6 +1175,9 @@ final class VoiceControlController: UIViewController {
     /// listen start mode=auto once and keeps streaming (the server VAD ends utterances);
     /// push-to-talk sends mode=manual (tap to start/stop, v3 behavior).
     private func armListening() {
+        if localVoiceActive {
+            return // an offline utterance owns the mic until it finishes
+        }
         if remoteMicActive {
             // The remote phone's microphone is the uplink: reopen it in hands-free mode
             // (its frames keep arriving through the relay, whatever the local mode is).
@@ -1135,11 +1224,20 @@ final class VoiceControlController: UIViewController {
 
     /// Mic tap. While the uplink streams: end the utterance now (push-to-talk stop, or
     /// hands-free "send") and wait for the reply. While the assistant speaks: barge in.
-    /// Otherwise: start listening. Without the websocket the tap only logs voice_ws_offline —
-    /// the platform speech recognizers are Google voice and are banned on this screen.
+    /// Otherwise: start listening. Without the websocket the tap no longer dead-ends: one
+    /// on-device recognition runs through the normal text pipeline (REST brain, then the
+    /// offline keywords), so the robot stays drivable by voice with Xiaozhi down.
     @objc private func micTapped() {
         guard session.isReady else {
+            if localVoiceActive {
+                // Second tap cancels the offline utterance.
+                localVoiceActive = false
+                LocalStt.stop()
+                setUiState(.ready)
+                return
+            }
             appendLog(L10n.string("voice_ws_offline"))
+            startOfflineVoice()
             return
         }
         if micStreaming {
@@ -1149,6 +1247,28 @@ final class VoiceControlController: UIViewController {
             return
         }
         armListening()
+    }
+
+    /// Offline mic: one on-device recognition into {@code onTranscript} — the same text
+    /// pipeline typed input uses (session text-in when it is up, REST brain, then the offline
+    /// keywords), so "go forward", "turn left" and "grip" still drive the robot without Xiaozhi.
+    private func startOfflineVoice() {
+        guard !localVoiceActive, !micStreaming else { return }
+        localVoiceActive = true
+        setUiState(.listening)
+        LocalStt.listen(locale: Locale(identifier: voiceLanguageTag),
+                        onText: { [weak self] text in
+                            guard let self = self else { return }
+                            self.localVoiceActive = false
+                            self.onTranscript(text)
+                        },
+                        onError: { [weak self] message in
+                            guard let self = self else { return }
+                            self.localVoiceActive = false
+                            self.setUiState(.ready)
+                            self.appendLog(message)
+                            self.alert(message)
+                        })
     }
 
     /// Ends the uplink (mic tap again, server tts start, or screen exit).
@@ -1747,7 +1867,16 @@ final class VoiceControlController: UIViewController {
     }
 
     /// REST brain (XiaozhiClient) with the earlier turns as context; keywords on failure.
+    /// A clear order in the words ("go forward", "grip", "stop") runs through the local
+    /// vocabulary straight away. The chat brain does not get to answer "none" — or hedge
+    /// into "stop" — and leave the robot standing after the driver clearly commanded it;
+    /// it only handles what the keywords do not understand (conversation, nuanced asks).
     private func restInterpret(_ text: String) {
+        let local = VoiceInterpreter.interpret(text)
+        if local.action != .unknown {
+            execute(command: local, say: "")
+            return
+        }
         let config = XiaozhiClient.loadConfig()
         if config.isConfigured {
             XiaozhiClient(config: config).interpret(text: text,
@@ -1807,7 +1936,18 @@ final class VoiceControlController: UIViewController {
         case .unknown:
             stopMoving()
         case .stop:
+            fetcher.cancel()
             stopMoving()
+        case .grip, .release:
+            let close = command.action == .grip
+            if relayClient.isHostConnected {
+                relayClient.sendGrip(close)  // a robot another phone shares over WiFi
+            } else if isBluetoothConnected {
+                bluetooth.sendData(payload: close ? "g1\n" : "g0\n")
+            } else {
+                alert(L10n.string("voice_not_connected"))
+                return
+            }
         case .lightsOn:
             guard isBluetoothConnected else {
                 alert(L10n.string("voice_not_connected"))
@@ -2031,6 +2171,8 @@ final class VoiceControlController: UIViewController {
         case .indicatorRight: return L10n.string("voice_indicator_right")
         case .indicatorHazard: return L10n.string("voice_indicator_hazard")
         case .indicatorOff: return L10n.string("voice_indicator_off")
+        case .grip: return L10n.string("voice_grip")
+        case .release: return L10n.string("voice_release")
         case .chat: return ""
         case .unknown: return L10n.string("voice_no_match")
         }
@@ -2050,6 +2192,80 @@ final class VoiceControlController: UIViewController {
         runPhotoTool(question: question) { photoJson, error in
             done(photoJson, photoJson == nil ? error : "")
         }
+    }
+
+    // MARK: Fetch (pick up an object)
+
+    private lazy var fetcher = ObjectFetcher(robot: ObjectFetcher.Robot(
+        look: { [weak self] question, answer in
+            guard let self = self else { return answer(nil) }
+            self.runPhotoTool(question: question) { photoJson, _ in
+                answer(photoJson.map { Self.extractPhotoAnswer($0) })
+            }
+        },
+        drive: { [weak self] l, r, ms, done in self?.fetchDrive(l, r, ms, done) },
+        gripper: { [weak self] close in
+            guard self != nil, isBluetoothConnected else { return }
+            bluetoothDataController.shared.sendData(payload: close ? "g1\n" : "g0\n")
+        },
+        approach: { ms in
+            guard isBluetoothConnected else { return }
+            bluetoothDataController.shared.sendData(payload: "a\(max(0, min(5000, ms)))\n")
+        },
+        sonarCm: { [weak self] in self?.bluetooth.sonarDistanceCm ?? -1 },
+        progress: { [weak self] text in self?.appendConversation(.action, "» \(text)") }))
+
+    /// One timed move of a fetch: same driveTick resend and auto-stop as a voice move, without
+    /// the speed slider (the fetch turns by calibrated times). `done` runs after the stop.
+    private func fetchDrive(_ left: Float, _ right: Float, _ ms: Int, _ done: @escaping () -> Void) {
+        guard isBluetoothConnected else {
+            fetcher.cancel()
+            return
+        }
+        scriptQueue.removeAll()
+        driveLeft = clampUnit(left)
+        driveRight = clampUnit(right)
+        moveEndsAt = ProcessInfo.processInfo.systemUptime + Double(ms) / 1000
+        VoiceRelayServer.shared.noteLocalMove(endsAt: moveEndsAt)
+        sendControl(left: driveLeft, right: driveRight)
+        driveTimer?.invalidate()
+        driveTimer = Timer.scheduledTimer(withTimeInterval: Self.driveTickSeconds, repeats: true) { [weak self] _ in
+            self?.driveTick()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(ms + 120) / 1000) { [weak self] in
+            if self?.fetcher.isRunning == true { done() }
+        }
+    }
+
+    /// Starts a fetch (voice tool, or the long-press on the camera corner when `done` is nil).
+    private func startFetch(_ object: String, done: ((String?, String?) -> Void)?) {
+        guard isBluetoothConnected else {
+            let why = L10n.string("voice_fetch_needs_robot")
+            if let done = done { done(nil, why) } else { alert(why) }
+            return
+        }
+        bluetooth.sendData(payload: "s200\n")  // live distance for the final approach
+        fetcher.start(object) { [weak self] ok, message in
+            guard let self = self else { return }
+            self.bluetooth.sendData(payload: "s0\n")
+            self.stopMoving()
+            if let done = done {
+                done(ok ? message : nil, message)  // the assistant speaks it and asks where to go
+            } else {
+                self.appendBotTurn(message)
+            }
+        }
+    }
+
+    @objc private func cameraLongPressed(_ gesture: UILongPressGestureRecognizer) {
+        guard gesture.state == .began else { return }
+        let box = UIAlertController(title: L10n.string("voice_fetch_title"), message: nil, preferredStyle: .alert)
+        box.addTextField { $0.placeholder = L10n.string("voice_fetch_hint") }
+        box.addAction(UIAlertAction(title: L10n.string("voice_cancel"), style: .cancel))
+        box.addAction(UIAlertAction(title: L10n.string("voice_fetch_go"), style: .default) { [weak self, weak box] _ in
+            self?.startFetch(box?.textFields?.first?.text ?? "", done: nil)
+        })
+        present(box, animated: true)
     }
 
     // MARK: Corner camera
@@ -2130,66 +2346,16 @@ final class VoiceControlController: UIViewController {
     /// execute path as the quick buttons (bluetoothDataController.sendData), so the STOP
     /// latch, drive gate and timed auto-stop all apply.
     private func handleToolCall(_ name: String, _ args: [String: Any]) -> Bool {
-        guard ["self.robot.move", "self.robot.stop", "self.robot.led",
-               "self.robot.indicator", "self.robot.sonar", "self.robot.trick"].contains(name) else {
+        guard VoiceCommand.robotToolNames.contains(name) else {
+            return false
+        }
+        guard let command = VoiceCommand.from(tool: name, args: args) else {
+            // Unusable args: reject rather than guess — and do NOT mark the utterance as
+            // handled, so the 3.5 s window's keyword fallback still runs the user's words.
             return false
         }
         utteranceTraffic = true
         utteranceToolCall = true
-        let command: VoiceCommand
-        switch name {
-        case "self.robot.move":
-            let action: VoiceAction
-            switch args["direction"] as? String ?? "" {
-            case "forward": action = .forward
-            case "backward": action = .backward
-            case "left": action = .left
-            case "right": action = .right
-            default: action = .stop
-            }
-            let speed = (args["speed"] as? NSNumber)?.floatValue ?? VoiceCommand.defaultSpeed
-            let duration = (args["duration_ms"] as? NSNumber)?.intValue ?? VoiceCommand.defaultDurationMs
-            command = VoiceCommand(action: action, speed: speed, durationMs: duration,
-                                   rawText: name, source: "xiaozhi")
-        case "self.robot.stop":
-            command = VoiceCommand(action: .stop, rawText: name, source: "xiaozhi")
-        case "self.robot.led":
-            // Front/back lights: {"state": "on" | "off"} (Android parity).
-            let action: VoiceAction
-            switch (args["state"] as? String ?? "").lowercased() {
-            case "on": action = .lightsOn
-            case "off": action = .lightsOff
-            default: return false  // unknown state: reject rather than guess
-            }
-            command = VoiceCommand(action: action, rawText: name, source: "xiaozhi")
-        case "self.robot.indicator":
-            // Turn signals: {"state": "left" | "right" | "both" | "off"}.
-            let action: VoiceAction
-            switch args["state"] as? String ?? "" {
-            case "left": action = .indicatorLeft
-            case "right": action = .indicatorRight
-            case "both": action = .indicatorHazard
-            case "off": action = .indicatorOff
-            default: return false  // unknown state: reject rather than guess
-            }
-            command = VoiceCommand(action: action, rawText: name, source: "xiaozhi")
-        case "self.robot.sonar":
-            command = VoiceCommand(action: .sonar, rawText: name, source: "xiaozhi")
-        case "self.robot.trick":
-            let action: VoiceAction
-            switch args["name"] as? String ?? "" {
-            case "triangle": action = .triangle
-            case "circle": action = .circle
-            case "spin": action = .spin360
-            case "turn_around": action = .turnAround
-            case "wiggle": action = .wiggle
-            case "sing": action = .sing
-            default: return false  // unknown trick: reject, never spin the robot by default
-            }
-            command = VoiceCommand(action: action, rawText: name, source: "xiaozhi")
-        default:
-            command = VoiceCommand(action: .stop, rawText: name, source: "xiaozhi")
-        }
         // Silent execution: the assistant's own tts reply covers the answer. The action
         // still goes in the conversation list ("»" row); the phone never speaks it.
         execute(command: command, say: "", spoken: false)
@@ -2214,6 +2380,28 @@ final class VoiceControlController: UIViewController {
     @objc private func tapSpin() { execute(command: VoiceCommand(action: .spin360, rawText: "tap", source: "tap"), say: "") }
     @objc private func tapWiggle() { execute(command: VoiceCommand(action: .wiggle, rawText: "tap", source: "tap"), say: "") }
     @objc private func tapTurn() { execute(command: VoiceCommand(action: .turnAround, rawText: "tap", source: "tap"), say: "") }
+
+    @objc private func tapGrip() { execute(command: VoiceCommand(action: .grip, rawText: "tap", source: "tap"), say: "") }
+    @objc private func tapRelease() { execute(command: VoiceCommand(action: .release, rawText: "tap", source: "tap"), say: "") }
+
+    /// Ask the firmware for the claw state (it answers g0/g1 on the same link).
+    @objc private func requestGripperState() {
+        guard isBluetoothConnected else { return }
+        bluetooth.sendData(payload: "g2\n")
+        refreshGripperState()
+    }
+
+    /// The line under the grip tiles: what the firmware last reported (g0/g1).
+    @objc private func refreshGripperState() {
+        switch bluetooth.gripperState {
+        case 0:
+            gripperStateLabel.text = Strings.hwStateOpen
+        case 1:
+            gripperStateLabel.text = Strings.hwStateClosed
+        default:
+            gripperStateLabel.text = Strings.hwStateUnknown
+        }
+    }
 
     @objc private func speedChanged() {
         speedScale = speedSlider.value

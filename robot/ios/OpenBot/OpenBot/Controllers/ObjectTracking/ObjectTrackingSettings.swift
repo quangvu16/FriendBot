@@ -38,7 +38,9 @@ class ObjectTrackingSettings: UIView {
     ///     - frame:
     ///     - detector:
     ///     - model:
-    init(frame: CGRect, detector: Detector?, model: ModelItem) {
+    ///     - showsAutoControls: false hides the auto switch and dynamic speed (pages
+    ///       like AI Pick never follow the object on their own).
+    init(frame: CGRect, detector: Detector?, model: ModelItem, showsAutoControls: Bool = true) {
 
         // Setup UI
         self.detector = detector;
@@ -51,13 +53,15 @@ class ObjectTrackingSettings: UIView {
         swipeUp.direction = .up
         addGestureRecognizer(swipeUp)
         createBar()
-        autoModeLabel = createLabel(text: Strings.autoMode, leadingAnchor: Int(adapted(dimensionSize: 20, to: .height)), topAnchor: Int(adapted(dimensionSize: 15, to: .height)));
-        addSubview(autoModeLabel);
         createBluetoothIcon()
         createCameraIcon()
-        createSwitchButton()
-        addSubview(createLabel(text: Strings.dynamicSpeed, leadingAnchor: Int(adapted(dimensionSize: 150, to: .height)), topAnchor: Int(adapted(dimensionSize: 40, to: .height))))
-        setDynamicSpeed()
+        if showsAutoControls {
+            autoModeLabel = createLabel(text: Strings.autoMode, leadingAnchor: Int(adapted(dimensionSize: 20, to: .height)), topAnchor: Int(adapted(dimensionSize: 15, to: .height)));
+            addSubview(autoModeLabel);
+            createSwitchButton()
+            addSubview(createLabel(text: Strings.dynamicSpeed, leadingAnchor: Int(adapted(dimensionSize: 150, to: .height)), topAnchor: Int(adapted(dimensionSize: 40, to: .height))))
+            setDynamicSpeed()
+        }
         addSubview(createLabel(text: Strings.model, leadingAnchor: Int(adapted(dimensionSize: 20, to: .height)), topAnchor: Int(adapted(dimensionSize: 60, to: .height))))
         createModelDropDown()
         speedTitleLabel = createLabel(text: Strings.speed, leadingAnchor: Int(adapted(dimensionSize: 20, to: .height)), topAnchor: Int(adapted(dimensionSize: 90, to: .height)))
@@ -89,12 +93,13 @@ class ObjectTrackingSettings: UIView {
         setupThreads();
         setupVehicleControls();
         createLeftSpeed()
-        if let model = preferencesManager.getObjectTrackModel(){
-            if Common.isModelItemAvailableInDocument(modelName: model) == true {
-                modelDropdownLabel.text = model
-                let returnModel = Common.returnModelItem(modelName: model)
-                self.selectedModel = returnModel
-                imageInputLabel.text = returnModel.inputSize
+        if let model = preferencesManager.getObjectTrackModel(), !model.isEmpty {
+            // The active model may be a bundled one just as well as a downloaded one.
+            if let restored = Common.loadAllModelItems().first(where: { Common.baseName($0.name) == Common.baseName(model) }),
+               Common.isModelItemRunnable(restored) {
+                modelDropdownLabel.text = Common.baseName(restored.name)
+                self.selectedModel = restored
+                imageInputLabel.text = restored.inputSize
             }
             else{
                 preferencesManager.setObjectTrackModel(value: "");
@@ -551,7 +556,8 @@ class ObjectTrackingSettings: UIView {
         }
         dd.layer.cornerRadius = 10
         dd.backgroundColor = Colors.freeRoamButtonsColor
-        modelDropdownLabel.text = selectedModels.first
+        // Show the model that is actually active, not just the first list entry.
+        modelDropdownLabel.text = selectedModel.map { Common.baseName($0.name) } ?? selectedModels.first
         modelDropdownLabel.textColor = Colors.border
         let tap = UITapGestureRecognizer(target: self, action: #selector(showModelDropdown(_:)))
         dd.addGestureRecognizer(tap)
@@ -640,6 +646,7 @@ class ObjectTrackingSettings: UIView {
 
     /// callback to toggle autopilot when network command is received from web controller
     @objc func toggleNetwork(_ notification: Notification) {
+        guard autoModeButton.superview != nil else { return } // no auto switch on this page
         autoModeButton.setOn(!autoModeButton.isOn, animated: true)
         switchButton(autoModeButton)
     }

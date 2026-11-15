@@ -40,7 +40,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.SwitchCompat
+        <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/auto_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
                     android:paddingVertical="12dp"
                     android:paddingStart="16dp"
                     android:text="@string/status"
-                    android:textColor="@android:color/black" />
+                    android:textColor="#202124" />
 
                 <TextView
                     android:id="@+id/status_text"
@@ -85,7 +85,7 @@
                     android:gravity="center_vertical|start"
                     android:paddingHorizontal="8dp"
                     android:text="@string/vision_stopped"
-                    android:textColor="@android:color/black"
+                    android:textColor="#202124"
                     tools:text="▲ Running" />
             </LinearLayout>
 
@@ -112,7 +112,7 @@
                     android:paddingVertical="12dp"
                     android:paddingStart="16dp"
                     android:text="@string/tile_guides"
-                    android:textColor="@android:color/black" />
+                    android:textColor="#202124" />
 
                 <TextView
                     android:id="@+id/help_button"
@@ -125,7 +125,7 @@
                     android:focusable="true"
                     android:gravity="center"
                     android:text="@string/vision_help"
-                    android:textColor="@color/openBotBlue" />
+                    android:textColor="#1A73E8" />
             </LinearLayout>
         </LinearLayout>
 
@@ -161,7 +161,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/auto_switch"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/auto_switch"
-            app:tint="@color/openBotBlue" />
+            app:tint="#1A73E8" />
 
         <include
             android:id="@+id/controllerContainer"

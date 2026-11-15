@@ -8,6 +8,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import okhttp3.OkHttpClient;
@@ -73,6 +74,12 @@ public final class XiaozhiSession {
   /** Camera tool, same name the KS5028 S3CAM firmware registers (take a photo and explain it). */
   private static final String TAKE_PHOTO_TOOL = "self.camera.take_photo";
 
+  /** Find an object with the camera, drive to it and pick it up (ObjectFetcher). */
+  private static final String FETCH_TOOL = "self.robot.fetch";
+
+  /** A fetch takes several photos and moves; the tools/call is failed after this. */
+  private static final long FETCH_TIMEOUT_MS = 180000;
+
   /** Capture + vision explain can take a while; the tools/call is failed after this. */
   private static final long PHOTO_TIMEOUT_MS = 60000;
 
@@ -121,6 +128,15 @@ public final class XiaozhiSession {
      * replies to the JSON-RPC call exactly once (a timeout guard covers a stuck camera).
      */
     void onTakePhoto(String question, PhotoCallback callback);
+
+    /**
+     * The assistant asked to pick up an object ({@code self.robot.fetch}): find it with the
+     * camera, drive to it, close the gripper, and answer through {@code callback} with a short
+     * text (success or why it failed).
+     */
+    default void onFetch(String object, PhotoCallback callback) {
+      callback.onPhotoResult(null, "Fetching is not available on this screen");
+    }
   }
 
   /** One-shot answer to a {@code self.camera.take_photo} tools/call. */
@@ -486,6 +502,10 @@ public final class XiaozhiSession {
             dispatchTakePhoto(id, args);
             break;
           }
+          if (FETCH_TOOL.equals(name)) {
+            dispatchFetch(id, args);
+            break;
+          }
           VoiceCommand command = toolCommand(name, args);
           if (command == null) {
             sendRpcError(id, -32602, "Unknown tool or argument: " + name);
@@ -570,6 +590,8 @@ public final class XiaozhiSession {
     tools.add(sonarTool());
     tools.add(trickTool());
     tools.add(photoTool());
+    tools.add(gripperTool());
+    tools.add(fetchTool());
     JsonObject result = new JsonObject();
     result.add("tools", tools);
     result.addProperty("nextCursor", "");
@@ -629,6 +651,82 @@ public final class XiaozhiSession {
           }
         },
         PHOTO_TIMEOUT_MS);
+  }
+
+  /** Answers a fetch tools/call when the robot holds the object (or gave up). */
+  private void dispatchFetch(JsonElement id, JsonObject args) {
+    String object = text(args, "object");
+    AtomicBoolean answered = new AtomicBoolean(false);
+    PhotoCallback callback =
+        (resultText, errorMessage) -> {
+          if (!answered.compareAndSet(false, true)) return;
+          if (resultText == null || resultText.isEmpty()) {
+            sendRpcError(id, -32000, errorMessage.isEmpty() ? "Fetch failed" : errorMessage);
+          } else {
+            sendRpcResult(id, photoToolResult(resultText));
+          }
+        };
+    post(() -> listener.onFetch(object, callback));
+    main.postDelayed(
+        () -> {
+          if (answered.compareAndSet(false, true)) {
+            sendRpcError(id, -32000, "Fetch took too long");
+          }
+        },
+        FETCH_TIMEOUT_MS);
+  }
+
+  private static JsonObject gripperTool() {
+    JsonObject tool = new JsonObject();
+    tool.addProperty("name", "self.robot.gripper");
+    tool.addProperty(
+        "description",
+        "Open or close the robot's gripper (claw). 'grab' closes it to hold an object (the user"
+            + " says hold it, grab it, keep it, take it). 'release' opens it to let the object go"
+            + " (drop it, let go, put it down, give it). Use after moving to the place the user"
+            + " wants the object.");
+    JsonObject schema = new JsonObject();
+    schema.addProperty("type", "object");
+    JsonObject properties = new JsonObject();
+    JsonObject action = new JsonObject();
+    action.addProperty("type", "string");
+    JsonArray enumValues = new JsonArray();
+    enumValues.add("grab");
+    enumValues.add("release");
+    action.add("enum", enumValues);
+    properties.add("action", action);
+    schema.add("properties", properties);
+    JsonArray required = new JsonArray();
+    required.add("action");
+    schema.add("required", required);
+    tool.add("inputSchema", schema);
+    return tool;
+  }
+
+  private static JsonObject fetchTool() {
+    JsonObject tool = new JsonObject();
+    tool.addProperty("name", FETCH_TOOL);
+    tool.addProperty(
+        "description",
+        "Find an object with the robot's camera, drive to it and pick it up with the gripper."
+            + " Use when the user asks the robot to pick up, fetch, get or take an object (for"
+            + " example: pick up the red ball). It takes photos and moves step by step, so it can"
+            + " take up to a minute. When it returns, ask the user where to take the object; move"
+            + " there with self.robot.move, then call self.robot.gripper with release.");
+    JsonObject schema = new JsonObject();
+    schema.addProperty("type", "object");
+    JsonObject properties = new JsonObject();
+    JsonObject object = new JsonObject();
+    object.addProperty("type", "string");
+    object.addProperty(
+        "description", "The object to pick up, in English, with its colour (e.g. 'the red cup').");
+    properties.add("object", object);
+    schema.add("properties", properties);
+    JsonArray required = new JsonArray();
+    required.add("object");
+    schema.add("required", required);
+    tool.add("inputSchema", schema);
+    return tool;
   }
 
   private static JsonObject photoToolResult(String photoJson) {
@@ -812,24 +910,40 @@ public final class XiaozhiSession {
     switch (name) {
       case "self.robot.move":
         {
+          // LLMs vary: "direction" per the schema, sometimes "action", and synonyms.
           String direction = text(args, "direction");
+          if (direction.isEmpty()) direction = text(args, "action");
           VoiceCommand.Action action;
-          switch (direction) {
+          switch (direction.toLowerCase(Locale.ROOT).trim()) {
             case "forward":
+            case "ahead":
+            case "straight":
+            case "go":
               action = VoiceCommand.Action.FORWARD;
               break;
             case "backward":
+            case "back":
+            case "reverse":
               action = VoiceCommand.Action.BACKWARD;
               break;
             case "left":
+            case "turn_left":
+            case "turnleft":
               action = VoiceCommand.Action.LEFT;
               break;
             case "right":
+            case "turn_right":
+            case "turnright":
               action = VoiceCommand.Action.RIGHT;
               break;
-            default:
+            case "stop":
+            case "halt":
               action = VoiceCommand.Action.STOP;
               break;
+            default:
+              // Unknown direction: reject rather than stop the robot by default — and the
+              // utterance window's keyword fallback still runs the user's words.
+              return null;
           }
           return VoiceCommand.of(action, speed, duration, name, "mcp");
         }
@@ -850,6 +964,17 @@ public final class XiaozhiSession {
         }
       case "self.robot.sonar":
         return VoiceCommand.of(VoiceCommand.Action.SONAR, name, "mcp");
+      case "self.robot.gripper":
+        {
+          String gripAction = text(args, "action");
+          if ("grab".equalsIgnoreCase(gripAction)) {
+            return VoiceCommand.of(VoiceCommand.Action.GRIP, name, "mcp");
+          }
+          if ("release".equalsIgnoreCase(gripAction)) {
+            return VoiceCommand.of(VoiceCommand.Action.RELEASE, name, "mcp");
+          }
+          return null; // unknown: never guess with the claw
+        }
       case "self.robot.indicator":
         {
           String state = text(args, "state");

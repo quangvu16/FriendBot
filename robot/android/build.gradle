@@ -22,6 +22,11 @@ buildscript {
 }
 
 allprojects {
+    if (projectDir.absolutePath.startsWith("/Volumes/")) {
+        def buildDirName = project == rootProject ? "root" : project.name
+        project.layout.buildDirectory.set(file("${System.getProperty("user.home")}/.gradle-builds/${rootProject.name}/${buildDirName}"))
+    }
+
     repositories {
         google()
         mavenCentral()
@@ -31,7 +36,10 @@ allprojects {
 }
 
 task clean(type: Delete) {
-    delete rootProject.buildDir
+    delete rootProject.layout.buildDirectory
+    subprojects {
+        delete layout.buildDirectory
+    }
 }
 
 task checkStyle(type:JavaExec) {

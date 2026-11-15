@@ -351,6 +351,14 @@ public final class VoiceRelayClient {
     send(message);
   }
 
+  /** Gripper on the shared robot: {@code true} grip (close), {@code false} release (open). */
+  public void sendGrip(boolean close) {
+    JsonObject message = new JsonObject();
+    message.addProperty("t", "grip");
+    message.addProperty("on", close);
+    send(message);
+  }
+
   /**
    * Streams one 60 ms opus frame of this phone's microphone to the host voice control page
    * (Remote Mic page); {@code rms} is the frame's level (0..1) for its waveform display.

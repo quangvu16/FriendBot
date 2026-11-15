@@ -196,6 +196,25 @@ final class PhotoExplainer: NSObject, AVCapturePhotoCaptureDelegate,
         }
     }
 
+    /// Explains an already-captured JPEG (e.g. a frame grabbed by another camera pipeline such
+    /// as Voice Grab's detector). Same upload and callbacks as `captureAndExplain`, minus the
+    /// shutter: `onCaptured` gets the given bytes so callers can still show a still.
+    func explainJpeg(
+        _ jpeg: Data,
+        question: String,
+        explainUrl: String,
+        explainToken: String,
+        onCaptured: @escaping (Data?) -> Void,
+        explained: @escaping (String?, String) -> Void
+    ) {
+        pendingQuestion = question
+        self.explainUrl = explainUrl
+        self.explainToken = explainToken
+        pending = Handlers(captured: onCaptured, explained: explained)
+        DispatchQueue.main.async { onCaptured(jpeg) }
+        explain(jpeg: Self.shrink(jpeg) ?? jpeg)
+    }
+
     private func shoot() {
         if let output = photoOutput, let session = session, session.isRunning {
             takePhoto(with: output)

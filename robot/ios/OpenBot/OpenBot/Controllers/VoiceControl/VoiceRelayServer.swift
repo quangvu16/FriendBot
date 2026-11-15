@@ -310,6 +310,10 @@ final class VoiceRelayServer {
                                 ms: self.clampMs(ms))
             case "stop":
                 self.handleStop()
+            case "grip":
+                if let on = root["on"] as? Bool, isBluetoothConnected {
+                    bluetoothDataController.shared.sendData(payload: on ? "g1\n" : "g0\n")
+                }
             case "ping":
                 if let id = root["id"] as? NSNumber {
                     client.send("{\"t\":\"pong\",\"id\":\(id.int64Value)}")
@@ -517,6 +521,8 @@ final class VoiceRelayServer {
         device.isBatteryMonitoringEnabled = true
         var s: [String: Any] = ["t": "status",
                                 "moving": robotMoving(ProcessInfo.processInfo.systemUptime)]
+        let grip = bluetoothDataController.shared.gripperState
+        if grip >= 0 { s["grip"] = grip }  // 0 open, 1 closed (Pro pages)
         if device.batteryLevel >= 0 {
             s["bat"] = Int((device.batteryLevel * 100).rounded())
             s["chg"] = device.batteryState == .charging || device.batteryState == .full

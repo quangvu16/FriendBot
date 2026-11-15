@@ -5,7 +5,6 @@
 import Foundation
 import UIKit
 import DropDown
-import GoogleSignIn
 
 
 class popupWindowView: UIView {
@@ -312,19 +311,6 @@ class popupWindowView: UIView {
     @objc func onDoneBtnTap(_ sender: UIButton) throws {
         try Common.saveConfigFileToDocument(modelItems: Common.modifyModels(modelAddress: modelAddress, model: model, widthOfModel: widthOfModel, heightOfModel: heightOfModel));
         if let index = model.name.firstIndex(of: ".") {
-            if GIDSignIn.sharedInstance.currentUser != nil {
-                let encoder = JSONEncoder()
-                encoder.outputFormatting = [.withoutEscapingSlashes]
-                do {
-                    let jsonData = try encoder.encode(Common.modifyModels(modelAddress: modelAddress, model: model, widthOfModel: widthOfModel, heightOfModel: heightOfModel));
-                    if let jsonString = String(data: jsonData, encoding: .utf8) {
-                        if let data = jsonString.data(using: .utf8) {
-                            Authentication().updateModelListFile(fileData: data);
-                        }
-                    }
-                }
-            } else {
-            }
             NotificationCenter.default.post(name: .removeBlankScreen, object: model.name.prefix(upTo: index));
         }
         removeFromSuperview();

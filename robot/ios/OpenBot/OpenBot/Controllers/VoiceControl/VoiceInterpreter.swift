@@ -8,7 +8,8 @@
 //  phone is offline): the speech-to-text transcript is matched against the same small vocabulary
 //  the firmware's "t<text>" channel understands, in English, Vietnamese and Chinese — extended
 //  with the voice page's trick and accessory commands (lights, sonar, sing, triangle, circle,
-//  360° spin, turn around, turn left and right). Order matters and mirrors the firmware exactly:
+//  360° spin, turn around, turn left and right, and the gripper: close or release the claw).
+//  Order matters and mirrors the firmware exactly:
 //  "stop" wins over everything ("don't go" must stop, not drive), and "back" is checked before
 //  "go" so "go back" reverses. The tricks are checked before the plain moves because their
 //  phrases contain those words ("move in circle" must not become "move", "sing and turn around"
@@ -17,7 +18,9 @@
 //  Mirrors VoiceInterpreter.java on Android.
 //
 
+import AVFoundation
 import Foundation
+import Speech
 
 enum VoiceInterpreter {
 
@@ -26,6 +29,10 @@ enum VoiceInterpreter {
     private static let sonarWords = ["sonar", "distance", "how far", "khoảng cách", "khoang cach", "cảm biến", "距离", "多远", "超声波"]
     private static let lightsOnWords = ["lights on", "light on", "turn on the light", "turn on light", "turn on lights", "bật đèn", "bat den", "mở đèn", "mo den", "开灯", "打开灯"]
     private static let lightsOffWords = ["lights off", "light off", "turn off the light", "turn off light", "turn off lights", "tắt đèn", "tat den", "关灯", "关掉灯"]
+    /// Close the claw — after the lights (so "mở đèn" still means lights on), before the moves.
+    private static let gripWords = ["grip", "gripping", "grip it", "close the claw", "close claw", "close the gripper", "close gripper", "grab it", "grab", "hold it", "hold the object", "keep it", "pick up", "pick it up", "kẹp", "kep", "夹", "抓住"]
+    /// Open the claw — same slot as the grip words, checked after them ("open" pairs with "grip").
+    private static let releaseWords = ["release", "releasing", "let go", "let it go", "drop", "drop it", "put it down", "put down", "open the claw", "open claw", "open the gripper", "open gripper", "give it", "give it back", "tha ra", "tha xuong", "bo xuong", "dat xuong", "buong", "tha", "mở ra", "mo ra", "松开", "放开", "张开"]
     private static let triangleWords = ["triangle", "tam giác", "tam giac", "三角形", "三角"]
     private static let circleWords = ["circle", "vòng tròn", "vong tron", "vòng", "圆形", "圆圈", "画圆"]
     private static let spinWords = ["360", "spin", "spinning", "xoay", "một vòng", "mot vong", "旋转", "转一圈", "转圈"]
@@ -41,7 +48,7 @@ enum VoiceInterpreter {
     private static let rightWords = ["right", "turn right", "phải", "rẽ phải", "re phai", "右", "右转"]
     private static let fasterWords = ["faster", "speed up", "speedup", "nhanh", "nhanh lên", "tăng tốc", "快", "快点", "加速"]
     private static let slowerWords = ["slower", "slow down", "slowdown", "chậm", "chậm lại", "cham", "giảm tốc", "慢", "慢点", "减速"]
-    private static let forwardWords = ["forward", "forwards", "ahead", "straight", "go", "going", "move", "moving", "tiến", "tien", "đi", "前进", "向前", "走"]
+    private static let forwardWords = ["forward", "forwards", "ahead", "straight", "go", "going", "move", "moving", "drive", "driving", "tiến", "tien", "đi", "前进", "向前", "走"]
     /// "go forward for a long time" — stretches a plain move to 5 s.
     private static let longWords = ["long", "for a while", "lâu", "lau", "xa", "far"]
 
@@ -67,6 +74,8 @@ enum VoiceInterpreter {
         else if containsAny(t, sonarWords) { action = .sonar }
         else if containsAny(t, lightsOnWords) { action = .lightsOn }
         else if containsAny(t, lightsOffWords) { action = .lightsOff }
+        else if containsAny(t, gripWords) { action = .grip }
+        else if containsAny(t, releaseWords) { action = .release }
         else if containsAny(t, triangleWords) { action = .triangle }
         else if containsAny(t, circleWords) { action = .circle }
         else if containsAny(t, spinWords) { action = .spin360 }
@@ -150,5 +159,102 @@ enum VoiceInterpreter {
     /// CJK Unified Ideographs (+ Extension A): the Chinese keywords.
     private static func isHan(_ scalar: Unicode.Scalar) -> Bool {
         (0x4E00...0x9FFF).contains(scalar.value) || (0x3400...0x4DBF).contains(scalar.value)
+    }
+}
+
+// MARK: - Offline speech (platform STT while the Xiaozhi socket is down)
+
+/// One-shot on-device recognition: the mic tap still hears the driver when the session is
+/// offline, and the transcript goes through the normal text pipeline (REST brain, then the
+/// offline keywords), so the robot stays drivable by voice without the cloud. Used by the
+/// Voice Control and AI Pick pages; Voice Grab keeps its own continuous recognizer.
+enum LocalStt {
+    private static var task: SFSpeechRecognitionTask?
+    private static var engine: AVAudioEngine?
+    /// Bumped by every start/stop so callbacks from a stale utterance are ignored.
+    private static var generation = 0
+
+    /// Listens for one utterance. Both callbacks arrive on the main queue; `error` is
+    /// already user-facing (permission / no recognizer / no match).
+    static func listen(locale: Locale = .current,
+                       onText: @escaping (String) -> Void,
+                       onError: @escaping (String) -> Void) {
+        stop()
+        let gen = generation
+        AVAudioSession.sharedInstance().requestRecordPermission { micOK in
+            DispatchQueue.main.async {
+                guard gen == generation else { return }
+                guard micOK else {
+                    onError(L10n.string("voice_mic_permission_denied"))
+                    return
+                }
+                SFSpeechRecognizer.requestAuthorization { status in
+                    DispatchQueue.main.async {
+                        guard gen == generation else { return }
+                        guard status == .authorized else {
+                            onError(L10n.string("voice_mic_permission_denied"))
+                            return
+                        }
+                        guard let recognizer = SFSpeechRecognizer(locale: locale),
+                              recognizer.isAvailable else {
+                            onError(L10n.string("voice_no_speech_recognizer"))
+                            return
+                        }
+                        let session = AVAudioSession.sharedInstance()
+                        do {
+                            try session.setCategory(.playAndRecord, mode: .default,
+                                                    options: [.defaultToSpeaker, .allowBluetooth])
+                            try session.setActive(true)
+                        } catch {
+                            onError(L10n.string("voice_no_speech_recognizer"))
+                            return
+                        }
+                        let request = SFSpeechAudioBufferRecognitionRequest()
+                        request.shouldReportPartialResults = false
+                        let engine = AVAudioEngine()
+                        do {
+                            let input = engine.inputNode
+                            let format = input.outputFormat(forBus: 0)
+                            input.installTap(onBus: 0, bufferSize: 1024, format: format) { buffer, _ in
+                                request.append(buffer)
+                            }
+                            engine.prepare()
+                            try engine.start()
+                        } catch {
+                            onError(L10n.string("voice_no_speech_recognizer"))
+                            return
+                        }
+                        Self.engine = engine
+                        task = recognizer.recognitionTask(with: request) { result, error in
+                            DispatchQueue.main.async {
+                                guard gen == generation else { return }
+                                guard result?.isFinal == true || error != nil else { return }
+                                let text = result?.bestTranscription.formattedString
+                                    .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+                                stop()
+                                if error == nil && !text.isEmpty {
+                                    onText(text)
+                                } else {
+                                    onError(L10n.string("voice_no_match"))
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /// Abandons the current utterance (page exit, mic tapped again, or the caller took over).
+    static func stop() {
+        generation += 1
+        if let engine = engine {
+            engine.inputNode.removeTap(onBus: 0)
+            engine.stop()
+        }
+        engine = nil
+        task?.cancel()
+        task = nil
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
 }

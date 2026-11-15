@@ -12,7 +12,8 @@ import java.util.regex.Pattern;
  * or the phone is offline): the speech-to-text transcript is matched against the same small
  * vocabulary the firmware's {@code t<text>} channel understands, in English, Vietnamese and
  * Chinese — extended with the voice page's trick and accessory commands (lights, sonar, sing,
- * triangle, circle, 360° spin, turn around, turn left and right).
+ * triangle, circle, 360° spin, turn around, turn left and right, and the gripper: close or
+ * release the claw).
  *
  * <p>Order matters and mirrors the firmware exactly: "stop" wins over everything ("don't go" must
  * stop, not drive), and "back" is checked before "go" so "go back" reverses. The tricks are checked
@@ -39,6 +40,20 @@ public final class VoiceInterpreter {
   private static final String[] LIGHTS_OFF_WORDS = {
     "lights off", "light off", "turn off the light", "turn off light", "turn off lights",
     "tắt đèn", "tat den", "关灯", "关掉灯"
+  };
+  /** Close the claw — after the lights (so "mở đèn" still means lights on), before the moves. */
+  private static final String[] GRIP_WORDS = {
+    "grip", "gripping", "grip it", "close the claw", "close claw", "close the gripper",
+    "close gripper", "grab it", "grab", "hold it", "hold the object", "keep it",
+    "pick up", "pick it up",
+    "kẹp", "kep", "夹", "抓住"
+  };
+  /** Open the claw — same slot as the grip words, checked after them ("open" pairs with "grip"). */
+  private static final String[] RELEASE_WORDS = {
+    "release", "releasing", "let go", "let it go", "drop", "drop it", "put it down",
+    "put down", "open the claw", "open claw", "open the gripper", "open gripper",
+    "give it", "give it back", "tha ra", "tha xuong", "bo xuong", "dat xuong",
+    "buong", "tha", "mở ra", "mo ra", "松开", "放开", "张开"
   };
   private static final String[] INDICATOR_LEFT_WORDS = {
     "signal left", "left signal", "left indicator", "left blinker", "xi nhan trái", "xi nhan trai",
@@ -88,7 +103,7 @@ public final class VoiceInterpreter {
     "slower", "slow down", "slowdown", "chậm", "chậm lại", "cham", "giảm tốc", "慢", "慢点", "减速"
   };
   private static final String[] FWD_WORDS = {
-    "forward", "forwards", "ahead", "straight", "go", "going", "move", "moving", "tiến", "tien", "đi", "前进", "向前", "走"
+    "forward", "forwards", "ahead", "straight", "go", "going", "move", "moving", "drive", "driving", "tiến", "tien", "đi", "前进", "向前", "走"
   };
   /** "go forward for a long time" — stretches a plain move to 5 s. */
   private static final String[] LONG_WORDS = {
@@ -118,6 +133,8 @@ public final class VoiceInterpreter {
     else if (containsAny(t, SONAR_WORDS)) action = VoiceCommand.Action.SONAR;
     else if (containsAny(t, LIGHTS_ON_WORDS)) action = VoiceCommand.Action.LIGHTS_ON;
     else if (containsAny(t, LIGHTS_OFF_WORDS)) action = VoiceCommand.Action.LIGHTS_OFF;
+    else if (containsAny(t, GRIP_WORDS)) action = VoiceCommand.Action.GRIP;
+    else if (containsAny(t, RELEASE_WORDS)) action = VoiceCommand.Action.RELEASE;
     else if (containsAny(t, TRIANGLE_WORDS)) action = VoiceCommand.Action.TRIANGLE;
     else if (containsAny(t, CIRCLE_WORDS)) action = VoiceCommand.Action.CIRCLE;
     else if (containsAny(t, SPIN_WORDS)) action = VoiceCommand.Action.SPIN360;
@@ -180,7 +197,7 @@ public final class VoiceInterpreter {
    * "what" and "đi" does not match "điện". Chinese keywords are matched as plain substrings,
    * because Chinese writes words without spaces.
    */
-  static boolean containsWord(String text, String needle) {
+  public static boolean containsWord(String text, String needle) {
     if (needle.isEmpty()) return false;
     if (Character.UnicodeScript.of(needle.codePointAt(0)) == Character.UnicodeScript.HAN) {
       return text.contains(needle);

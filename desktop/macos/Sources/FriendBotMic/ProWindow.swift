@@ -30,6 +30,8 @@ final class ProModel: ObservableObject {
     @Published var batteryColor = Palette.muted
     @Published var note: String?
     @Published var scanning = false
+    /// Claw state from the robot's status: 0 open, 1 closed, nil unknown.
+    @Published var gripState: Int?
     @Published private var refresh = 0
 
     private(set) var link: MicLink?
@@ -160,6 +162,7 @@ final class ProModel: ObservableObject {
             said = m["text"] as? String ?? ""
         case "status":
             showBattery(m)
+            if let g = (m["grip"] as? NSNumber)?.intValue { gripState = g }
         case "cam":
             guard camOn, let b = m["b"] as? String, let data = Data(base64Encoded: b),
                   let img = NSImage(data: data) else { return }
@@ -255,6 +258,14 @@ final class ProModel: ObservableObject {
         flash("Stop sent", seconds: 1.5)
     }
 
+    /// Gripper: close (hold the object) or open (let it go).
+    func grip(_ close: Bool) {
+        guard let l = link, l.connected else { flash(linkText); return }
+        l.sendLine(FBQR.json(["t": "grip", "on": close]))
+        gripState = close ? 1 : 0
+        flash(close ? "Grip sent" : "Release sent", seconds: 1.5)
+    }
+
     func toggleCamera() {
         camOn.toggle()
         if !camOn { camImage = nil }
@@ -278,6 +289,10 @@ final class ProModel: ObservableObject {
             if e.keyCode == 49 { // space
                 if down, !e.isARepeat { self.setTalking(true) }
                 if !down { self.setTalking(false) }
+                return nil
+            }
+            if down, !e.isARepeat, e.keyCode == 5 || e.keyCode == 15 { // G grip, R release
+                self.grip(e.keyCode == 5)
                 return nil
             }
             if e.keyCode == 53, down { // esc
@@ -397,6 +412,11 @@ struct ProView: View {
                 .frame(maxWidth: .infinity)
             }
 
+            HStack(spacing: 10) {
+                clawButton("✊ GRIP (G)", Palette.green, active: m.gripState == 1) { m.grip(true) }
+                clawButton("✋ RELEASE (R)", Palette.amber, active: m.gripState == 0) { m.grip(false) }
+            }
+
             Button(action: m.stopRobot) {
                 Text("■  STOP   (Esc)").font(.system(size: 17, weight: .bold, design: .monospaced))
                     .tracking(2).foregroundColor(.white)
@@ -406,7 +426,7 @@ struct ProView: View {
             }
             .buttonStyle(.plain)
 
-            Text("HOLD SPACE = TALK · ARROWS = DRIVE · ESC = STOP")
+            Text("SPACE TALK · ARROWS DRIVE · G/R CLAW · ESC STOP")
                 .font(.system(size: 9, design: .monospaced)).foregroundColor(Palette.muted)
 
             TextField(m.internet ? "friendbot://net?room=…" : "Robot phone IP (empty = find it)", text: $m.entry)
@@ -426,6 +446,18 @@ struct ProView: View {
         .background(Palette.ink)
         .preferredColorScheme(.dark)
         .sheet(isPresented: $m.scanning) { QRScanSheet { m.useQr($0) } }
+    }
+
+    private func clawButton(_ title: String, _ color: Color, active: Bool, _ action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(title).font(.system(size: 13, weight: .bold, design: .monospaced))
+                .foregroundColor(active ? Palette.ink : color)
+                .frame(maxWidth: .infinity).padding(.vertical, 11)
+                .background(RoundedRectangle(cornerRadius: 12).fill(active ? color : Color.clear))
+                .overlay(RoundedRectangle(cornerRadius: 12).stroke(color, lineWidth: 1.5))
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 
     private func tab(_ title: String, _ p: ProModel.Page) -> some View {
@@ -479,7 +511,7 @@ struct ProView: View {
                 .background(Capsule().fill(Palette.panel.opacity(0.85)))
                 .padding(10)
         }
-        .frame(height: 200)
+        .frame(height: 170)
         .clipShape(RoundedRectangle(cornerRadius: 14))
         .overlay(RoundedRectangle(cornerRadius: 14).stroke(Palette.cyan.opacity(0.27), lineWidth: 1))
         .contentShape(Rectangle())

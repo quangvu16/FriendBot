@@ -20,6 +20,8 @@ class bluetoothDataController: CMDeviceMotion, CBCentralManagerDelegate, CBPerip
     var bumperData: String = ""
     /// Last mid-sonar distance in cm ("s<cm>" reports), or -1 when no report has arrived yet.
     var sonarDistanceCm: Float = -1
+    /// Last gripper state the robot reported ("g0" open / "g1" closed), or -1 before any.
+    var gripperState = -1
     var writeCharacteristics: CBCharacteristic?
     var robotInfo: String = ""
     /// Object avoidance, ArduPilot Rover style. Every `c` drive command is
@@ -205,6 +207,12 @@ class bluetoothDataController: CMDeviceMotion, CBCentralManagerDelegate, CBPerip
             // Mid sonar distance in cm (the firmware's reply to "s<interval>").
             if let cm = Float(String(stringFromData.dropFirst())) {
                 sonarDistanceCm = cm
+            }
+            break
+        case "g":
+            // Gripper finished moving: g0 open, g1 closed.
+            if let state = Int(String(stringFromData.dropFirst())) {
+                gripperState = state
             }
             break
         case "m":

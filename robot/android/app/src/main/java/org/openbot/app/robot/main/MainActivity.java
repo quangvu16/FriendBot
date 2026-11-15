@@ -92,8 +92,8 @@ public class MainActivity extends AppCompatActivity {
     float density = getResources().getDisplayMetrics().density;
     int stopSize = (int) (88 * density);
     FrameLayout.LayoutParams stopParams =
-        new FrameLayout.LayoutParams(stopSize, stopSize, Gravity.END | Gravity.BOTTOM);
-    stopParams.setMarginEnd((int) (16 * density));
+        new FrameLayout.LayoutParams(stopSize, stopSize, Gravity.START | Gravity.BOTTOM);
+    stopParams.setMarginStart((int) (16 * density));
     stopButton.setVisibility(View.GONE);
     stopButton.setOnClickListener(
         v -> {
@@ -314,14 +314,14 @@ public class MainActivity extends AppCompatActivity {
     if (stopButton == null) return;
     float density = getResources().getDisplayMetrics().density;
     FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) stopButton.getLayoutParams();
+    // Bottom-left on every screen: above the home indicator, and above the bottom
+    // navigation bar (56 dp + gap) while a home tab is showing.
+    lp.gravity = Gravity.START | Gravity.BOTTOM;
+    lp.topMargin = 0;
     if (stopOnHomeScreen) {
-      lp.gravity = Gravity.END | Gravity.BOTTOM;
-      lp.topMargin = 0;
       lp.bottomMargin = (int) ((56 + 20) * density) + systemBarBottom;
     } else {
-      lp.gravity = Gravity.END | Gravity.TOP;
-      lp.topMargin = (int) (12 * density) + systemBarTop;
-      lp.bottomMargin = 0;
+      lp.bottomMargin = (int) (16 * density) + systemBarBottom;
     }
     stopButton.setLayoutParams(lp);
   }

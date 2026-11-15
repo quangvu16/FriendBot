@@ -542,3 +542,75 @@
 "pro_talking" = "Talking";
 "pro_stop" = "■  STOP";
 "pro_safety_stopped" = "The robot stopped by itself: the link was lost while it moved.";
+
+/* Gripper */
+"voice_grip" = "Grip (hold the object)";
+"voice_release" = "Release (let the object go)";
+"voice_fetch_title" = "Pick up an object";
+"voice_fetch_hint" = "e.g. the red cup";
+"voice_fetch_go" = "Fetch";
+"voice_fetch_needs_robot" = "Picking up needs this phone connected to the robot (Bluetooth) and its camera.";
+"pro_grip" = "✊ GRIP";
+"pro_release" = "✋ RELEASE";
+
+/* Grab Object page */
+"tile_grab_object" = "Grab Object";
+"grab_object" = "Object";
+"grab_distance" = "Grip at (cm)";
+"grab_flip_on" = "Driving direction reversed";
+"grab_flip_off" = "Driving direction normal";
+"grab_sonar" = "sonar %@";
+"grab_idle" = "Pick the object (🎯), then turn Auto on to grab the %@";
+"grab_searching" = "Searching for the %@";
+"grab_holding" = "Holding the %@ ✊ — press ✋ to let it go";
+"grab_lost" = "Cannot find the %@ — point the robot at it and try again";
+"grab_no_model" = "No AI detector model on this phone";
+"grab_hint" = "AI finds the object, the front sonar measures the distance, the robot grips at the distance you set. Drives away from it? Press ⇄.";
+
+/* Voice Grab (object tracking + voice + gripper + sonar) */
+"tile_voice_grab" = "Voice Grab";
+"vgrab_ready" = "Say: \"pick up the cup\", \"bring me the bottle\", \"put it down\", \"follow me\", \"stop\". Or just: \"go forward\", \"how far\", \"grip\".";
+"vgrab_examples" = "Talk to the robot like a person: pick up the cup · bring me the bottle · bring it to me · put it down · follow me · find the ball · stop. Plain drive words work too: go forward · turn left · how far · grip. Tiếng Việt: lấy cái cốc · mang chai lại đây · lại đây · thả ra · đi theo tôi · tìm quả bóng · dừng lại · tiến · rẽ trái · khoảng cách. Buttons: 🎯 object to track, 🎤 listen on/off, EN/VI language, ✊ close claw, ✋ open claw, ⇄ reverse wheels.";
+"vgrab_gripped" = "Gripped ✊";
+"vgrab_released" = "Released ✋";
+"vgrab_got_it" = "Got it.";
+"vgrab_failed" = "I can't grab it.";
+"vgrab_check_yes" = "Yes, I picked it up.";
+"vgrab_check_no" = "No, the gripper is open.";
+"vgrab_see" = "I see %@.";
+"vgrab_see_none" = "I don't see anything.";
+"vgrab_no_speech" = "Speech recognition is not available. Allow Speech Recognition in Settings.";
+
+/* AI Pick */
+"tile_ai_pick" = "AI Pick";
+"aipick_ready" = "Talk to the Xiaozhi AI (🎤): \"go forward\", \"stop\", \"how far\", \"grab it\", \"release\". ✊ creeps in and grips at the set distance.";
+"aipick_picking" = "Creeping in to grab (≤ %1$d cm)…";
+"aipick_grabbed" = "Grabbed at %1$.0f cm ✊";
+"aipick_grabbed_blind" = "Grabbed ✊ (no sonar reading)";
+"aipick_too_far" = "Nothing came within %1$d cm — drive closer and try again";
+"aipick_released" = "Released ✋";
+"aipick_not_paired" = "Voice AI not paired — open the Voice Control page to pair first";
+"aipick_no_photo" = "Photos are not available on the AI Pick screen";
+
+/* Hardware Test */
+"tile_hardware_test" = "Hardware Test";
+"hw_gripper" = "Gripper";
+"hw_gripper_close" = "Close claw";
+"hw_state_open" = "State: Open";
+"hw_state_closed" = "State: Closed";
+"hw_state_unknown" = "State: —";
+"hw_leds" = "LEDs";
+"hw_left_led" = "Left LED";
+"hw_right_led" = "Right LED";
+"hw_sonar" = "Sonar (middle)";
+"hw_sonar_value" = "%.0f cm";
+"hw_sonar_none" = "—";
+"hw_connected" = "Bluetooth connected";
+"hw_disconnected" = "Not connected";
+"hw_gripper_close_hint" = "Sends g1 to close, g0 to open";
+"hw_led_hint" = "Sent with the i command";
+"hw_sonar_hint" = "Streams every 500 ms while open";
+"hw_info" = "The firmware does not confirm LED state, so the switches show the last command this page sent.";
+"hw_motors" = "Motors";
+"hw_motors_hint" = "Hold a direction to drive, release to stop. Nothing turns? Tap RESUME (bottom-left) and check motor power.";
+"hw_motor_stop" = "Stop";

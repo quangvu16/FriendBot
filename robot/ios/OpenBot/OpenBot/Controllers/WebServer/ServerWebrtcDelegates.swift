@@ -13,7 +13,7 @@ class ServerWebrtcDelegate: WebRTCClientDelegate {
     var mSocket = NativeWebSocket.shared;
     var useCustomCapturer: Bool = true
     let webSocketMsgHandler = WebSocketMessageHandler();
-    let roomId =  GoogleAccount.email ?? ""
+    let roomId = ""
 
     /// callback to check the generate candidate and send to the controller
     func didGenerateCandidate(iceCandidate: RTCIceCandidate) {

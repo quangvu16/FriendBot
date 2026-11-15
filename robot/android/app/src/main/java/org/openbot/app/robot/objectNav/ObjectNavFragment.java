@@ -47,6 +47,7 @@ import org.openbot.app.robot.utils.Enums;
 import org.openbot.app.robot.utils.MovingAverage;
 import org.openbot.app.robot.utils.PermissionUtils;
 import org.openbot.app.robot.vehicle.Control;
+import org.openbot.app.robot.vehicle.Vehicle;
 import timber.log.Timber;
 
 public class ObjectNavFragment extends CameraFragment {
@@ -247,6 +248,11 @@ public class ObjectNavFragment extends CameraFragment {
           preferencesManager.setDynamicSpeed(binding.dynamicSpeed.isChecked());
           tracker.setDynamicSpeed(preferencesManager.getDynamicSpeed());
         });
+
+    // Gripper: the claw control this page did not have. The firmware answers g0/g1
+    // when the move finishes, so the state text updates from processUSBData.
+    binding.gripBtn.setOnClickListener(v -> vehicle.sendGripper(true));
+    binding.releaseBtn.setOnClickListener(v -> vehicle.sendGripper(false));
   }
 
   private void mirrorControl() {
@@ -374,6 +380,10 @@ public class ObjectNavFragment extends CameraFragment {
     handler = new Handler(handlerThread.getLooper());
     binding.bleToggle.setChecked(vehicle.bleConnected());
     super.onResume();
+    if (vehicle != null && vehicle.isConnected()) {
+      vehicle.requestGripperState(); // ask the firmware for the claw state
+    }
+    refreshGripperState();
   }
 
   @Override
@@ -397,12 +407,35 @@ public class ObjectNavFragment extends CameraFragment {
 
   @Override
   protected void processUSBData(String data) {
+    // The claw state is the one line this page reads: the digital firmware answers
+    // g0/g1 after every move (the base observer already stored it on the vehicle).
+    if (!data.isEmpty() && data.charAt(0) == 'g') {
+      refreshGripperState();
+    }
     binding.controllerContainer.speedInfo.setText(
         getString(
             R.string.speedInfo,
             String.format(
                 Locale.US, "%3.0f,%3.0f", vehicle.getLeftWheelRpm(), vehicle.getRightWheelRpm())));
     refreshObjectAvoidanceStatus(binding.objectAvoidance.avoidInfo);
+  }
+
+  /** Mirror the firmware's claw report on the state cell of the gripper row. */
+  private void refreshGripperState() {
+    if (binding == null || vehicle == null) {
+      return;
+    }
+    switch (vehicle.getGripperState()) {
+      case Vehicle.GRIP_OPEN:
+        binding.gripperStateText.setText(R.string.hardware_state_open);
+        break;
+      case Vehicle.GRIP_CLOSED:
+        binding.gripperStateText.setText(R.string.hardware_state_closed);
+        break;
+      default:
+        binding.gripperStateText.setText(R.string.hardware_state_unknown);
+        break;
+    }
   }
 
   @Override

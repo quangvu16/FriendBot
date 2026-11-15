@@ -246,6 +246,11 @@ public class MainFragment extends Fragment implements OnItemClickListener<SubCat
             .navigate(R.id.action_mainFragment_to_robotInfoFragment);
         break;
 
+      case FeatureList.HARDWARE_TEST:
+        Navigation.findNavController(requireView())
+            .navigate(R.id.action_mainFragment_to_hardwareTestFragment);
+        break;
+
       case FeatureList.VOICE_CONTROL:
         Navigation.findNavController(requireView())
             .navigate(R.id.action_mainFragment_to_voiceControlFragment);
@@ -319,6 +324,21 @@ public class MainFragment extends Fragment implements OnItemClickListener<SubCat
       case FeatureList.TARGET_TRACKING:
         Navigation.findNavController(requireView())
             .navigate(R.id.action_mainFragment_to_targetTrackingFragment);
+        break;
+
+      case FeatureList.VOICE_GRAB:
+        Navigation.findNavController(requireView())
+            .navigate(R.id.action_mainFragment_to_voiceGrabFragment);
+        break;
+
+      case FeatureList.AI_PICK:
+        Navigation.findNavController(requireView())
+            .navigate(R.id.action_mainFragment_to_aiPickFragment);
+        break;
+
+      case FeatureList.GRAB_OBJECT:
+        Navigation.findNavController(requireView())
+            .navigate(R.id.action_mainFragment_to_grabObjectFragment);
         break;
 
       case FeatureList.GUIDE_COLOUR:

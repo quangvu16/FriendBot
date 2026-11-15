@@ -68,36 +68,34 @@ class Common {
         return []
     }
 
+    /// Model name without its file extension, e.g. "ssd-mobilenet-v2" for
+    /// "ssd-mobilenet-v2.tflite". Names without a dot are returned unchanged.
+    static func baseName(_ name: String) -> String {
+        guard let index = name.firstIndex(of: ".") else { return name }
+        return String(name.prefix(upTo: index))
+    }
+
+    /// Whether the file of a given modelItem can actually be loaded: shipped in
+    /// the app bundle, or downloaded / added into the documents directory.
+    static func isModelItemRunnable(_ item: ModelItem) -> Bool {
+        let fileName = item.path.split(separator: "/").map(String.init).last ?? ""
+        if !fileName.isEmpty && Bundle.main.path(forResource: fileName, ofType: "") != nil {
+            return true
+        }
+        return DataLogger.shared.getDocumentDirectoryInformation().contains { $0.lastPathComponent == item.name }
+    }
+
     /// Load the modelItems of a specific mode.
     ///
     /// - Parameters: mode (e.g. "AUTOPILOT" or "DETECTOR")
-    /// - Returns: array of all models of that type which are downloaded
+    /// - Returns: names of all models of that type from the Model Management list
+    ///   whose file can actually be loaded (bundled, downloaded or added)
     static func loadSelectedModels(mode: String) -> [String] {
         var selectedModels: [String] = []
-        let allModels = loadAllModelItems()
-        for model in allModels {
-
-            if model.type == mode && model.pathType == "ASSET" {
-                if isModelItemAvailableInDocument(modelName: model.name + Strings.tflite) {
-                    selectedModels.append(model.name)
-                }
-            }
-            let split = model.path.split(separator: "/");
-            let index = split.count - 1;
-            if index < 0 {
-                continue;
-            }
-            let fileName = String(split[index]);
-            if model.type == mode {
-                let bundle = Bundle.main
-                let path = bundle.path(forResource: fileName, ofType: "")
-                if path != nil {
-                    selectedModels.append(String(model.name.prefix(upTo: model.name.firstIndex(of: ".")!)))
-                }
-                if isModelItemAvailableInDocument(modelName: String(model.name.prefix(upTo: model.name.firstIndex(of: ".")!))) {
-                    selectedModels.append(String(model.name.prefix(upTo: model.name.firstIndex(of: ".")!)))
-                }
-            }
+        for model in loadAllModelItems() where model.type == mode {
+            let name = baseName(model.name)
+            guard name != "", !selectedModels.contains(name), isModelItemRunnable(model) else { continue }
+            selectedModels.append(name)
         }
         return selectedModels
     }
@@ -124,15 +122,18 @@ class Common {
     /// Get a modelItem from its name
     ///
     /// - Parameters: name of the model
-    /// - Returns: the loaded modelItem
+    /// - Returns: the loaded modelItem, or an empty placeholder (path "") when
+    ///   the name is not part of the Model Management list
     static func returnModelItem(modelName: String) -> ModelItem {
         let allModels = loadAllModelItems()
+        let wanted = baseName(modelName)
         for item in allModels {
-            if item.name.contains(modelName) {
+            if baseName(item.name) == wanted {
                 return item;
             }
         }
-        let model: ModelItem = ModelItem.init(id: allModels.count + 1, class: allModels[0].class, type: allModels[0].type, name: modelName, pathType: allModels[allModels.count - 1].pathType, path: "", inputSize: allModels[0].inputSize)
+        let first = allModels.first
+        let model: ModelItem = ModelItem.init(id: allModels.count + 1, class: first?.class ?? "", type: first?.type ?? "", name: modelName, pathType: allModels.last?.pathType ?? "", path: "", inputSize: first?.inputSize ?? "")
         return model;
     }
 

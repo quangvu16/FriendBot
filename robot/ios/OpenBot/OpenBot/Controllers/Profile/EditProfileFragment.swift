@@ -4,7 +4,6 @@
 
 import Foundation
 import UIKit
-import GoogleSignIn
 /***
  class for fragment of edit profile section
  */
@@ -13,7 +12,6 @@ class editProfileFragment: UIViewController, UIImagePickerControllerDelegate, UI
  Outlets for the user interface elements used in this view controller.
 */
     private var profileIcon: UIImageView!
-    private let authentication = Authentication()
     private var firstName: UILabel!
     private var lastName: UILabel!
     let alert = UIAlertController(title: Strings.loadingTitle, message: Strings.loadingProfileMessage, preferredStyle: .alert)
@@ -82,8 +80,6 @@ class editProfileFragment: UIViewController, UIImagePickerControllerDelegate, UI
         profileIcon.clipsToBounds = true
         if let saved = LocalProfile.photo {
             profileIcon.image = saved
-        } else if let imgUrl = GoogleAccount.photoURL(dimension: 100) {
-            profileIcon.load(url: imgUrl)
         }
         view.addSubview(profileIcon)
         profileIcon.contentMode = .scaleAspectFill
@@ -117,9 +113,9 @@ class editProfileFragment: UIViewController, UIImagePickerControllerDelegate, UI
     private func createTextFields() {
         firstNameField = CustomTextField(frame: CGRect(x: 17, y: firstName.frame.origin.y + adapted(dimensionSize: 30, to: .height), width: width - 34, height: 47));
         view.addSubview(firstNameField);
-        setTextField(textField: firstNameField, value: getFirstName(name: LocalProfile.displayName ?? GoogleAccount.displayName ?? Strings.unknownFallback));
+        setTextField(textField: firstNameField, value: getFirstName(name: LocalProfile.displayName ?? Strings.unknownFallback));
         lastNameField = CustomTextField(frame: CGRect(x: 17, y: lastName.frame.origin.y + adapted(dimensionSize: 30, to: .height), width: width - 34, height: 47));
-        setTextField(textField: lastNameField, value: getLastName(name: LocalProfile.displayName ?? GoogleAccount.displayName ?? ""));
+        setTextField(textField: lastNameField, value: getLastName(name: LocalProfile.displayName ?? ""));
         dobField = CustomTextField(frame: CGRect(x: 17, y: dob.frame.origin.y + adapted(dimensionSize: 30, to: .height), width: width - 34, height: 47));
         self.setTextField(textField: self.dobField, value: Date.getCurrentDate());
         getDOB { dob in
@@ -129,7 +125,7 @@ class editProfileFragment: UIViewController, UIImagePickerControllerDelegate, UI
         img.image = UIImage(named: "calendar");
         dobField.addSubview(img)
         let emailField = CustomTextField(frame: CGRect(x: 17, y: email.frame.origin.y + adapted(dimensionSize: 30, to: .height), width: width - 34, height: 47));
-        setTextField(textField: emailField, value: authentication.googleSignIn.currentUser?.profile?.email ?? "");
+        setTextField(textField: emailField, value: "");
         emailField.isEnabled = false
         emailField.textColor = traitCollection.userInterfaceStyle == .dark ? Colors.lightBlack : UIColor.lightGray;
         scrollView.addSubview(firstNameField);
