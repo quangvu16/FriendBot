@@ -143,7 +143,7 @@
 <text x="96" y="328" font-size="15" font-weight="700" fill="#0f172a">Connect the robot</text>
 <text x="96" y="350" font-size="12.5" fill="#475569">USB-C OTG cable to the ESP32 → Robot</text>
 <text x="96" y="369" font-size="12.5" fill="#475569">Info → USB on, 115200 baud</text>
-<text x="96" y="388" font-size="12.5" fill="#475569">or Bluetooth → “FriendBot: MTV”</text>
+<text x="96" y="388" font-size="12.5" fill="#475569">or Bluetooth → “OpenBot: MTV”</text>
 <circle cx="72" cy="445" r="13" fill="#0f172a"/><text x="72" y="450" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">3</text>
 <text x="96" y="451" font-size="15" font-weight="700" fill="#0f172a">Open Voice Control</text>
 <text x="96" y="473" font-size="12.5" fill="#475569">Home grid → General → Voice Control</text>

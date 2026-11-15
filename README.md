@@ -7,7 +7,7 @@
 **Talk to your robot. It listens, answers, and drives.**
 
 FriendBot is a small 2-wheel robot car built on [OpenBot](https://www.openbot.org/). An
-**ESP32** board drives the motors and reads three distance sensors. Your **phone** (Android or
+**ESP32** board drives the motors, reads the distance ahead and works the claw. Your **phone** (Android or
 iOS) is the brain. **Xiaozhi** (xiaozhi.me) is the voice assistant: it hears you, thinks, talks
 back, and tells the robot what to do.
 
@@ -30,15 +30,16 @@ Vietnamese quick guide: [HUONG_DAN_DIEU_KHIEN_GIONG_NOI.md](docs/HUONG_DAN_DIEU_
 2. [How it works](#2-how-it-works)
 3. [Wiring](#3-wiring)
 4. [Flash the firmware](#4-flash-the-firmware)
-5. [Install the app and connect](#5-install-the-app-and-connect)
+5. [Install the app and connect](#5-install-the-app-and-connect) — app pages on Android / iOS
 6. [Pair with xiaozhi.me (first time only)](#6-pair-with-xiaozhime-first-time-only)
-7. [The Voice Control page](#7-the-voice-control-page) — robot face, buttons, camera, QR codes
+7. [The Voice Control page](#7-the-voice-control-page) — robot face, buttons, camera, gripper, QR codes
 8. [Talk from another phone or computer](#8-talk-from-another-phone-or-computer) — Remote Mic,
    Internet Mic, Wi-Fi / Internet Mic Pro, macOS and Python apps
 9. [Voice commands](#9-voice-commands)
 10. [Configuring Xiaozhi](#10-configuring-xiaozhi)
 11. [AI and camera features](#11-ai-and-camera-features) — Autopilot, Object Tracking, Follow a
-    Coloured Object, Follow a Face, Follow a Black Line, Object Avoidance, Target Tracking
+    Coloured Object, Follow a Face, Follow a Black Line, Object Avoidance, Target Tracking,
+    Grab Object, Voice Grab
 12. [Safety](#12-safety)
 13. [Troubleshooting](#13-troubleshooting)
 14. [Questions to go deeper](#14-questions-to-go-deeper)
@@ -53,9 +54,10 @@ Vietnamese quick guide: [HUONG_DAN_DIEU_KHIEN_GIONG_NOI.md](docs/HUONG_DAN_DIEU_
 | ESP32 WROOM-32 DevKitC (38 pin) | The robot's small controller: runs the motors, sensors, LEDs and LCD |
 | L298N dual H-bridge (or MX1508) | Turns the ESP32's weak signals into motor power |
 | 2 × DC gear motors + wheels | Differential drive: two wheels, steering by speed difference |
-| 3 × HC-SR04 ultrasonic sensors | Measure distance left / middle / right, so the robot does not crash |
+| 1 × HC-SR04 ultrasonic sensor | Front distance: slows at 50 cm, stops at 15 cm, so the robot does not crash |
+| Claw gripper + on/off driver board | Holds objects: signal on GPIO 32, powered from the 5 V rail |
 | 2 × LEDs + 220 Ω resistors | Lights and turn signals |
-| 16×2 LCD with I2C backpack | Shows speed, link and distances on the robot |
+| 16×2 LCD with I2C backpack | Shows distance, link and claw state on the robot |
 | 2S Li-ion battery (7.4 V) | Power for the motors (and 5 V for the board through the driver) |
 | Android or iOS phone | The brain: runs the FriendBot app, microphone, speaker and camera |
 | Wi-Fi or mobile data | Voice goes to the Xiaozhi server on the internet |
@@ -69,6 +71,17 @@ Vietnamese quick guide: [HUONG_DAN_DIEU_KHIEN_GIONG_NOI.md](docs/HUONG_DAN_DIEU_
 ---
 
 ## 2. How it works
+
+![FriendBot system overview: you speak, the phone app talks to the Xiaozhi cloud, the ESP32 drives the robot](docs/images/system-overview.svg)
+
+The whole project in one picture: **you speak** — the **phone app** (Android / iOS) streams your
+voice to the **Xiaozhi cloud**, which answers out loud and, when the robot should act, calls a
+robot tool (`self.robot.move`, `self.robot.gripper`, …). The app turns that into drive commands
+for the **ESP32**, which does the fast, safety-critical work (motors, sonar, failsafes) — so the
+robot still stops at a wall even if the phone or the internet fails. Other phones can join over
+Wi-Fi as a microphone or a driving pad.
+
+The same flow for one command, step by step:
 
 ![Voice pipeline](docs/images/voice-flow.svg)
 
@@ -96,17 +109,24 @@ Everything is also written in the on-screen chat, so you can see what was said a
 
 ## 3. Wiring
 
-![FriendBot wiring: ESP32 WROOM-32 DevKitC + L298N + 3 sonars + LEDs + LCD](docs/images/wiring.svg)
+![FriendBot wiring: ESP32 WROOM-32 DevKitC + L298N motors + front sonar + LEDs + LCD + claw driver](docs/images/wiring.svg)
 
 | Part | Signal | ESP32 GPIO |
 |---|---|---|
 | Right motor | IN1 forward (PWM) / IN2 backward (PWM) / EN | **19 / 4 / 18** |
 | Left motor | IN1 forward (PWM) / IN2 backward (PWM) / EN | **15 / 2 / 5** |
-| Sonar middle | TRIG / ECHO | **13 / 12** |
-| Sonar left | TRIG / ECHO | **26 / 25** |
-| Sonar right | TRIG / ECHO | **32 / 33** |
+| Sonar front (middle) | TRIG / ECHO | **13 / 12** |
 | LEDs | left / right | **14 / 27** |
 | LCD (I2C, 0x27 or 0x3F) | SDA / SCL | **21 / 22** |
+| Claw gripper driver | signal (S+) · 5 V · GND | **32** · 5 V · GND |
+
+> **Claw power:** take the driver board's 5 V from the 5 V rail (the L298N's +5 V output or a buck
+> converter), not from the ESP32's 5 V pin, and join its GND with all the others. *Why? A claw
+> motor draws far more current than the board's pin can give; the ESP32 would brown out and reset.*
+>
+> *Why only one sonar?* The two side sonars were dropped to make room for the claw — their pins
+> **26 / 25 / 33** are now free and **32** carries the claw signal (the firmware follows the front
+> sonar alone; it still slows at 50 cm and stops at 15 cm).
 
 **Four rules that save hours:**
 
@@ -114,7 +134,7 @@ Everything is also written in the on-screen chat, so you can see what was said a
    joined. *Why? Without it, signals have no shared "zero", so motors twitch and sonars read
    nonsense.*
 2. **Divide the sonar ECHO voltage.** HC-SR04 echo is 5 V, the ESP32 is 3.3 V. Put 1 kΩ in
-   series and 2 kΩ to GND on every ECHO wire. *Why? 5 V slowly damages the ESP32 pin.*
+   series and 2 kΩ to GND on the sonar's ECHO wire. *Why? 5 V slowly damages the ESP32 pin.*
 3. **Never power motors from the ESP32.** Battery → driver `+12V`/`VCC`. *Why? Motors pull
    far more current than the board's 5 V pin can give.*
 4. **Strapping pins (2, 5, 12, 15).** If the board will not boot or flash, unplug the middle
@@ -158,19 +178,22 @@ arduino-cli upload  --fqbn esp32:esp32:esp32 --port /dev/tty.usbserial-0001 firm
 | `MOTOR_MIN_DUTY` | `60` | Smallest power that really turns the wheels. Wheels hum but don't move? Try `80` |
 | `MOTOR_MAX_DUTY` | `255` | Full app speed maps to this. Robot too fast? Try `180` |
 | `MOTOR_RAMP_STEP` | `20` | Soft start: max power increase per 10 ms |
-| `FRONT_SLOW_CM` / `FRONT_STOP_CM` | `50` / `15` | Middle sonar: start slowing at 50 cm, stop forward at 15 cm |
-| `SIDE_SLOW_CM` / `SIDE_STOP_CM` | `25` / `10` | Same for the left and right sonars |
-| `ESCAPE_CM` / `ESCAPE_MAX_TRIES` | `5` / `2` | While driving, closer than 5 cm → backs off and turns to the open side, at most 2 times |
-| `HAS_LCD` / `HAS_SONAR` / `HAS_INDICATORS` | `1` | Set to `0` for parts you did not fit |
+| `FRONT_SLOW_CM` / `FRONT_STOP_CM` | `50` / `15` | Front sonar: start slowing at 50 cm, stop forward at 15 cm |
+| `ESCAPE_CM` / `ESCAPE_MAX_TRIES` | `5` / `2` | While driving, closer than 5 cm → backs off and turns left, at most 2 times |
+| `GRIPPER_MOVE_MS` | `700` | How long the claw travels before the app hears `g0` / `g1` |
+| `GRIPPER_APPROACH_STOP_CM` | `4` | Approach mode (`a<ms>`): front stop distance while picking something up |
+| `GRIPPER_HELD_CM` | `13` | Closer than this with the claw closed = the held object, not a wall |
+| `HAS_LCD` / `HAS_SONAR` / `HAS_INDICATORS` / `HAS_GRIPPER` | `1` | Set to `0` for parts you did not fit |
 
 ### What the robot shows
 
 - **Bluetooth name:** `OpenBot: MTV`
 - **LCD:**
   ```
-  L 200 R 200  BLE     <- motor outputs, link: BLE / USB / WAIT / LOST / STOP
-  L 40 M120 Rmax       <- left / middle / right distance in cm (--- = sensor fault)
+  Dist:120 cm BLE      <- front distance + link: BLE / USB / WAIT / LOST / STOP
+  Claw: OPEN           <- claw: OPEN / CLOSED / MOVING (row blank without a gripper)
   ```
+  (Before a phone talks, it shows `Phone not yet` / `connected`.)
 
 ### Messages between phone and robot
 
@@ -181,7 +204,10 @@ arduino-cli upload  --fqbn esp32:esp32:esp32 --port /dev/tty.usbserial-0001 firm
 | phone → robot | `f` | "What are you?" → robot replies with its features |
 | phone → robot | `s<ms>` | Send sonar readings every *ms*. `s100` |
 | phone → robot | `i<left>,<right>` | LEDs: 0 off, 1 on, 2 blink, 3 auto. `i2,0` = left signal |
+| phone → robot | `g1` / `g0` | Gripper: grip (close) / release (open). `g2` asks for the state |
+| phone → robot | `a<ms>` | Approach mode for *ms* (max 5000, `a0` ends it): the middle sonar lets the robot creep to **4 cm** instead of 15 cm, speed is capped, the escape reflex pauses |
 | robot → phone | `s<cm>` | Free distance in front, e.g. `s42` |
+| robot → phone | `g0` / `g1` | The claw finished moving: open / closed (LCD line 2 shows `Claw: OPEN` / `Claw: CLOSED`) |
 
 *Source: `firmware/openbot-esp32-mtv/openbot-esp32-mtv.ino` (SETTINGS, `handle_message`)*
 
@@ -201,6 +227,32 @@ arduino-cli upload  --fqbn esp32:esp32:esp32 --port /dev/tty.usbserial-0001 firm
 > You can talk to Xiaozhi before the robot is connected — it just won't move.
 
 *Source: `robot/android/.../common/FeatureList.java` (AI category), iOS `Constants.swift`*
+
+### The app pages (Android and iOS)
+
+Both apps open on the same **Home dashboard** and follow the same structure. This map shows how
+the screens link together:
+
+![FriendBot app map: how the main screens link together on Android and iOS](docs/images/app-navigation.svg)
+
+**Voice Control** — the screen you talk to the robot from (face, transcript, quick buttons; see
+[§7](#7-the-voice-control-page)):
+
+| Android | iOS |
+|---|---|
+| ![Android app: the Voice Control screen](docs/images/android-app.svg) | ![iOS app: the Voice Control screen](docs/images/ios-app.svg) |
+
+**The other screens** — Home, Bluetooth, Drive, GPS Mission, Car setup (robot info + tests),
+Remote Mic, Autopilot, Object Tracking, Point Goal, Model Management, the Vision Modes and their
+"How to use" guides:
+
+| Android | iOS |
+|---|---|
+| ![Android app: the other screens](docs/images/android-screens.svg) | ![iOS app: the other screens](docs/images/ios-screens.svg) |
+
+The map and mock-ups show the core screens; the newer pages — **Internet Mic / Wi-Fi Mic Pro /
+Internet Mic Pro** ([§8](#8-talk-from-another-phone-or-computer)), **Voice Grab**, **AI Pick**
+and **Grab Object** ([§11](#11-ai-and-camera-features)) — each have their own section below.
 
 ---
 
@@ -280,6 +332,47 @@ Ask *"What's in front of you?"* or *"Có gì phía trước?"*: the phone takes 
 vision service describes it, and the answer is spoken. The photo shows on the face for a few
 seconds. In the controls, **tap the camera preview** to take a photo yourself; the round button
 flips between front and back camera.
+
+### The gripper — hold, let go, pick up and carry
+
+| You say (or do) | The robot does |
+|---|---|
+| "Hold it", "grab it", "close the claw" | Closes the gripper (`self.robot.gripper` grab) |
+| "Let it go", "drop it", "open the claw" | Opens the gripper (release) |
+| "Pick up the red cup" | **Fetch:** opens the claw, finds the cup with the camera, drives to it, grips it, then asks *"Where should I take it?"* |
+| "Bring it to me" / "go left 1 metre and put it down" | Xiaozhi drives there (`self.robot.move`) and opens the claw |
+| **Long-press the corner camera** | Asks *"What should I pick up?"* and fetches it — no talking needed |
+| Pro pages: **✊ GRIP / ✋ RELEASE** (keys **G / R** on a computer) | Grip / release from another phone, Mac or PC |
+
+**How the fetch finds the object (step by step):**
+
+1. Take a photo and ask the vision service *"where is the red cup?"* — it answers
+   `FOUND x=62 w=18` (x = left 0 … right 100, w = how wide it looks) or `NONE`.
+2. Not seen → turn 45° and look again (one full circle at most).
+3. Off to one side → turn toward it. Centred but small → drive forward a little.
+4. Big in the photo (≥ 38 % wide) or the sonar reads ≤ 20 cm → **approach mode** (`a2500`),
+   creep forward 0.65 s, close the claw.
+
+*Why step by step? One photo cannot tell distance or angle exactly. Looking again after every
+short move corrects the error before it grows — "visual servoing". In a simulation with noisy
+answers it reached the object 30 out of 30 times, using 6–16 photos (about 3 s each, so 20–50 s).*
+
+**Calibrate once** (`ObjectFetcher.java` / `ObjectFetcher` in `VoiceCommand.swift`):
+
+| If… | Change |
+|---|---|
+| Turns overshoot / undershoot | `SPIN_360_MS` (time for one full spin at speed 0.6) |
+| The claw closes too early / pushes the object away | `FINAL_MS` (last creep, default 650 ms) |
+| It stops too far away | lower `GRAB_WIDTH` (38) |
+| Claw does not open/close fully | firmware `GRIPPER_MOVE_MS` (default 700 ms — raise it for a slower claw) |
+| The robot creeps too far / not far enough in approach mode | firmware `GRIPPER_APPROACH_STOP_CM` (default 4 cm) |
+
+**Safety:** STOP (button, face long-press, voice) cancels a fetch at once. Approach mode ends by
+itself after 2.5 s, and the firmware still stops forward motion at 4 cm. Fetching runs on the
+robot phone (it needs the camera and the Bluetooth link); other phones can grip/release.
+
+*Source: `firmware/openbot-esp32-mtv/openbot-esp32-mtv.ino` (GRIPPER), `ObjectFetcher.java`,
+`XiaozhiSession.java`*
 
 ### The QR codes (for other phones and computers)
 
@@ -435,6 +528,8 @@ Say them, type them, or use them offline. With Xiaozhi online, natural sentences
 | `self.robot.sonar` | — | Read distance |
 | `self.robot.trick` | name: sing / triangle / circle / spin / turn_around / wiggle | Tricks |
 | `self.camera.take_photo` | question | Look and describe |
+| `self.robot.gripper` | action: grab / release | Hold or let go of an object |
+| `self.robot.fetch` | object (e.g. "the red cup") | Find it with the camera, drive to it, pick it up |
 
 *Source: `VoiceInterpreter.java`, `VoiceCommand.java`, `XiaozhiSession.java`*
 
@@ -486,7 +581,7 @@ Besides voice, FriendBot can drive itself with the phone's camera. Open them fro
 - **Mount the phone upright** on the robot, back camera facing forward (down at the floor for Black Line).
 - Press **Auto** (or **Auto Mode**) to start, turn it off to stop. Leaving the page also stops the robot.
 - **»** sets the speed: Slow / Normal / Fast = 128 / 192 / 255 of 255.
-- **The firmware still protects the robot**: its sonars slow it from 50 cm and stop it at 15 cm, and the red **STOP** overrides everything. *Why this matters:* a camera or a neural network can be wrong; the sonar stop doesn't depend on them.
+- **The firmware still protects the robot**: its front sonar slows it from 50 cm and stops it at 15 cm, and the red **STOP** overrides everything. *Why this matters:* a camera or a neural network can be wrong; the sonar stop doesn't depend on them.
 - Vision Modes have a **How to use** button that opens step-by-step instructions.
 
 > The AI features come from [OpenBot](https://www.openbot.org). The Vision Modes are based on
@@ -635,6 +730,82 @@ Vision's object tracker).
 
 ---
 
+### 11.8 Grab Object (AI + front sonar + gripper)
+
+**Home → Vision Modes → Grab Object.** The phone's own AI model (the Object Tracking detector,
+MobileNet-SSD: 80 everyday objects, no internet) finds the object, the robot drives to it, and
+the **middle (front) sonar** measures the real distance — at the distance you set the robot stops
+and closes the gripper.
+
+1. Pick the **Object** (cup, bottle, sports ball, apple, teddy bear, …) and **Grip at** (default
+   8 cm from the sonar to the object).
+2. Turn **Auto** on. The status shows what it is doing and the sonar distance.
+3. It stops by itself with *"Holding the cup ✊"*. **✋ Release** opens the claw; **✊ Grip** closes
+   it any time.
+
+| Step | What decides | Example |
+|---|---|---|
+| Search | no box → turn ~20°, stop, look | the cup is behind the robot |
+| Turn | box left/right of the middle band | ◀ Turning to the cup |
+| Drive | box centred → speed falls with the **sonar** distance | ▲ Driving to cup · 60 cm |
+| Reach | sonar ≤ 35 cm → firmware approach mode (stops at 4 cm, not 15 cm). Right in front of the claw the camera loses the cup — the sonar still sees it | ▲ Reaching the cup by sonar · 12 cm |
+| Grip | sonar ≤ *Grip at* and the cup centred | Gripping the cup (8 cm) |
+
+*Why the sonar and not the box size? How big an object looks depends on how big it is; the sonar
+measures centimetres, so the claw closes at the right moment for a ball and a bottle alike.
+In a simulation with flickering detections and noisy sonar it grabbed the object 48 / 48 times
+from 8 starting positions (about 10 s each).*
+
+**Check once:** the gripper, the middle sonar and the phone camera must face the same way. If the
+robot drives **away** from the object, press **⇄ Reverse** once (it is remembered).
+
+*Source: `vision/GrabObjectFragment.java`, `vision/GrabSteering.java` (Android);
+`GrabObjectController` in `Vision/TargetTrackingController.swift` (iOS)*
+
+### 11.9 Voice Grab (talk to the robot like a person)
+
+**Home → Voice Grab** (Android: AI section; iOS: Vision Modes). Talk to the robot the way you
+would talk to a person. It **hears** you (the phone's speech recognition), **sees** the object and
+you (the same AI model as Grab Object, plus the "person" class), **measures** with the front sonar,
+**holds** with the gripper, and **answers out loud** with a face that shows how it feels.
+
+| You say (English) | Tiếng Việt | What the robot does |
+|---|---|---|
+| "pick up the cup" | "lấy cái cốc" | "Okay, I'll get the cup" → finds it → grips → happy wiggle → "Where should I take it?" |
+| "bring me the bottle" | "mang chai lại đây" | picks the bottle up, then comes back to you and says "Here you are!" |
+| "bring it to me" / "come here" | "lại đây" | drives to you (camera finds you; if you are not seen it drives back to where it started and looks around) |
+| "put it down" / "let go" | "thả ra" | opens the claw, steps back, "There you go" |
+| "follow me" | "đi theo tôi" | keeps about 60 cm behind you |
+| "find the ball" | "tìm quả bóng" | drives up to the ball and stops (no grip) |
+| "stop" | "dừng lại" | stops everything at once |
+| "hello" / "thank you" | "xin chào" / "cảm ơn" | waves (a small wiggle) / "You're welcome!" |
+
+Buttons: **🎤** listening on/off (hands-free, it pauses while the robot speaks so it never hears
+itself) · **EN/VI** language · **✊ / ✋** close / open the claw · **⇄** reverse wheels (shared with
+Grab Object). Auto turns on by itself when you give a moving command.
+
+**What makes it "act like a person"**
+
+- It **says what it is going to do** before doing it, and what went wrong if it fails
+  ("I can't find the cup" with a sad face) — like a helper, not a silent machine.
+- It **remembers where it started** (it counts its own wheel movement — "dead reckoning"), so
+  "bring it to me" works even when you are out of the camera's view.
+- When it **holds an object**, the object sits right in front of the middle sonar. The firmware
+  ignores readings closer than 13 cm while the claw is closed (`GRIPPER_HELD_CM`), and the page
+  ignores readings under 15 cm — so the robot does not "see a wall" in its own hand. It then
+  judges your distance by **how tall you look** in the picture instead.
+
+*Tested off the robot in a simulation: sentences understood 21 / 21; "bring me the cup" 20 / 20;
+"pick up → bring it to me → put it down" 20 / 20; "follow me" 20 / 20.*
+
+**Needs:** re-flash the firmware once (the held-object rule); Android needs Google speech services
+(Google app), iOS asks for Microphone + Speech Recognition permission. Vietnamese works best with
+the vi-VN speech pack installed.
+
+*Source: `vision/VoiceGrabParser.java`, `vision/VoiceGrabBrain.java`, `vision/VoiceGrabFragment.java`
+(Android); `VoiceGrabController` in `Vision/TargetTrackingController.swift` (iOS);
+`mid_is_held_object()` in the firmware.*
+
 ## 12. Safety
 
 The robot has **several independent layers**, so one failure does not cause a crash:
@@ -649,7 +820,7 @@ The robot has **several independent layers**, so one failure does not cause a cr
 | App — long-press the face | STOP from anywhere on the Voice Control page |
 | Pro pages — auto-stop | The robot stops if a Pro page goes silent while it moves (1.5 s Wi-Fi, 3 s internet) |
 | Firmware — sonar | Slows forward at 50 cm, stops at 15 cm; reversing and turning still work |
-| Firmware — escape | While driving and under 5 cm: backs away and turns to the open side (max 2 tries; STOP cancels it; never moves a parked robot) |
+| Firmware — escape | While driving and under 5 cm: backs away and turns left — one sonar, so no side to prefer (max 2 tries; STOP cancels it; never moves a parked robot) |
 | Firmware — link loss | Bluetooth disconnect → stop. USB heartbeat missing 750 ms → stop |
 
 > **Why both app and firmware?** If the phone freezes or the Bluetooth drops, the app cannot
@@ -666,7 +837,8 @@ The robot has **several independent layers**, so one failure does not cause a cr
 | Wheels hum but don't turn | Not enough power → raise `MOTOR_MIN_DUTY` (60 → 80), check the battery |
 | One wheel turns backwards | Set `MOTOR_L_REVERSED` or `MOTOR_R_REVERSED` to `1` |
 | Robot won't go forward, but reverses fine | Something is close to a sonar → check the LCD distances |
-| LCD left/right distances swapped | Swap the two sonar pin lines in the firmware |
+| Sonar shows `---` | Sensor fault → check the ECHO/TRIG wires (GPIO 12 / 13) and the voltage divider |
+| Claw never moves | Check the driver board's 5 V, its GND, and the signal wire on GPIO 32 |
 | LCD blank | Turn the blue contrast screw on the back of the LCD |
 | Board won't boot or flash | Unplug the sonar on GPIO 12 and the driver while flashing |
 | "Robot not connected" | Connect `OpenBot: MTV` on the Bluetooth screen first |
@@ -708,7 +880,7 @@ Ask yourself **"why?"** for each — it makes the design clear.
 
 | Folder | What is inside |
 |---|---|
-| [`firmware/openbot-esp32-mtv`](firmware/openbot-esp32-mtv/) | Robot firmware (ESP32 WROOM-32 + L298N/MX1508, 3 sonars, LEDs, LCD) |
+| [`firmware/openbot-esp32-mtv`](firmware/openbot-esp32-mtv/) | Robot firmware (ESP32 WROOM-32 + L298N/MX1508, front sonar, claw driver, LEDs, LCD) |
 | [`robot/android`](robot/android/) | FriendBot Android app (Android Studio) |
 | [`robot/ios`](robot/ios/) | FriendBot iOS app (Xcode) |
 | [`desktop/macos`](desktop/macos/README.md) | FriendBot Mic / Mic Pro for macOS |
